@@ -8,6 +8,10 @@ public class CommentOutputDto {
     public String comment;
     public LocalDate date;
 
+    public StoryOutputDto storyOutputDto;
+    public UserOutputDto userOutputDto;
+
+
     public CommentOutputDto() {
 
     }
@@ -40,5 +44,21 @@ public class CommentOutputDto {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public StoryOutputDto getStoryOutputDto() {
+        return storyOutputDto;
+    }
+
+    public void setStoryOutputDto(StoryOutputDto storyOutputDto) {
+        this.storyOutputDto = storyOutputDto;
+    }
+
+    public UserOutputDto getUserOutputDto() {
+        return userOutputDto;
+    }
+
+    public void setUserOutputDto(UserOutputDto userOutputDto) {
+        this.userOutputDto = userOutputDto;
     }
 }

@@ -3,6 +3,8 @@ package com.mf.minutefictionbackend.dtos.outputDtos;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AuthorProfileOutputDto {
 
@@ -12,6 +14,8 @@ public class AuthorProfileOutputDto {
     public String bio;
     public LocalDate dob;
 
+    public List<StoryOutputDto> storyOutputDtoList = new ArrayList<>();
+    public UserOutputDto user;
 
 
 
@@ -64,5 +68,22 @@ public class AuthorProfileOutputDto {
 
     public void setDob(LocalDate dob) {
         this.dob = dob;
+    }
+
+
+    public List<StoryOutputDto> getStoryOutputDtoList() {
+        return storyOutputDtoList;
+    }
+
+    public void setStoryOutputDtoList(List<StoryOutputDto> storyOutputDtoList) {
+        this.storyOutputDtoList = storyOutputDtoList;
+    }
+
+    public UserOutputDto getUser() {
+        return user;
+    }
+
+    public void setUser(UserOutputDto user) {
+        this.user = user;
     }
 }

@@ -1,6 +1,7 @@
 package com.mf.minutefictionbackend.dtos.outputDtos;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class ThemeOutputDto {
 
@@ -8,6 +9,10 @@ public class ThemeOutputDto {
     public String name;
     public LocalDate openDate;
     public LocalDate closeDate;
+
+    public List<StoryOutputDto> storyOutputDtoList;
+
+
 
     public ThemeOutputDto(Long id, String name, LocalDate openDate, LocalDate closeDate) {
         this.id = id;
@@ -46,5 +51,13 @@ public class ThemeOutputDto {
 
     public void setCloseDate(LocalDate closeDate) {
         this.closeDate = closeDate;
+    }
+
+    public List<StoryOutputDto> getStoryOutputDtoList() {
+        return storyOutputDtoList;
+    }
+
+    public void setStoryOutputDtoList(List<StoryOutputDto> storyOutputDtoList) {
+        this.storyOutputDtoList = storyOutputDtoList;
     }
 }

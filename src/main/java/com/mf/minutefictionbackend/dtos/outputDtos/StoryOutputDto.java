@@ -1,11 +1,19 @@
 package com.mf.minutefictionbackend.dtos.outputDtos;
 
+import java.util.List;
+
 public class StoryOutputDto {
 
     public Long id;
     public String title;
     public String content;
     public String status;
+
+    public AuthorProfileOutputDto authorProfileOutputDto;
+    public ThemeOutputDto themeOutputDto;
+
+    public List<CommentOutputDto> commentOutputDtoList;
+
 
 
     public StoryOutputDto() {
@@ -49,5 +57,29 @@ public class StoryOutputDto {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public AuthorProfileOutputDto getAuthorProfileOutputDto() {
+        return authorProfileOutputDto;
+    }
+
+    public void setAuthorProfileOutputDto(AuthorProfileOutputDto authorProfileOutputDto) {
+        this.authorProfileOutputDto = authorProfileOutputDto;
+    }
+
+    public ThemeOutputDto getThemeOutputDto() {
+        return themeOutputDto;
+    }
+
+    public void setThemeOutputDto(ThemeOutputDto themeOutputDto) {
+        this.themeOutputDto = themeOutputDto;
+    }
+
+    public List<CommentOutputDto> getCommentOutputDtoList() {
+        return commentOutputDtoList;
+    }
+
+    public void setCommentOutputDtoList(List<CommentOutputDto> commentOutputDtoList) {
+        this.commentOutputDtoList = commentOutputDtoList;
     }
 }
