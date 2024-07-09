@@ -11,7 +11,6 @@ public class StoryOutputDto {
 
     public AuthorProfileOutputDto authorProfileOutputDto;
     public ThemeOutputDto themeOutputDto;
-
     public List<CommentOutputDto> commentOutputDtoList;
 
 

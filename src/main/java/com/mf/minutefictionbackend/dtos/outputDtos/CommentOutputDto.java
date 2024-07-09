@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class CommentOutputDto {
 
     public Long id;
-    public String comment;
+    public String content;
     public LocalDate date;
 
     public StoryOutputDto storyOutputDto;
@@ -16,9 +16,9 @@ public class CommentOutputDto {
 
     }
 
-    public CommentOutputDto(Long id, String comment, LocalDate date) {
+    public CommentOutputDto(Long id, String content, LocalDate date) {
         this.id = id;
-        this.comment = comment;
+        this.content = content;
         this.date = date;
     }
 
@@ -30,12 +30,12 @@ public class CommentOutputDto {
         this.id = id;
     }
 
-    public String getComment() {
-        return comment;
+    public String getContent() {
+        return content;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public LocalDate getDate() {

@@ -8,17 +8,21 @@ public class ThemeOutputDto {
     public Long id;
     public String name;
     public LocalDate openDate;
-    public LocalDate closeDate;
+    public LocalDate closingDate;
 
     public List<StoryOutputDto> storyOutputDtoList;
 
 
 
-    public ThemeOutputDto(Long id, String name, LocalDate openDate, LocalDate closeDate) {
+    public ThemeOutputDto(Long id, String name, LocalDate openDate, LocalDate closingDate) {
         this.id = id;
         this.name = name;
         this.openDate = openDate;
-        this.closeDate = closeDate;
+        this.closingDate = closingDate;
+    }
+
+    public ThemeOutputDto() {
+
     }
 
     public Long getId() {
@@ -45,12 +49,12 @@ public class ThemeOutputDto {
         this.openDate = openDate;
     }
 
-    public LocalDate getCloseDate() {
-        return closeDate;
+    public LocalDate getClosingDate() {
+        return closingDate;
     }
 
-    public void setCloseDate(LocalDate closeDate) {
-        this.closeDate = closeDate;
+    public void setClosingDate(LocalDate closingDate) {
+        this.closingDate = closingDate;
     }
 
     public List<StoryOutputDto> getStoryOutputDtoList() {

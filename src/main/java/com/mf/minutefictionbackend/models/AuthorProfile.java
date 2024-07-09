@@ -17,10 +17,9 @@ public class AuthorProfile {
     @Column
     private String lastname;
     @Column
-    private LocalDate dob;
-    @Column
     private String bio;
-
+    @Column
+    private LocalDate dob;
 
 
     @OneToOne
