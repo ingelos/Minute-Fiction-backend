@@ -20,6 +20,7 @@ public class AuthorProfileOutputDto {
 
 
     public AuthorProfileOutputDto() {
+
     }
 
     public AuthorProfileOutputDto(String username, String firstname, String lastname, String bio, LocalDate dob) {

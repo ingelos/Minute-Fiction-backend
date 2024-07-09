@@ -14,7 +14,6 @@ public class MailingOutputDto {
 
 
     public MailingOutputDto() {
-
     }
     public MailingOutputDto(Long id, String title, String content, LocalDate date) {
         this.id = id;

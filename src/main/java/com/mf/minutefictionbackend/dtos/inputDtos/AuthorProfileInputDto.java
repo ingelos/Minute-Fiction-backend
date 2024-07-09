@@ -11,6 +11,7 @@ public class AuthorProfileInputDto {
     public LocalDate dob;
 
 
+
     public AuthorProfileInputDto(String username, String firstname, String lastname, String bio, LocalDate dob) {
         this.username = username;
         this.firstname = firstname;
