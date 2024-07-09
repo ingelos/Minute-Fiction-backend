@@ -3,31 +3,43 @@ package com.mf.minutefictionbackend.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "comments")
-public class Comment {
+@Table(name = "mailings")
+public class Mailing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
+    private String title;
+    @Column
     private String content;
     @Column
     private LocalDate date;
 
-    @ManyToOne
-    @JoinColumn(name = "story_id")
-    private Story story;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @OneToMany(mappedBy = "mailing")
+    private Set<User> subscribers = new HashSet<>();
 
 
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {
@@ -46,11 +58,8 @@ public class Comment {
         this.date = date;
     }
 
-    public Story getStory() {
-        return story;
+    public Set<User> getSubscribers() {
+        return subscribers;
     }
 
-    public User getUser() {
-        return user;
-    }
 }

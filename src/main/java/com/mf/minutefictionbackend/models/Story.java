@@ -2,6 +2,9 @@ package com.mf.minutefictionbackend.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "stories")
 public class Story {
@@ -19,6 +22,17 @@ public class Story {
     @Column
     private String status;
 
+
+    @ManyToOne
+    @JoinColumn(name = "authorProfile_id")
+    private AuthorProfile authorProfile;
+
+    @ManyToOne
+    @JoinColumn(name = "theme_id")
+    private Theme theme;
+
+    @OneToMany(mappedBy = "story")
+    private List<Comment> comments = new ArrayList<>();
 
 
 
@@ -48,5 +62,19 @@ public class Story {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+
+
+    public AuthorProfile getAuthorProfile() {
+        return authorProfile;
+    }
+
+    public Theme getTheme() {
+        return theme;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
     }
 }
