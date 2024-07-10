@@ -24,7 +24,7 @@ public class Story {
 
 
     @ManyToOne
-    @JoinColumn(name = "authorProfile_id")
+    @JoinColumn(name = "author_profile_username", referencedColumnName = "username")
     private AuthorProfile authorProfile;
 
     @ManyToOne

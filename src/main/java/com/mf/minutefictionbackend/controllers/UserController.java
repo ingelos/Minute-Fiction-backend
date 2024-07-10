@@ -3,6 +3,7 @@ package com.mf.minutefictionbackend.controllers;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -21,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserOutputDto> createUser(@RequestBody UserInputDto userInputDto) {
+    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestBody UserInputDto userInputDto) {
         UserOutputDto user = userService.createUser(userInputDto);
         // add authority
 
@@ -45,7 +46,8 @@ public class UserController {
 
     @DeleteMapping("/{username}")
     public ResponseEntity<UserOutputDto> deleteUser(@PathVariable("username") String username) {
-        return ResponseEntity.ok().body(userService.deleteUser(username));
+        userService.deleteUser(username);
+        return ResponseEntity.noContent().build();
     }
 
 

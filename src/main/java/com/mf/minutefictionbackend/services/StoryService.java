@@ -8,12 +8,10 @@ import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.repositories.StoryRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.mf.minutefictionbackend.dtos.mappers.StoryMapper.storyFromModelToOutputDto;
-import static com.mf.minutefictionbackend.dtos.mappers.StoryMapper.storyModelListToOutputList;
+import static com.mf.minutefictionbackend.dtos.mappers.StoryMapper.*;
 
 @Service
 public class StoryService {
@@ -26,14 +24,13 @@ public class StoryService {
 
 
     public StoryOutputDto createStory(StoryInputDto storyInputDto) {
-        Story story = storyRepository.save(StoryMapper.storyFromInputDtoToModel(storyInputDto));
+        Story story = storyRepository.save(storyFromInputDtoToModel(storyInputDto));
         return storyFromModelToOutputDto(story);
     }
 
     public List<StoryOutputDto> getAllStories() {
         List<Story> allStories = storyRepository.findAll();
         return storyModelListToOutputList(allStories);
-
     }
 
     public StoryOutputDto getStoryById(Long id) {
@@ -43,12 +40,22 @@ public class StoryService {
         } else throw new ResourceNotFoundException("No story found with id " + id);
     }
 
-    public StoryOutputDto deleteStory(Long id) {
-        Optional<Story> optionalStory = storyRepository.findById(id);
-        if(optionalStory.isPresent()) {
-            Story story = optionalStory.get();
-            storyRepository.delete(story);
-            return storyFromModelToOutputDto(story);
+    public List<StoryOutputDto> getStoriesByAuthorUsername(String username) {
+        List<Story> stories = storyRepository.findByAuthorProfileUsername(username);
+        if(!stories.isEmpty()) {
+            return storyModelListToOutputList(stories);
+        } else {
+            throw new ResourceNotFoundException("No stories found for username " + username);
+        }
+    }
+
+
+    public void deleteStoryById(Long id) {
+        if (storyRepository.existsById(id)) {
+            storyRepository.deleteById(id);
         } else throw new ResourceNotFoundException("No story found with id " + id);
     }
+
+
+
 }

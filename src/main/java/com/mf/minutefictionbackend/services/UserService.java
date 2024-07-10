@@ -45,12 +45,14 @@ public class UserService {
         }
     }
 
-    public UserOutputDto deleteUser(String username) {
-        Optional<User> optionalUser = userRepository.findUserByUsername(username);
-        if(optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            userRepository.delete(user);
-            return userFromModelToOutputDto(user);
+    public void deleteUser(String username) {
+//        Optional<User> optionalUser = userRepository.findUserByUsername(username);
+//        if(optionalUser.isPresent()) {
+//            User user = optionalUser.get();
+//            userRepository.delete(user);
+//            return userFromModelToOutputDto(user);
+            if(userRepository.existsById(username)) {
+                userRepository.deleteById(username);
         } else {
             throw new ResourceNotFoundException("No user found with username " + username);
         }
