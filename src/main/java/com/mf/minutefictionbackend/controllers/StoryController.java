@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-//@RequestMapping("/stories")
+@RequestMapping("/stories")
 public class StoryController {
 
     private final StoryService storyService;
@@ -27,7 +27,7 @@ public class StoryController {
 
 
 
-    @PostMapping("/stories")
+    @PostMapping
     public ResponseEntity<StoryOutputDto> createStory(@Valid @RequestBody StoryInputDto storyInputDto) {
         StoryOutputDto story = storyService.createStory(storyInputDto);
         // add authority / username
@@ -40,24 +40,23 @@ public class StoryController {
         return ResponseEntity.created(uri).body(story);
     }
 
-    @GetMapping("/stories")
+    @GetMapping
     public ResponseEntity<List<StoryOutputDto>> getAllStories() {
         return ResponseEntity.ok().body(storyService.getAllStories());
     }
 
-    @GetMapping("/stories/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<StoryOutputDto> getStoryById(@PathVariable ("id") Long id) {
         StoryOutputDto optionalStory = storyService.getStoryById(id);
         return ResponseEntity.ok().body(optionalStory);
     }
 
-    @GetMapping("/stories/{id}/comments")
+    @GetMapping("/{id}/comments")
     public List<CommentOutputDto> getAllCommentsByStory(@PathVariable Long id) {
         return commentService.getAllCommentsOnStory(id);
     }
 
-
-    @DeleteMapping("/stories/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStory(@PathVariable("id") Long id) {
         storyService.deleteStoryById(id);
         return ResponseEntity.noContent().build();

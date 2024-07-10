@@ -5,16 +5,13 @@ import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
 import com.mf.minutefictionbackend.services.CommentService;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
+@RequestMapping("/comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -25,17 +22,27 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<CommentOutputDto> createComment(CommentInputDto commentInputDto) {
         CommentOutputDto comment = commentService.createComment(commentInputDto);
-        // add authority / username
+        // add authority
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + comment).toUriString());
-        // add story author name to path
+        // comment.id?
 
         return ResponseEntity.created(uri).body(comment);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") Long id) {
+        commentService.deleteCommentById(id);
+        return ResponseEntity.noContent().build();
+    }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CommentOutputDto> getCommentById(@PathVariable("id") Long id) {
+        CommentOutputDto optionalComment = commentService.getCommentById(id);
+        return ResponseEntity.ok().body(optionalComment);
+    }
 
 
 }

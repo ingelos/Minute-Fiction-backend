@@ -40,6 +40,12 @@ public class StoryService {
         } else throw new ResourceNotFoundException("No story found with id " + id);
     }
 
+    public void deleteStoryById(Long id) {
+        if (storyRepository.existsById(id)) {
+            storyRepository.deleteById(id);
+        } else throw new ResourceNotFoundException("No story found with id " + id);
+    }
+
     public List<StoryOutputDto> getStoriesByAuthorUsername(String username) {
         List<Story> stories = storyRepository.findByAuthorProfileUsername(username);
         if(!stories.isEmpty()) {
@@ -50,11 +56,7 @@ public class StoryService {
     }
 
 
-    public void deleteStoryById(Long id) {
-        if (storyRepository.existsById(id)) {
-            storyRepository.deleteById(id);
-        } else throw new ResourceNotFoundException("No story found with id " + id);
-    }
+
 
 
 

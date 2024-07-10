@@ -28,7 +28,6 @@ public class ThemeService {
         return themeFromModelToOutputDto(theme);
     }
 
-
     public List<ThemeOutputDto> getAllThemes() {
         List<Theme> allThemes = themeRepository.findAll();
         return themeModelListToOutputList(allThemes);
@@ -41,12 +40,11 @@ public class ThemeService {
         } else throw new ResourceNotFoundException("No theme found with id " + id);
     }
 
-    public ThemeOutputDto deleteTheme(Long id) {
-        Optional<Theme> optionalTheme = themeRepository.findById(id);
-        if(optionalTheme.isPresent()) {
-            Theme theme = optionalTheme.get();
-            themeRepository.delete(theme);
-            return themeFromModelToOutputDto(theme);
-        } else throw new ResourceNotFoundException("No theme found with id " + id);
+    public void deleteTheme(Long id) {
+        if (themeRepository.existsById(id)) {
+            themeRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("No user found with username " + id);
+        }
     }
 }
