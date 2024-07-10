@@ -5,7 +5,9 @@ import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.models.User;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UserMapper {
 
@@ -27,11 +29,11 @@ public class UserMapper {
         return userOutputDto;
     }
 
-    public static List<UserOutputDto> userModelListToOutputList(List<User> users) {
-        List<UserOutputDto> userOutputDtoList = new ArrayList<>();
+    public static Set<UserOutputDto> userModelSetToOutputSet(Set<User> users) {
+        Set<UserOutputDto> userOutputDtoSet = new HashSet<>();
 
-        users.forEach((user) -> userOutputDtoList.add(userFromModelToOutputDto(user)));
-        return userOutputDtoList;
+        users.forEach((user) -> userOutputDtoSet.add(userFromModelToOutputDto(user)));
+        return userOutputDtoSet;
     }
     
 
