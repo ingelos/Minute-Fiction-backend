@@ -2,6 +2,7 @@ package com.mf.minutefictionbackend.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,19 +13,18 @@ public class Story {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column
     private String title;
-
     @Column
     private String content;
-
     @Column
     private String status;
+    @Column
+    private LocalDate publishDate;
 
 
     @ManyToOne
-    @JoinColumn(name = "authorProfile_id")
+    @JoinColumn(name = "author_profile_username", referencedColumnName = "username")
     private AuthorProfile authorProfile;
 
     @ManyToOne
@@ -64,7 +64,13 @@ public class Story {
         this.status = status;
     }
 
+    public LocalDate getPublishDate() {
+        return publishDate;
+    }
 
+    public void setPublishDate(LocalDate publishDate) {
+        this.publishDate = publishDate;
+    }
 
     public AuthorProfile getAuthorProfile() {
         return authorProfile;

@@ -23,6 +23,7 @@ public class StoryMapper {
         storyOutputDto.setTitle(story.getTitle());
         storyOutputDto.setContent(story.getContent());
         storyOutputDto.setStatus(story.getStatus());
+        storyOutputDto.setPublishDate(story.getPublishDate());
 
         return storyOutputDto;
     }

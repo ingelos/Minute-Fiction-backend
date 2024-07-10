@@ -27,7 +27,7 @@ public class AuthorProfile {
     private User user;
 
     @OneToMany(mappedBy = "authorProfile")
-    private List<Story> stories = new ArrayList<>();
+    private List<Story> stories;
 
 
 
