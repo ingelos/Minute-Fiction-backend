@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.mf.minutefictionbackend.dtos.mappers.StoryMapper.*;
 
 @Service
 public class StoryService {
@@ -24,19 +23,19 @@ public class StoryService {
 
 
     public StoryOutputDto createStory(StoryInputDto storyInputDto) {
-        Story story = storyRepository.save(storyFromInputDtoToModel(storyInputDto));
-        return storyFromModelToOutputDto(story);
+        Story story = storyRepository.save(StoryMapper.storyFromInputDtoToModel(storyInputDto));
+        return StoryMapper.storyFromModelToOutputDto(story);
     }
 
     public List<StoryOutputDto> getAllStories() {
         List<Story> allStories = storyRepository.findAll();
-        return storyModelListToOutputList(allStories);
+        return StoryMapper.storyModelListToOutputList(allStories);
     }
 
     public StoryOutputDto getStoryById(Long id) {
         Optional<Story> optionalStory = storyRepository.findById(id);
         if(optionalStory.isPresent()) {
-            return storyFromModelToOutputDto(optionalStory.get());
+            return StoryMapper.storyFromModelToOutputDto(optionalStory.get());
         } else throw new ResourceNotFoundException("No story found with id " + id);
     }
 
@@ -49,11 +48,12 @@ public class StoryService {
     public List<StoryOutputDto> getStoriesByAuthorUsername(String username) {
         List<Story> stories = storyRepository.findByAuthorProfileUsername(username);
         if(!stories.isEmpty()) {
-            return storyModelListToOutputList(stories);
+            return StoryMapper.storyModelListToOutputList(stories);
         } else {
             throw new ResourceNotFoundException("No stories found for username " + username);
         }
     }
+
 
 
 

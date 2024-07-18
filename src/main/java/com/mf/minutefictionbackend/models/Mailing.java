@@ -1,10 +1,8 @@
 package com.mf.minutefictionbackend.models;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "mailings")
@@ -20,9 +18,6 @@ public class Mailing {
     @Column
     private LocalDate date;
 
-
-    @OneToMany(mappedBy = "mailing")
-    private Set<User> subscribers = new HashSet<>();
 
 
 
@@ -58,8 +53,5 @@ public class Mailing {
         this.date = date;
     }
 
-    public Set<User> getSubscribers() {
-        return subscribers;
-    }
 
 }

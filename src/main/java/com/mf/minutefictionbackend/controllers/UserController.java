@@ -50,6 +50,10 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-
+    @PutMapping("/{username}")
+    public ResponseEntity<UserOutputDto> updateUser(@PathVariable("username") String username, @RequestBody UserOutputDto userDto) {
+        userService.updateUser(username, userDto);
+        return ResponseEntity.noContent().build();
+    }
 
 }
