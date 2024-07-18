@@ -1,8 +1,6 @@
 package com.mf.minutefictionbackend.models;
 
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,15 +17,13 @@ public class User {
     @Column
     private String email;
 
+    @Column
+    private boolean subscribedToMailing;
 
 
 
     @OneToOne(mappedBy = "user")
     private AuthorProfile authorProfile;
-
-    @ManyToOne
-    @JoinColumn(name = "mailing_id")
-    private Mailing mailing;
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
@@ -58,11 +54,19 @@ public class User {
         this.email = email;
     }
 
+    public Boolean getSubscribedToMailing() {
+        return subscribedToMailing;
+    }
+
+    public void setSubscribedToMailing(boolean subscribedToMailing) {
+        this.subscribedToMailing = subscribedToMailing;
+    }
+
     public AuthorProfile getAuthorProfile() {
         return authorProfile;
     }
 
-    public Mailing getMailing() {
-        return mailing;
+    public List<Comment> getComments() {
+        return comments;
     }
 }

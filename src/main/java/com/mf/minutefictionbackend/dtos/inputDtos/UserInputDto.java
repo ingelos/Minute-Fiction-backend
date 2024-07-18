@@ -14,5 +14,6 @@ public class UserInputDto {
     @Email(message = "Invalid email")
     public String email;
 
+    public Boolean subscribedToMailing;
 
 }

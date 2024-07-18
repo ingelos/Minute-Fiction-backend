@@ -4,6 +4,7 @@ import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.UserMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
+import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
 import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class UserService {
     }
 
     public UserOutputDto getUserByUsername(String username) {
-        Optional<User> user = userRepository.findUserByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username);
         if(user.isPresent()) {
             return userFromModelToOutputDto(user.get());
         } else {
@@ -53,5 +54,25 @@ public class UserService {
         }
     }
 
+
+    public void updateUser(String username, UserOutputDto updatedUser) {
+        Optional<User> u = userRepository.findByUsername(username);
+        if (u.isPresent()) {
+            User updateUser = u.get();
+            updateUser.setPassword(updatedUser.getPassword());
+            updateUser.setUsername(updatedUser.getUsername());
+            updateUser.setEmail(updatedUser.getEmail());
+            updateUser.setSubscribedToMailing(updatedUser.getSubscribedToMailing());
+
+            User returnUser = userRepository.save(updateUser);
+            UserMapper.userFromModelToOutputDto(returnUser);
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
+    }
+
+    // setAuthorities
+    // addAuthorities
+    // removeAuthorities
 
 }

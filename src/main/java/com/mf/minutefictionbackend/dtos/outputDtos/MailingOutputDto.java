@@ -1,7 +1,7 @@
 package com.mf.minutefictionbackend.dtos.outputDtos;
 
 import java.time.LocalDate;
-import java.util.Set;
+
 
 public class MailingOutputDto {
 
@@ -10,7 +10,7 @@ public class MailingOutputDto {
     public String content;
     public LocalDate date;
 
-    public Set<UserOutputDto> userOutputDtoSet;
+
 
 
     public MailingOutputDto() {

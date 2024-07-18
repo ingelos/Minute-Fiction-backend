@@ -37,7 +37,6 @@ public class AuthorProfileController {
         return ResponseEntity.created(uri).body(authorProfile);
     }
 
-
     @GetMapping("/{username}/stories")
     public List<StoryOutputDto> getStoriesByUsername(@PathVariable String username) {
         return storyService.getStoriesByAuthorUsername(username);

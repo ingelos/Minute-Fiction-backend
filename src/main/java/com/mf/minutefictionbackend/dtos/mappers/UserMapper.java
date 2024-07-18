@@ -4,9 +4,7 @@ import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.models.User;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class UserMapper {
@@ -16,6 +14,7 @@ public class UserMapper {
         user.setUsername(userInputDto.username);
         user.setPassword(userInputDto.password);
         user.setEmail(userInputDto.email);
+        user.setSubscribedToMailing(userInputDto.subscribedToMailing);
 
         return user;
     }
@@ -25,6 +24,7 @@ public class UserMapper {
         userOutputDto.setUsername(user.getUsername());
         userOutputDto.setPassword(user.getPassword());
         userOutputDto.setEmail(user.getEmail());
+        userOutputDto.setSubscribedToMailing(user.getSubscribedToMailing());
 
         return userOutputDto;
     }

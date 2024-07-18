@@ -3,8 +3,10 @@ package com.mf.minutefictionbackend.dtos.mappers;
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
+import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.Comment;
+import com.mf.minutefictionbackend.models.Story;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,5 +35,6 @@ public class AuthorProfileMapper {
 
         return authorProfileOutputDto;
     }
+
 
 }
