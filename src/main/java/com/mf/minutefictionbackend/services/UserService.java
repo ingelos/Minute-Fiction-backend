@@ -69,7 +69,6 @@ public class UserService {
         } else {
             throw new UsernameNotFoundException(username);
         }
-
     }
 
     // setAuthorities
