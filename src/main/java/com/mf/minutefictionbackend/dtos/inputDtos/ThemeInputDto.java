@@ -11,6 +11,8 @@ public class ThemeInputDto {
 
     @NotBlank(message = "Theme requires a name")
     public String name;
+    @NotBlank(message = "Theme requires a description")
+    public String description;
     @FutureOrPresent
     public LocalDate openDate;
     @NotNull(message = "Theme requires a closingDate")
@@ -18,8 +20,9 @@ public class ThemeInputDto {
     public LocalDate closingDate;
 
 
-    public ThemeInputDto(String name, LocalDate openDate, LocalDate closingDate) {
+    public ThemeInputDto(String name, String description, LocalDate openDate, LocalDate closingDate) {
         this.name = name;
+        this.description = description;
         this.openDate = openDate;
         this.closingDate = closingDate;
     }
@@ -30,6 +33,15 @@ public class ThemeInputDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDate getOpenDate() {

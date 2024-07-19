@@ -54,9 +54,9 @@ public class AuthorProfileController {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@PathVariable("username") String username, @RequestBody AuthorProfileOutputDto authorDto) {
-        authorProfileService.updateAuthorProfile(username, authorDto);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@PathVariable("username") String username, @RequestBody AuthorProfileOutputDto updatedProfile) {
+        AuthorProfileOutputDto authorProfileDto = authorProfileService.updateAuthorProfile(username, updatedProfile);
+        return ResponseEntity.ok().body(authorProfileDto);
     }
 
 }

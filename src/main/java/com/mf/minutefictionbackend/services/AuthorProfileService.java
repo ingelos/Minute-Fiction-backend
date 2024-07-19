@@ -6,7 +6,6 @@ import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,25 +36,25 @@ public class AuthorProfileService {
 
     public AuthorProfileOutputDto getAuthorProfileByUsername(String username) {
         Optional<AuthorProfile> optionalAuthor = authorProfileRepository.findById(username);
-        if(optionalAuthor.isPresent()) {
+        if (optionalAuthor.isPresent()) {
             return AuthorProfileMapper.authorProfileFromModelToOutputDto(optionalAuthor.get());
         } else {
             throw new UsernameNotFoundException("No user found with username " + username);
         }
     }
 
-    public void updateAuthorProfile(String username, AuthorProfileOutputDto authorDto) {
+    public AuthorProfileOutputDto updateAuthorProfile(String username, AuthorProfileOutputDto updatedProfile) {
         Optional<AuthorProfile> profile = authorProfileRepository.findById(username);
-        if(profile.isPresent()) {
+        if (profile.isPresent()) {
             AuthorProfile updateProfile = profile.get();
-            updateProfile.setUsername(authorDto.getUsername());
-            updateProfile.setFirstname(authorDto.getFirstname());
-            updateProfile.setLastname(authorDto.getLastname());
-            updateProfile.setBio(authorDto.getBio());
-            updateProfile.setDob(authorDto.getDob());
+            updateProfile.setUsername(updatedProfile.getUsername());
+            updateProfile.setFirstname(updatedProfile.getFirstname());
+            updateProfile.setLastname(updatedProfile.getLastname());
+            updateProfile.setBio(updatedProfile.getBio());
+            updateProfile.setDob(updatedProfile.getDob());
 
             AuthorProfile returnAuthorProfile = authorProfileRepository.save(updateProfile);
-            AuthorProfileMapper.authorProfileFromModelToOutputDto(returnAuthorProfile);
+            return AuthorProfileMapper.authorProfileFromModelToOutputDto(returnAuthorProfile);
         } else {
             throw new UsernameNotFoundException("No user found with username " + username);
         }

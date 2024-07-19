@@ -7,16 +7,17 @@ public class ThemeOutputDto {
 
     public Long id;
     public String name;
+    public String description;
     public LocalDate openDate;
     public LocalDate closingDate;
 
     public List<StoryOutputDto> storyOutputDtoList;
 
 
-
-    public ThemeOutputDto(Long id, String name, LocalDate openDate, LocalDate closingDate) {
+    public ThemeOutputDto(Long id, String name, String description, LocalDate openDate, LocalDate closingDate) {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.openDate = openDate;
         this.closingDate = closingDate;
     }
@@ -39,6 +40,14 @@ public class ThemeOutputDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDate getOpenDate() {

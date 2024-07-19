@@ -52,8 +52,8 @@ public class UserController {
 
     @PutMapping("/{username}")
     public ResponseEntity<UserOutputDto> updateUser(@Valid @PathVariable("username") String username, @RequestBody UserOutputDto userDto) {
-        userService.updateUser(username, userDto);
-        return ResponseEntity.noContent().build();
+        UserOutputDto updatedUser = userService.updateUser(username, userDto);
+        return ResponseEntity.ok().body(updatedUser);
     }
 
 }

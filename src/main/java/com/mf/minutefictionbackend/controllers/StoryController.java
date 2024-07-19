@@ -52,11 +52,11 @@ public class StoryController {
         return ResponseEntity.ok().body(optionalStory);
     }
 
-    @GetMapping("/{id}/comments")
-    public ResponseEntity<List<CommentOutputDto>> getAllCommentsByStory(@PathVariable Long id) {
-        List<CommentOutputDto> comments = commentService.getAllCommentsOnStory(id);
-        return ResponseEntity.ok(comments);
-    }
+//    @GetMapping("/{id}/comments")
+//    public ResponseEntity<List<CommentOutputDto>> getAllCommentsByStory(@PathVariable Long id) {
+//        List<CommentOutputDto> comments = commentService.getAllCommentsOnStory(id);
+//        return ResponseEntity.ok(comments);
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStory(@PathVariable("id") Long id) {

@@ -37,8 +37,8 @@ public class MailingController {
 
     @PutMapping("/{id}")
     public ResponseEntity<MailingOutputDto> updateMailing(@Valid @PathVariable("id") Long id, @RequestBody MailingOutputDto mailingDto) {
-        mailingService.updateMailing(id, mailingDto);
-        return ResponseEntity.noContent().build();
+        MailingOutputDto updatedMailing = mailingService.updateMailing(id, mailingDto);
+        return ResponseEntity.ok().body(updatedMailing);
     }
 
 //    @PostMapping("/{id}/send")

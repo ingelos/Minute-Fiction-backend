@@ -37,10 +37,9 @@ public class MailingService {
     public List<MailingOutputDto> getAllMailings() {
         List<Mailing> allMailings = mailingRepository.findAll();
         return MailingMapper.mailingFromModelListToOutputList(allMailings);
-        // new Hashset<>allMailings ??
     }
 
-    public void updateMailing(Long id, MailingOutputDto updatedMailing) {
+    public MailingOutputDto updateMailing(Long id, MailingOutputDto updatedMailing) {
         Optional<Mailing> mailing = mailingRepository.findById(id);
         if (mailing.isPresent()) {
             Mailing updateMailing = mailing.get();
@@ -49,11 +48,15 @@ public class MailingService {
             updateMailing.setDate(updatedMailing.getDate());
 
             Mailing returnMailing = mailingRepository.save(updateMailing);
-            MailingMapper.mailingFromModelToOutputDto(returnMailing);
+            return MailingMapper.mailingFromModelToOutputDto(returnMailing);
         } else {
             throw new ResourceNotFoundException("No mailing found with id " + id);
         }
     }
+
+    // uitzoeken hoe dat zit met javaMailSender en neppe email etc.!!!
+
+
 
 //    public void sendMailing(Long mailingId) {
 //        Optional<Mailing> optionalMailing = mailingRepository.findById(mailingId);

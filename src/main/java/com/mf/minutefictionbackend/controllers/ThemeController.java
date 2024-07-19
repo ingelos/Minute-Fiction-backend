@@ -43,6 +43,12 @@ public class ThemeController {
         return ResponseEntity.ok().body(optionalTheme);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ThemeOutputDto> updateTheme(@PathVariable("id") Long id, @RequestBody ThemeInputDto updatedTheme) {
+        ThemeOutputDto themeDto = themeService.updateTheme(id, updatedTheme);
+        return ResponseEntity.ok().body(themeDto);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTheme(@PathVariable("id") Long id) {
         themeService.deleteTheme(id);

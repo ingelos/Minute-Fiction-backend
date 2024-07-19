@@ -40,7 +40,7 @@ public class UserService {
 
     public UserOutputDto getUserByUsername(String username) {
         Optional<User> user = userRepository.findByUsername(username);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             return UserMapper.userFromModelToOutputDto(user.get());
         } else {
             throw new ResourceNotFoundException("No user found with username " + username);
@@ -49,19 +49,19 @@ public class UserService {
 
     public void deleteUser(String username) {
         Optional<User> optionalUser = userRepository.findById(username);
-            if(optionalUser.isPresent()) {
-                User user = optionalUser.get();
-                if (user.getAuthorProfile() != null) {
-                    authorProfileRepository.delete(user.getAuthorProfile());
-                }
-                userRepository.delete(user);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.getAuthorProfile() != null) {
+                authorProfileRepository.delete(user.getAuthorProfile());
+            }
+            userRepository.delete(user);
         } else {
             throw new ResourceNotFoundException("No user found with username " + username);
         }
     }
 
 
-    public void updateUser(String username, UserOutputDto updatedUser) {
+    public UserOutputDto updateUser(String username, UserOutputDto updatedUser) {
         Optional<User> u = userRepository.findByUsername(username);
         if (u.isPresent()) {
             User updateUser = u.get();
@@ -71,11 +71,12 @@ public class UserService {
             updateUser.setSubscribedToMailing(updatedUser.getSubscribedToMailing());
 
             User returnUser = userRepository.save(updateUser);
-            UserMapper.userFromModelToOutputDto(returnUser);
+            return UserMapper.userFromModelToOutputDto(returnUser);
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException("No user found with username " + username);
         }
     }
+
 
     // setAuthorities
     // addAuthorities
