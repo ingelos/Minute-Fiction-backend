@@ -11,5 +11,4 @@ import java.util.Optional;
 public interface AuthorProfileRepository extends JpaRepository<AuthorProfile, String> {
 
 
-
 }

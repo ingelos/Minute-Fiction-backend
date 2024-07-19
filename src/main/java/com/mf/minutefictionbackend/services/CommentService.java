@@ -56,15 +56,6 @@ public class CommentService {
         } else throw new ResourceNotFoundException("No comment found");
     }
 
-    public List<CommentOutputDto> getCommentsByStory(Long storyId) {
-        Optional<Story> optionalStory = storyRepository.findById(storyId);
-        if (optionalStory.isPresent()) {
-            List<Comment> comments = commentRepository.findCommentsByStory(storyId);
-            return CommentMapper.commentModelListToOutputList(comments);
-        } else {
-            throw new ResourceNotFoundException("No story found");
-        }
-    }
 
 
     public CommentOutputDto getCommentById(Long storyId, Long commentId) {
@@ -91,5 +82,16 @@ public class CommentService {
             throw new ResourceNotFoundException("No comment found");
         }
     }
+
+    public List<CommentOutputDto> getCommentsByStory(Long storyId) {
+        Optional<Story> optionalStory = storyRepository.findById(storyId);
+        if (optionalStory.isPresent()) {
+            List<Comment> comments = commentRepository.findCommentsByStory_Id(storyId);
+            return CommentMapper.commentModelListToOutputList(comments);
+        } else {
+            throw new ResourceNotFoundException("No story found");
+        }
+    }
+
 
 }

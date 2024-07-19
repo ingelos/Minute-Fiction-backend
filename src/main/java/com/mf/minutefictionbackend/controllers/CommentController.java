@@ -44,16 +44,15 @@ public class CommentController {
         return ResponseEntity.ok().body(comment);
     }
 
-    @GetMapping
-    public ResponseEntity<List<CommentOutputDto>> getCommentsByStory(@PathVariable Long storyId) {
-        List<CommentOutputDto> comments = commentService.getCommentsByStory(storyId);
-        return ResponseEntity.ok(comments);
-    }
+
 
     @PutMapping("/{commentId}")
     public ResponseEntity<CommentOutputDto> updateComment(@PathVariable("storyId") Long storyId, @PathVariable("commentId") Long commentId, @RequestBody CommentInputDto updatedComment) {
         CommentOutputDto commentDto = commentService.updateComment(storyId, commentId, updatedComment);
         return ResponseEntity.ok().body(commentDto);
-    };
+    }
+
+
+
 
 }

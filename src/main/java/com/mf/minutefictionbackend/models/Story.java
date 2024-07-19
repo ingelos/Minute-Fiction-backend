@@ -27,6 +27,7 @@ public class Story {
     @JoinColumn(name = "author_profile_username", referencedColumnName = "username")
     private AuthorProfile authorProfile;
 
+
     @ManyToOne
     @JoinColumn(name = "theme_id")
     private Theme theme;

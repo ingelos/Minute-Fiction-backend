@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
-    List<Story> findByAuthorProfileUsername(String username);
+    List<Story> findByAuthorProfile_Username(String username);
 
 
 }

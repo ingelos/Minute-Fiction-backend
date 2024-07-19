@@ -45,19 +45,13 @@ public class StoryService {
         } else throw new ResourceNotFoundException("No story found with id " + id);
     }
 
-    public List<StoryOutputDto> getStoriesByAuthorUsername(String username) {
-        List<Story> stories = storyRepository.findByAuthorProfileUsername(username);
-        if(!stories.isEmpty()) {
-            return StoryMapper.storyModelListToOutputList(stories);
-        } else {
+    public List<StoryOutputDto> getStoriesByAuthor(String username) {
+        List<Story> stories = storyRepository.findByAuthorProfile_Username(username);
+        if(stories.isEmpty()) {
             throw new ResourceNotFoundException("No stories found for username " + username);
         }
+        return StoryMapper.storyModelListToOutputList(stories);
     }
-
-
-
-
-
 
 
 }
