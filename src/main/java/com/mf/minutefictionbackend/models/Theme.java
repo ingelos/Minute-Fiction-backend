@@ -15,6 +15,8 @@ public class Theme {
     @Column(name = "theme_name")
     private String name;
     @Column
+    private String description;
+    @Column
     private LocalDate openDate;
     @Column
     private LocalDate closingDate;
@@ -36,6 +38,14 @@ public class Theme {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDate getOpenDate() {

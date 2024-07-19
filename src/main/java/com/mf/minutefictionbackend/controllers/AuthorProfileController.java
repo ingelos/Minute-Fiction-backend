@@ -2,7 +2,6 @@ package com.mf.minutefictionbackend.controllers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.services.AuthorProfileService;
 import com.mf.minutefictionbackend.services.StoryService;
@@ -12,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/authorprofiles")
@@ -42,6 +42,21 @@ public class AuthorProfileController {
         return storyService.getStoriesByAuthorUsername(username);
     }
 
+    @GetMapping
+    public ResponseEntity<List<AuthorProfileOutputDto>> getAllAuthorProfiles() {
+        return ResponseEntity.ok().body(authorProfileService.getAllAuthorProfiles());
+    }
 
+    @GetMapping("/{username}")
+    public ResponseEntity<AuthorProfileOutputDto> getAuthorProfileByUsername(@PathVariable("username") String username) {
+        AuthorProfileOutputDto optionalAuthorProfile = authorProfileService.getAuthorProfileByUsername(username);
+        return ResponseEntity.ok().body(optionalAuthorProfile);
+    }
+
+    @PutMapping("/{username}")
+    public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@PathVariable("username") String username, @RequestBody AuthorProfileOutputDto updatedProfile) {
+        AuthorProfileOutputDto authorProfileDto = authorProfileService.updateAuthorProfile(username, updatedProfile);
+        return ResponseEntity.ok().body(authorProfileDto);
+    }
 
 }

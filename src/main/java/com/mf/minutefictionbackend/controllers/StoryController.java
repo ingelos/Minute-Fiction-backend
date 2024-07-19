@@ -6,6 +6,7 @@ import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.services.CommentService;
 import com.mf.minutefictionbackend.services.StoryService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,7 +31,7 @@ public class StoryController {
     @PostMapping
     public ResponseEntity<StoryOutputDto> createStory(@Valid @RequestBody StoryInputDto storyInputDto) {
         StoryOutputDto story = storyService.createStory(storyInputDto);
-        // add authority / username
+        // add authority / username in security config
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -51,10 +52,11 @@ public class StoryController {
         return ResponseEntity.ok().body(optionalStory);
     }
 
-    @GetMapping("/{id}/comments")
-    public List<CommentOutputDto> getAllCommentsByStory(@PathVariable Long id) {
-        return commentService.getAllCommentsOnStory(id);
-    }
+//    @GetMapping("/{id}/comments")
+//    public ResponseEntity<List<CommentOutputDto>> getAllCommentsByStory(@PathVariable Long id) {
+//        List<CommentOutputDto> comments = commentService.getAllCommentsOnStory(id);
+//        return ResponseEntity.ok(comments);
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStory(@PathVariable("id") Long id) {

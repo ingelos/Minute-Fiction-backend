@@ -1,12 +1,22 @@
 package com.mf.minutefictionbackend.dtos.inputDtos;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 public class AuthorProfileInputDto {
 
+    @NotBlank
     public String username;
+    @NotBlank(message = "First name is required.")
+    @Size(min=3, max=64)
     public String firstname;
+    @NotBlank(message = "Last name is required.")
+    @Size(min=3, max=64)
     public String lastname;
+    @NotNull
     public String bio;
     public LocalDate dob;
 

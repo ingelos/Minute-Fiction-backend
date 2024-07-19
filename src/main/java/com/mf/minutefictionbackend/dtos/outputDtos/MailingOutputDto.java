@@ -6,8 +6,8 @@ import java.time.LocalDate;
 public class MailingOutputDto {
 
     public Long id;
-    public String title;
-    public String content;
+    public String subject;
+    public String body;
     public LocalDate date;
 
 
@@ -15,10 +15,11 @@ public class MailingOutputDto {
 
     public MailingOutputDto() {
     }
-    public MailingOutputDto(Long id, String title, String content, LocalDate date) {
+
+    public MailingOutputDto(Long id, String subject, String body, LocalDate date) {
         this.id = id;
-        this.title = title;
-        this.content = content;
+        this.subject = subject;
+        this.body = body;
         this.date = date;
     }
 
@@ -30,20 +31,21 @@ public class MailingOutputDto {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+
+    public String getSubject() {
+        return subject;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
-    public String getContent() {
-        return content;
+    public String getBody() {
+        return body;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setBody(String body) {
+        this.body = body;
     }
 
     public LocalDate getDate() {

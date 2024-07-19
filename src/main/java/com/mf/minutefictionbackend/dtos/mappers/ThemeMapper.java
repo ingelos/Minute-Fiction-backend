@@ -12,6 +12,7 @@ public class ThemeMapper {
     public static Theme themeFromInputDtoToModel(ThemeInputDto themeInputDto) {
         Theme theme = new Theme();
         theme.setName(themeInputDto.getName());
+        theme.setDescription(themeInputDto.getDescription());
         theme.setOpenDate(themeInputDto.getOpenDate());
         theme.setClosingDate(themeInputDto.getClosingDate());
 
@@ -22,6 +23,7 @@ public class ThemeMapper {
         ThemeOutputDto themeOutputDto = new ThemeOutputDto();
         themeOutputDto.setId(theme.getId());
         themeOutputDto.setName(theme.getName());
+        themeOutputDto.setDescription(theme.getDescription());
         themeOutputDto.setOpenDate(theme.getOpenDate());
         themeOutputDto.setClosingDate(theme.getClosingDate());
 
@@ -31,7 +33,9 @@ public class ThemeMapper {
     public static List<ThemeOutputDto> themeModelListToOutputList(List<Theme> themes) {
         List<ThemeOutputDto> themeOutputDtoList = new ArrayList<>();
 
-        themes.forEach((theme) -> themeOutputDtoList.add(themeFromModelToOutputDto(theme)));
+        for(Theme theme : themes) {
+            themeOutputDtoList.add(themeFromModelToOutputDto(theme));
+        }
         return themeOutputDtoList;
     }
 

@@ -11,8 +11,8 @@ public class MailingMapper {
 
     public static Mailing mailingFromInputDtoToModel(MailingInputDto mailingInputDto) {
         Mailing mailing = new Mailing();
-        mailing.setTitle(mailingInputDto.title);
-        mailing.setContent(mailingInputDto.content);
+        mailing.setSubject(mailingInputDto.subject);
+        mailing.setBody(mailingInputDto.body);
         mailing.setDate(mailingInputDto.date);
 
         return mailing;
@@ -21,8 +21,8 @@ public class MailingMapper {
     public static MailingOutputDto mailingFromModelToOutputDto(Mailing mailing) {
         MailingOutputDto mailingOutputDto = new MailingOutputDto();
         mailingOutputDto.setId(mailing.getId());
-        mailingOutputDto.setTitle(mailing.getTitle());
-        mailingOutputDto.setContent(mailing.getContent());
+        mailingOutputDto.setSubject(mailing.getSubject());
+        mailingOutputDto.setBody(mailing.getBody());
         mailingOutputDto.setDate(mailing.getDate());
 
         return mailingOutputDto;
@@ -31,7 +31,9 @@ public class MailingMapper {
     public static List<MailingOutputDto> mailingFromModelListToOutputList(List<Mailing> mailings) {
         List<MailingOutputDto> mailingOutputDtoList = new ArrayList<>();
 
-        mailings.forEach((mailing) -> mailingOutputDtoList.add(mailingFromModelToOutputDto(mailing)));
+        for(Mailing mailing : mailings) {
+            mailingOutputDtoList.add(mailingFromModelToOutputDto(mailing));
+        }
         return mailingOutputDtoList;
     }
 
