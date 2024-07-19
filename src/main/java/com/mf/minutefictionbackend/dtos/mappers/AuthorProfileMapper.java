@@ -37,4 +37,12 @@ public class AuthorProfileMapper {
     }
 
 
+    public static List<AuthorProfileOutputDto> authorProfileModelListToOutputList(List<AuthorProfile> profiles) {
+        List<AuthorProfileOutputDto> authorProfileOutputDtoList = new ArrayList<>();
+
+        profiles.forEach((profile) -> authorProfileOutputDtoList.add(authorProfileFromModelToOutputDto(profile)));
+        return authorProfileOutputDtoList;
+    }
+
+
 }

@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.mf.minutefictionbackend.dtos.mappers.UserMapper.userFromModelToOutputDto;
-import static com.mf.minutefictionbackend.dtos.mappers.UserMapper.userModelSetToOutputSet;
 
 @Service
 public class UserService {
@@ -34,21 +33,22 @@ public class UserService {
 
     public Set<UserOutputDto> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
-        return userModelSetToOutputSet(new HashSet<>(allUsers));
+        return UserMapper.userModelSetToOutputSet(new HashSet<>(allUsers));
     }
 
     public UserOutputDto getUserByUsername(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         if(user.isPresent()) {
-            return userFromModelToOutputDto(user.get());
+            return UserMapper.userFromModelToOutputDto(user.get());
         } else {
             throw new ResourceNotFoundException("No user found with username " + username);
         }
     }
 
     public void deleteUser(String username) {
-            if(userRepository.existsById(username)) {
-                userRepository.deleteById(username);
+        Optional<User> optionalUser = userRepository.findById(username);
+            if(optionalUser.isPresent()) {
+                userRepository.delete(optionalUser.get());
         } else {
             throw new ResourceNotFoundException("No user found with username " + username);
         }

@@ -30,7 +30,7 @@ public class StoryController {
     @PostMapping
     public ResponseEntity<StoryOutputDto> createStory(@Valid @RequestBody StoryInputDto storyInputDto) {
         StoryOutputDto story = storyService.createStory(storyInputDto);
-        // add authority / username
+        // add authority / username in security config
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
