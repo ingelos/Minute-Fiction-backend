@@ -12,9 +12,9 @@ public class Mailing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
-    private String title;
+    private String subject;
     @Column
-    private String content;
+    private String body;
     @Column
     private LocalDate date;
 
@@ -29,20 +29,20 @@ public class Mailing {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
-    public String getContent() {
-        return content;
+    public String getBody() {
+        return body;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setBody(String body) {
+        this.body = body;
     }
 
     public LocalDate getDate() {

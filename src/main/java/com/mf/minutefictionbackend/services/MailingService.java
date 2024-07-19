@@ -5,7 +5,7 @@ import com.mf.minutefictionbackend.dtos.mappers.MailingMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.MailingOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Mailing;
-import com.mf.minutefictionbackend.models.User;
+
 import com.mf.minutefictionbackend.repositories.MailingRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -37,6 +37,22 @@ public class MailingService {
     public List<MailingOutputDto> getAllMailings() {
         List<Mailing> allMailings = mailingRepository.findAll();
         return MailingMapper.mailingFromModelListToOutputList(allMailings);
+        // new Hashset<>allMailings ??
+    }
+
+    public void updateMailing(Long id, MailingOutputDto updatedMailing) {
+        Optional<Mailing> mailing = mailingRepository.findById(id);
+        if (mailing.isPresent()) {
+            Mailing updateMailing = mailing.get();
+            updateMailing.setSubject(updatedMailing.getSubject());
+            updateMailing.setBody(updatedMailing.getBody());
+            updateMailing.setDate(updatedMailing.getDate());
+
+            Mailing returnMailing = mailingRepository.save(updateMailing);
+            MailingMapper.mailingFromModelToOutputDto(returnMailing);
+        } else {
+            throw new ResourceNotFoundException("No mailing found with id " + id);
+        }
     }
 
 //    public void sendMailing(Long mailingId) {

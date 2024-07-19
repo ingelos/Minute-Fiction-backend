@@ -6,6 +6,7 @@ import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
 import com.mf.minutefictionbackend.models.User;
+import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,21 +15,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.mf.minutefictionbackend.dtos.mappers.UserMapper.userFromModelToOutputDto;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AuthorProfileRepository authorProfileRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, AuthorProfileRepository authorProfileRepository) {
         this.userRepository = userRepository;
+        this.authorProfileRepository = authorProfileRepository;
     }
 
 
     public UserOutputDto createUser(UserInputDto userInputDto) {
         User user = userRepository.save(UserMapper.userFromInputDtoToModel(userInputDto));
-        return userFromModelToOutputDto(user);
+        return UserMapper.userFromModelToOutputDto(user);
     }
 
     public Set<UserOutputDto> getAllUsers() {
@@ -48,7 +50,11 @@ public class UserService {
     public void deleteUser(String username) {
         Optional<User> optionalUser = userRepository.findById(username);
             if(optionalUser.isPresent()) {
-                userRepository.delete(optionalUser.get());
+                User user = optionalUser.get();
+                if (user.getAuthorProfile() != null) {
+                    authorProfileRepository.delete(user.getAuthorProfile());
+                }
+                userRepository.delete(user);
         } else {
             throw new ResourceNotFoundException("No user found with username " + username);
         }

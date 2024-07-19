@@ -31,7 +31,9 @@ public class ThemeMapper {
     public static List<ThemeOutputDto> themeModelListToOutputList(List<Theme> themes) {
         List<ThemeOutputDto> themeOutputDtoList = new ArrayList<>();
 
-        themes.forEach((theme) -> themeOutputDtoList.add(themeFromModelToOutputDto(theme)));
+        for(Theme theme : themes) {
+            themeOutputDtoList.add(themeFromModelToOutputDto(theme));
+        }
         return themeOutputDtoList;
     }
 

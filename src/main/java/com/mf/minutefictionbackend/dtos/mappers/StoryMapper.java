@@ -31,7 +31,9 @@ public class StoryMapper {
     public static List<StoryOutputDto> storyModelListToOutputList(List<Story> stories) {
         List<StoryOutputDto> storyOutputDtoList = new ArrayList<>();
 
-        stories.forEach((story) -> storyOutputDtoList.add(storyFromModelToOutputDto(story)));
+        for(Story story : stories) {
+            storyOutputDtoList.add(storyFromModelToOutputDto(story));
+        }
         return storyOutputDtoList;
     }
 

@@ -3,6 +3,7 @@ package com.mf.minutefictionbackend.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
@@ -14,7 +15,8 @@ public class Comment {
     @Column
     private String content;
     @Column
-    private LocalDate date;
+    private LocalDateTime created;
+
 
     @ManyToOne
     @JoinColumn(name = "story_id")
@@ -38,12 +40,12 @@ public class Comment {
         this.content = content;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getCreated() {
+        return created;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 
     public Story getStory() {
@@ -52,5 +54,13 @@ public class Comment {
 
     public User getUser() {
         return user;
+    }
+
+    public void setStory(Story story) {
+        this.story = story;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

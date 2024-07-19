@@ -1,33 +1,40 @@
 package com.mf.minutefictionbackend.dtos.inputDtos;
 
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 public class MailingInputDto {
 
-    public String title;
-    public String content;
+    @NotNull(message = "Subject is required.")
+    public String subject;
+    @NotNull(message = "Body is required.")
+    public String body;
+    @FutureOrPresent
     public LocalDate date;
 
-    public MailingInputDto(String title, String content, LocalDate date) {
-        this.title = title;
-        this.content = content;
+
+    public MailingInputDto(String subject, String body, LocalDate date) {
+        this.subject = subject;
+        this.body = body;
         this.date = date;
     }
 
-    public String getTitle() {
-        return title;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
-    public String getContent() {
-        return content;
+    public String getBody() {
+        return body;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setBody(String body) {
+        this.body = body;
     }
 
     public LocalDate getDate() {

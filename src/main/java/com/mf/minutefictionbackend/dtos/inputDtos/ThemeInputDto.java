@@ -2,13 +2,14 @@ package com.mf.minutefictionbackend.dtos.inputDtos;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
 public class ThemeInputDto {
 
-    @NotNull(message = "Theme requires a name")
+    @NotBlank(message = "Theme requires a name")
     public String name;
     @FutureOrPresent
     public LocalDate openDate;

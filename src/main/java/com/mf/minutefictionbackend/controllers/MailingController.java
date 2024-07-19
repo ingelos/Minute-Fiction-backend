@@ -26,13 +26,19 @@ public class MailingController {
         MailingOutputDto mailing = mailingService.createMailing(mailingInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/" + mailing.title).toUriString());
+                .path("/" + mailing.subject).toUriString());
         return ResponseEntity.created(uri).body(mailing);
     }
 
     @GetMapping
     public ResponseEntity<List<MailingOutputDto>> getAllMailings() {
         return ResponseEntity.ok().body(mailingService.getAllMailings());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MailingOutputDto> updateMailing(@Valid @PathVariable("id") Long id, @RequestBody MailingOutputDto mailingDto) {
+        mailingService.updateMailing(id, mailingDto);
+        return ResponseEntity.noContent().build();
     }
 
 //    @PostMapping("/{id}/send")

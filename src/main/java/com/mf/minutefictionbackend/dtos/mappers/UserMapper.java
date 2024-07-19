@@ -32,7 +32,9 @@ public class UserMapper {
     public static Set<UserOutputDto> userModelSetToOutputSet(Set<User> users) {
         Set<UserOutputDto> userOutputDtoSet = new HashSet<>();
 
-        users.forEach((user) -> userOutputDtoSet.add(userFromModelToOutputDto(user)));
+        for(User user : users) {
+            userOutputDtoSet.add(userFromModelToOutputDto(user));
+        }
         return userOutputDtoSet;
     }
     

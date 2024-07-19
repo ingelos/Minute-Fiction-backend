@@ -1,25 +1,27 @@
 package com.mf.minutefictionbackend.dtos.outputDtos;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class CommentOutputDto {
 
     public Long id;
     public String content;
-    public LocalDate date;
+    public LocalDateTime created;
 
-    public StoryOutputDto storyOutputDto;
-    public UserOutputDto userOutputDto;
+
+    public StoryOutputDto story;
+    public UserOutputDto user;
 
 
     public CommentOutputDto() {
 
     }
 
-    public CommentOutputDto(Long id, String content, LocalDate date) {
+    public CommentOutputDto(Long id, String content, LocalDateTime created) {
         this.id = id;
         this.content = content;
-        this.date = date;
+        this.created = created;
     }
 
     public Long getId() {
@@ -38,27 +40,27 @@ public class CommentOutputDto {
         this.content = content;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getCreated() {
+        return created;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 
-    public StoryOutputDto getStoryOutputDto() {
-        return storyOutputDto;
+    public StoryOutputDto getStory() {
+        return story;
     }
 
-    public void setStoryOutputDto(StoryOutputDto storyOutputDto) {
-        this.storyOutputDto = storyOutputDto;
+    public void setStory(StoryOutputDto story) {
+        this.story = story;
     }
 
-    public UserOutputDto getUserOutputDto() {
-        return userOutputDto;
+    public UserOutputDto getUser() {
+        return user;
     }
 
-    public void setUserOutputDto(UserOutputDto userOutputDto) {
-        this.userOutputDto = userOutputDto;
+    public void setUser(UserOutputDto user) {
+        this.user = user;
     }
 }

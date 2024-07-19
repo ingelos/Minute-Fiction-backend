@@ -6,6 +6,7 @@ import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.services.CommentService;
 import com.mf.minutefictionbackend.services.StoryService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -52,8 +53,9 @@ public class StoryController {
     }
 
     @GetMapping("/{id}/comments")
-    public List<CommentOutputDto> getAllCommentsByStory(@PathVariable Long id) {
-        return commentService.getAllCommentsOnStory(id);
+    public ResponseEntity<List<CommentOutputDto>> getAllCommentsByStory(@PathVariable Long id) {
+        List<CommentOutputDto> comments = commentService.getAllCommentsOnStory(id);
+        return ResponseEntity.ok(comments);
     }
 
     @DeleteMapping("/{id}")
