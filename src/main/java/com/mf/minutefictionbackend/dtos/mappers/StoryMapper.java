@@ -24,6 +24,7 @@ public class StoryMapper {
         storyOutputDto.setContent(story.getContent());
         storyOutputDto.setStatus(story.getStatus());
         storyOutputDto.setPublishDate(story.getPublishDate());
+        storyOutputDto.setPublished(story.isPublished());
 
         return storyOutputDto;
     }

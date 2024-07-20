@@ -21,6 +21,8 @@ public class Story {
     private String status;
     @Column
     private LocalDate publishDate;
+    @Column
+    private boolean published;
 
 
     @ManyToOne
@@ -71,6 +73,14 @@ public class Story {
 
     public void setPublishDate(LocalDate publishDate) {
         this.publishDate = publishDate;
+    }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 
     public AuthorProfile getAuthorProfile() {

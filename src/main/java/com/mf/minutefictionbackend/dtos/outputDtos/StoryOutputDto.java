@@ -10,6 +10,7 @@ public class StoryOutputDto {
     public String content;
     public String status;
     public LocalDate publishDate;
+    public boolean published;
 
     public AuthorProfileOutputDto authorProfileOutputDto;
     public ThemeOutputDto themeOutputDto;
@@ -21,14 +22,14 @@ public class StoryOutputDto {
 
     }
 
-    public StoryOutputDto(Long id, String title, String content, String status, LocalDate publishDate) {
+    public StoryOutputDto(Long id, String title, String content, String status, LocalDate publishDate, boolean published) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.status = status;
         this.publishDate = publishDate;
+        this.published = published;
     }
-
 
     public Long getId() {
         return id;
@@ -68,6 +69,14 @@ public class StoryOutputDto {
 
     public void setPublishDate(LocalDate publishDate) {
         this.publishDate = publishDate;
+    }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 
     public AuthorProfileOutputDto getAuthorProfileOutputDto() {
