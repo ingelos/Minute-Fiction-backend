@@ -4,10 +4,15 @@ import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.StoryMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
+import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.Story;
+import com.mf.minutefictionbackend.models.Theme;
+import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
 import com.mf.minutefictionbackend.repositories.StoryRepository;
+import com.mf.minutefictionbackend.repositories.ThemeRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,14 +21,32 @@ import java.util.Optional;
 public class StoryService {
 
     private final StoryRepository storyRepository;
+    private final AuthorProfileRepository authorProfileRepository;
+    private final ThemeRepository themeRepository;
 
-    public StoryService(StoryRepository storyRepository) {
+    public StoryService(StoryRepository storyRepository, AuthorProfileRepository authorProfileRepository, ThemeRepository themeRepository) {
         this.storyRepository = storyRepository;
+        this.authorProfileRepository = authorProfileRepository;
+        this.themeRepository = themeRepository;
     }
 
 
-    public StoryOutputDto createStory(StoryInputDto storyInputDto) {
-        Story story = storyRepository.save(StoryMapper.storyFromInputDtoToModel(storyInputDto));
+    public StoryOutputDto submitStory(StoryInputDto storyInputDto, String username, Long themeId) {
+        AuthorProfile authorProfile = authorProfileRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Authorprofile not found"));
+        Theme theme = themeRepository.findById(themeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Theme not found"));
+
+        Story story = storyRepository.save(StoryMapper.storyFromInputDtoToModel(storyInputDto, authorProfile, theme));
+        return StoryMapper.storyFromModelToOutputDto(story);
+    }
+
+    public StoryOutputDto publishStory(Long storyId) {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Story not found"));
+        story.setStatus("published");
+        story.setPublishDate(LocalDate.now());
+        story = storyRepository.save(story);
         return StoryMapper.storyFromModelToOutputDto(story);
     }
 
@@ -47,11 +70,11 @@ public class StoryService {
 
     public List<StoryOutputDto> getStoriesByAuthor(String username) {
         List<Story> stories = storyRepository.findByAuthorProfile_Username(username);
-        if(stories.isEmpty()) {
-            throw new ResourceNotFoundException("No stories found for username " + username);
-        }
-        return StoryMapper.storyModelListToOutputList(stories);
+        if(!stories.isEmpty()) {
+            return StoryMapper.storyModelListToOutputList(stories);
+        } else throw new ResourceNotFoundException("No stories found for username " + username);
     }
+
 
 
 }

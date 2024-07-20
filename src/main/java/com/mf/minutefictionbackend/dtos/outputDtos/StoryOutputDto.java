@@ -10,11 +10,11 @@ public class StoryOutputDto {
     public String content;
     public String status;
     public LocalDate publishDate;
-    public boolean published;
 
-    public AuthorProfileOutputDto authorProfileOutputDto;
-    public ThemeOutputDto themeOutputDto;
-    public List<CommentOutputDto> commentOutputDtoList;
+
+    public AuthorProfileOutputDto authorProfile;
+    public ThemeOutputDto theme;
+    public List<CommentOutputDto> comments;
 
 
 
@@ -22,13 +22,12 @@ public class StoryOutputDto {
 
     }
 
-    public StoryOutputDto(Long id, String title, String content, String status, LocalDate publishDate, boolean published) {
+    public StoryOutputDto(Long id, String title, String content, String status, LocalDate publishDate) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.status = status;
         this.publishDate = publishDate;
-        this.published = published;
     }
 
     public Long getId() {
@@ -71,35 +70,27 @@ public class StoryOutputDto {
         this.publishDate = publishDate;
     }
 
-    public boolean isPublished() {
-        return published;
+    public AuthorProfileOutputDto getAuthorProfile() {
+        return authorProfile;
     }
 
-    public void setPublished(boolean published) {
-        this.published = published;
+    public void setAuthorProfile(AuthorProfileOutputDto authorProfile) {
+        this.authorProfile = authorProfile;
     }
 
-    public AuthorProfileOutputDto getAuthorProfileOutputDto() {
-        return authorProfileOutputDto;
+    public ThemeOutputDto getTheme() {
+        return theme;
     }
 
-    public void setAuthorProfileOutputDto(AuthorProfileOutputDto authorProfileOutputDto) {
-        this.authorProfileOutputDto = authorProfileOutputDto;
+    public void setTheme(ThemeOutputDto theme) {
+        this.theme = theme;
     }
 
-    public ThemeOutputDto getThemeOutputDto() {
-        return themeOutputDto;
+    public List<CommentOutputDto> getComments() {
+        return comments;
     }
 
-    public void setThemeOutputDto(ThemeOutputDto themeOutputDto) {
-        this.themeOutputDto = themeOutputDto;
-    }
-
-    public List<CommentOutputDto> getCommentOutputDtoList() {
-        return commentOutputDtoList;
-    }
-
-    public void setCommentOutputDtoList(List<CommentOutputDto> commentOutputDtoList) {
-        this.commentOutputDtoList = commentOutputDtoList;
+    public void setComments(List<CommentOutputDto> comments) {
+        this.comments = comments;
     }
 }

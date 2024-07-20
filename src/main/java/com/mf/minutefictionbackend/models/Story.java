@@ -21,14 +21,12 @@ public class Story {
     private String status;
     @Column
     private LocalDate publishDate;
-    @Column
-    private boolean published;
+
 
 
     @ManyToOne
     @JoinColumn(name = "author_profile_username", referencedColumnName = "username")
     private AuthorProfile authorProfile;
-
 
     @ManyToOne
     @JoinColumn(name = "theme_id")
@@ -75,16 +73,16 @@ public class Story {
         this.publishDate = publishDate;
     }
 
-    public boolean isPublished() {
-        return published;
-    }
-
-    public void setPublished(boolean published) {
-        this.published = published;
-    }
-
     public AuthorProfile getAuthorProfile() {
         return authorProfile;
+    }
+
+    public void setAuthorProfile(AuthorProfile authorProfile) {
+        this.authorProfile = authorProfile;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
 
     public Theme getTheme() {

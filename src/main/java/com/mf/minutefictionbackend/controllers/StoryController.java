@@ -28,17 +28,21 @@ public class StoryController {
 
 
 
-    @PostMapping
-    public ResponseEntity<StoryOutputDto> createStory(@Valid @RequestBody StoryInputDto storyInputDto) {
-        StoryOutputDto story = storyService.createStory(storyInputDto);
-        // add authority / username in security config
+    @PostMapping("/submit")
+    public ResponseEntity<StoryOutputDto> submitStory(@Valid @RequestBody StoryInputDto storyInputDto, @RequestParam String username, @RequestParam Long themeId) {
+        StoryOutputDto storyDto = storyService.submitStory(storyInputDto, username, themeId);
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/" + story.title).toUriString());
-        // add story author name to path
+                .path("/" + storyDto.id).toUriString());
+        return ResponseEntity.created(uri).body(storyDto);
+    }
 
-        return ResponseEntity.created(uri).body(story);
+
+    @PutMapping("/publish/{storyId}")
+    public ResponseEntity<StoryOutputDto> publishStory(@PathVariable Long storyId) {
+        StoryOutputDto storyOutputDto = storyService.publishStory(storyId);
+        return ResponseEntity.ok(storyOutputDto);
     }
 
     @GetMapping
