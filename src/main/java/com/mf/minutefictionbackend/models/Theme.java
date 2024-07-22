@@ -6,13 +6,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Table(name = "themes")
 public class Theme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "theme_name")
+    @Column
     private String name;
     @Column
     private String description;

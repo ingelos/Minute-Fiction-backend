@@ -1,5 +1,6 @@
 package com.mf.minutefictionbackend.models;
 
+import com.mf.minutefictionbackend.enums.StoryStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -15,10 +16,11 @@ public class Story {
     private Long id;
     @Column
     private String title;
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String content;
+    @Enumerated(EnumType.STRING)
     @Column
-    private String status;
+    private StoryStatus status;
     @Column
     private LocalDate publishDate;
 
@@ -57,11 +59,11 @@ public class Story {
         this.content = content;
     }
 
-    public String getStatus() {
+    public StoryStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StoryStatus status) {
         this.status = status;
     }
 

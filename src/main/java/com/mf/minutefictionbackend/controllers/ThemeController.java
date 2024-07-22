@@ -23,7 +23,7 @@ public class ThemeController {
     @PostMapping
     public ResponseEntity<ThemeOutputDto> createTheme(@Valid @RequestBody ThemeInputDto themeInputDto) {
         ThemeOutputDto theme = themeService.createTheme(themeInputDto);
-        // add authority editor
+        // authority editor
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -39,8 +39,8 @@ public class ThemeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ThemeOutputDto> getThemeById(@PathVariable("id") Long id) {
-        ThemeOutputDto optionalTheme = themeService.getThemeById(id);
-        return ResponseEntity.ok().body(optionalTheme);
+        ThemeOutputDto themeDto = themeService.getThemeById(id);
+        return ResponseEntity.ok().body(themeDto);
     }
 
     @PutMapping("/{id}")
@@ -54,6 +54,7 @@ public class ThemeController {
         themeService.deleteTheme(id);
         return ResponseEntity.noContent().build();
     }
+
 
 
 

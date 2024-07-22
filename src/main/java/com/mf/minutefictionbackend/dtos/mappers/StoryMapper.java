@@ -4,9 +4,11 @@ import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
+import com.mf.minutefictionbackend.enums.StoryStatus;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,8 @@ public class StoryMapper {
         Story story = new Story();
         story.setTitle(storyInputDto.getTitle());
         story.setContent(storyInputDto.getContent());
-        story.setStatus("submitted");
+        story.setStatus(StoryStatus.SUBMITTED);
+        story.setPublishDate(null);
         story.setAuthorProfile(authorProfile);
         story.setTheme(theme);
 
@@ -32,27 +35,26 @@ public class StoryMapper {
         storyDto.setStatus(story.getStatus());
         storyDto.setPublishDate(story.getPublishDate());
 
-        AuthorProfile authorProfile = story.getAuthorProfile();
-        if(authorProfile != null) {
-            AuthorProfileOutputDto authorProfileDto = new AuthorProfileOutputDto();
-            authorProfileDto.setUsername(story.getAuthorProfile().getUsername());
-            authorProfileDto.setFirstname(story.getAuthorProfile().getFirstname());
-            authorProfileDto.setLastname(story.getAuthorProfile().getLastname());
-            authorProfileDto.setBio(story.getAuthorProfile().getBio());
-            authorProfileDto.setDob(story.getAuthorProfile().getDob());
+        if(story.getAuthorProfile() != null) {
+            AuthorProfileOutputDto dto = new AuthorProfileOutputDto();
+            dto.setUsername(story.getAuthorProfile().getUsername());
+            dto.setFirstname(story.getAuthorProfile().getFirstname());
+            dto.setLastname(story.getAuthorProfile().getLastname());
+            dto.setBio(story.getAuthorProfile().getBio());
+            dto.setDob(story.getAuthorProfile().getDob());
 
-            storyDto.setAuthorProfile(authorProfileDto);
+            storyDto.setAuthorProfile(dto);
         }
 
-        Theme theme = story.getTheme();
-        if(theme != null) {
+        if(story.getTheme() != null) {
             ThemeOutputDto themeDto = new ThemeOutputDto();
-            themeDto.setId(theme.getId());
-            themeDto.setName(theme.getName());
-            themeDto.setDescription(theme.getDescription());
+            themeDto.setId(story.getTheme().getId());
+            themeDto.setName(story.getTheme().getName());
+            themeDto.setDescription(story.getTheme().getDescription());
 
             storyDto.setTheme(themeDto);
         }
+
 
         return storyDto;
     }

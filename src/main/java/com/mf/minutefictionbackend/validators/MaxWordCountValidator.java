@@ -1,4 +1,4 @@
-package com.mf.minutefictionbackend.annotations;
+package com.mf.minutefictionbackend.validators;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

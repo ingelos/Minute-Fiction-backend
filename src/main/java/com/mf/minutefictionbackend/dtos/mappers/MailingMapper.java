@@ -11,9 +11,9 @@ public class MailingMapper {
 
     public static Mailing mailingFromInputDtoToModel(MailingInputDto mailingInputDto) {
         Mailing mailing = new Mailing();
-        mailing.setSubject(mailingInputDto.subject);
-        mailing.setBody(mailingInputDto.body);
-        mailing.setDate(mailingInputDto.date);
+        mailing.setSubject(mailingInputDto.getSubject());
+        mailing.setBody(mailingInputDto.getBody());
+        mailing.setDate(mailingInputDto.getDate());
 
         return mailing;
     }

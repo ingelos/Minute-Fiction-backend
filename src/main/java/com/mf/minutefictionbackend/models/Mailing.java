@@ -13,7 +13,7 @@ public class Mailing {
     private Long id;
     @Column
     private String subject;
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String body;
     @Column
     private LocalDate date;

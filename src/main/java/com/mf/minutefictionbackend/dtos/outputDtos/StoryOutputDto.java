@@ -1,5 +1,7 @@
 package com.mf.minutefictionbackend.dtos.outputDtos;
 
+import com.mf.minutefictionbackend.enums.StoryStatus;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -8,9 +10,8 @@ public class StoryOutputDto {
     public Long id;
     public String title;
     public String content;
-    public String status;
+    public StoryStatus status;
     public LocalDate publishDate;
-
 
     public AuthorProfileOutputDto authorProfile;
     public ThemeOutputDto theme;
@@ -22,7 +23,7 @@ public class StoryOutputDto {
 
     }
 
-    public StoryOutputDto(Long id, String title, String content, String status, LocalDate publishDate) {
+    public StoryOutputDto(Long id, String title, String content, StoryStatus status, LocalDate publishDate) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -54,11 +55,11 @@ public class StoryOutputDto {
         this.content = content;
     }
 
-    public String getStatus() {
+    public StoryStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StoryStatus status) {
         this.status = status;
     }
 

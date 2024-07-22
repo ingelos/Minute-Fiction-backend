@@ -3,6 +3,7 @@ package com.mf.minutefictionbackend.services;
 import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.StoryMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
+import com.mf.minutefictionbackend.enums.StoryStatus;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.Story;
@@ -37,23 +38,36 @@ public class StoryService {
         Theme theme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Theme not found"));
 
-        Story story = storyRepository.save(StoryMapper.storyFromInputDtoToModel(storyInputDto, authorProfile, theme));
+        if(theme.getClosingDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Theme closing date has passed");
+        }
+
+        Story story = StoryMapper.storyFromInputDtoToModel(storyInputDto, authorProfile, theme);
+        story.setStatus(StoryStatus.SUBMITTED);
+        story = storyRepository.save(story);
         return StoryMapper.storyFromModelToOutputDto(story);
     }
 
     public StoryOutputDto publishStory(Long storyId) {
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not found"));
-        story.setStatus("published");
+
+        story.setStatus(StoryStatus.PUBLISHED);
         story.setPublishDate(LocalDate.now());
         story = storyRepository.save(story);
         return StoryMapper.storyFromModelToOutputDto(story);
     }
 
-    public List<StoryOutputDto> getAllStories() {
-        List<Story> allStories = storyRepository.findAll();
-        return StoryMapper.storyModelListToOutputList(allStories);
+
+
+    public List<StoryOutputDto> getStoriesByStatus(StoryStatus status) {
+        List<Story> stories = storyRepository.findByStatus(status);
+        if(stories.isEmpty()) {
+            throw new ResourceNotFoundException("No stories found with status " + status);
+        }
+        return StoryMapper.storyModelListToOutputList(stories);
     }
+
 
     public StoryOutputDto getStoryById(Long id) {
         Optional<Story> optionalStory = storyRepository.findById(id);
@@ -75,6 +89,13 @@ public class StoryService {
         } else throw new ResourceNotFoundException("No stories found for username " + username);
     }
 
+
+    public List<StoryOutputDto> getStoriesByStatusAndTheme(StoryStatus status, Long themeId) {
+        Theme theme = themeRepository.findById(themeId)
+                .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + themeId));
+        List<Story> stories = storyRepository.findByStatusAndTheme(status, theme);
+        return StoryMapper.storyModelListToOutputList(stories);
+    }
 
 
 }
