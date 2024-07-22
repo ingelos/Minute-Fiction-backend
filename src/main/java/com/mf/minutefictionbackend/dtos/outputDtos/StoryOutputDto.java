@@ -1,5 +1,7 @@
 package com.mf.minutefictionbackend.dtos.outputDtos;
 
+import com.mf.minutefictionbackend.enums.StoryStatus;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -8,12 +10,12 @@ public class StoryOutputDto {
     public Long id;
     public String title;
     public String content;
-    public String status;
+    public StoryStatus status;
     public LocalDate publishDate;
 
-    public AuthorProfileOutputDto authorProfileOutputDto;
-    public ThemeOutputDto themeOutputDto;
-    public List<CommentOutputDto> commentOutputDtoList;
+    public AuthorProfileOutputDto authorProfile;
+    public ThemeOutputDto theme;
+    public List<CommentOutputDto> comments;
 
 
 
@@ -21,14 +23,13 @@ public class StoryOutputDto {
 
     }
 
-    public StoryOutputDto(Long id, String title, String content, String status, LocalDate publishDate) {
+    public StoryOutputDto(Long id, String title, String content, StoryStatus status, LocalDate publishDate) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.status = status;
         this.publishDate = publishDate;
     }
-
 
     public Long getId() {
         return id;
@@ -54,11 +55,11 @@ public class StoryOutputDto {
         this.content = content;
     }
 
-    public String getStatus() {
+    public StoryStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StoryStatus status) {
         this.status = status;
     }
 
@@ -70,27 +71,27 @@ public class StoryOutputDto {
         this.publishDate = publishDate;
     }
 
-    public AuthorProfileOutputDto getAuthorProfileOutputDto() {
-        return authorProfileOutputDto;
+    public AuthorProfileOutputDto getAuthorProfile() {
+        return authorProfile;
     }
 
-    public void setAuthorProfileOutputDto(AuthorProfileOutputDto authorProfileOutputDto) {
-        this.authorProfileOutputDto = authorProfileOutputDto;
+    public void setAuthorProfile(AuthorProfileOutputDto authorProfile) {
+        this.authorProfile = authorProfile;
     }
 
-    public ThemeOutputDto getThemeOutputDto() {
-        return themeOutputDto;
+    public ThemeOutputDto getTheme() {
+        return theme;
     }
 
-    public void setThemeOutputDto(ThemeOutputDto themeOutputDto) {
-        this.themeOutputDto = themeOutputDto;
+    public void setTheme(ThemeOutputDto theme) {
+        this.theme = theme;
     }
 
-    public List<CommentOutputDto> getCommentOutputDtoList() {
-        return commentOutputDtoList;
+    public List<CommentOutputDto> getComments() {
+        return comments;
     }
 
-    public void setCommentOutputDtoList(List<CommentOutputDto> commentOutputDtoList) {
-        this.commentOutputDtoList = commentOutputDtoList;
+    public void setComments(List<CommentOutputDto> comments) {
+        this.comments = comments;
     }
 }

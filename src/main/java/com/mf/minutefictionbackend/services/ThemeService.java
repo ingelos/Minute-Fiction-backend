@@ -36,7 +36,7 @@ public class ThemeService {
 
     public ThemeOutputDto getThemeById(Long id) {
         Optional<Theme> optionalTheme = themeRepository.findById(id);
-        if(optionalTheme.isPresent()) {
+        if (optionalTheme.isPresent()) {
             return themeFromModelToOutputDto(optionalTheme.get());
         } else throw new ResourceNotFoundException("No theme found with id " + id);
     }
@@ -51,7 +51,7 @@ public class ThemeService {
 
     public ThemeOutputDto updateTheme(Long id, ThemeInputDto updatedTheme) {
         Optional<Theme> optionalTheme = themeRepository.findById(id);
-        if(optionalTheme.isPresent()) {
+        if (optionalTheme.isPresent()) {
             Theme updateTheme = optionalTheme.get();
             updateTheme.setName(updatedTheme.getName());
             updateTheme.setDescription(updatedTheme.getDescription());
@@ -61,7 +61,8 @@ public class ThemeService {
         } else {
             throw new ResourceNotFoundException("No theme found with id " + id);
         }
-
-
     }
+
+
+
 }

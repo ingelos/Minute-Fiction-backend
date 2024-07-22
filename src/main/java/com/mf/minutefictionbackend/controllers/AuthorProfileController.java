@@ -37,10 +37,6 @@ public class AuthorProfileController {
         return ResponseEntity.created(uri).body(authorProfile);
     }
 
-    @GetMapping("/{username}/stories")
-    public List<StoryOutputDto> getStoriesByUsername(@PathVariable String username) {
-        return storyService.getStoriesByAuthorUsername(username);
-    }
 
     @GetMapping
     public ResponseEntity<List<AuthorProfileOutputDto>> getAllAuthorProfiles() {
@@ -58,5 +54,13 @@ public class AuthorProfileController {
         AuthorProfileOutputDto authorProfileDto = authorProfileService.updateAuthorProfile(username, updatedProfile);
         return ResponseEntity.ok().body(authorProfileDto);
     }
+
+// stories by author
+    @GetMapping("/{username}/stories")
+    public ResponseEntity<List<StoryOutputDto>> getStoriesByAuthor(@PathVariable String username) {
+        List<StoryOutputDto> stories = storyService.getStoriesByAuthor(username);
+        return ResponseEntity.ok(stories);
+    }
+
 
 }

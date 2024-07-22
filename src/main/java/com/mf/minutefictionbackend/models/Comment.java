@@ -14,7 +14,7 @@ public class Comment {
     private Long id;
     @Column
     private String content;
-    @Column
+
     private LocalDateTime created;
 
 

@@ -11,7 +11,7 @@ public class ThemeOutputDto {
     public LocalDate openDate;
     public LocalDate closingDate;
 
-    public List<StoryOutputDto> storyOutputDtoList;
+    public List<StoryOutputDto> stories;
 
 
     public ThemeOutputDto(Long id, String name, String description, LocalDate openDate, LocalDate closingDate) {
@@ -66,11 +66,11 @@ public class ThemeOutputDto {
         this.closingDate = closingDate;
     }
 
-    public List<StoryOutputDto> getStoryOutputDtoList() {
-        return storyOutputDtoList;
+    public List<StoryOutputDto> getStories() {
+        return stories;
     }
 
-    public void setStoryOutputDtoList(List<StoryOutputDto> storyOutputDtoList) {
-        this.storyOutputDtoList = storyOutputDtoList;
+    public void setStories(List<StoryOutputDto> stories) {
+        this.stories = stories;
     }
 }
