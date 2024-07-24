@@ -4,6 +4,7 @@ import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
+import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.Comment;
 import com.mf.minutefictionbackend.models.Story;
@@ -15,18 +16,21 @@ public class AuthorProfileMapper {
 
     public static AuthorProfile authorProfileFromInputDtoToModel(AuthorProfileInputDto authorProfileInputDto) {
         AuthorProfile authorProfile = new AuthorProfile();
-        authorProfile.setUsername(authorProfileInputDto.username);
-        authorProfile.setFirstname(authorProfileInputDto.firstname);
-        authorProfile.setLastname(authorProfileInputDto.lastname);
-        authorProfile.setBio(authorProfileInputDto.bio);
-        authorProfile.setDob(authorProfileInputDto.dob);
+        authorProfile.setUsername(authorProfileInputDto.getUsername());
+        authorProfile.setFirstname(authorProfileInputDto.getFirstname());
+        authorProfile.setLastname(authorProfileInputDto.getLastname());
+        authorProfile.setBio(authorProfileInputDto.getBio());
+        authorProfile.setDob(authorProfileInputDto.getDob());
 
         return authorProfile;
     }
 
     public static AuthorProfileOutputDto authorProfileFromModelToOutputDto(AuthorProfile authorProfile) {
-        AuthorProfileOutputDto authorProfileOutputDto = new AuthorProfileOutputDto();
+        if(authorProfile == null) {
+            return null;
+        }
 
+        AuthorProfileOutputDto authorProfileOutputDto = new AuthorProfileOutputDto();
         authorProfileOutputDto.setUsername(authorProfile.getUsername());
         authorProfileOutputDto.setFirstname(authorProfile.getFirstname());
         authorProfileOutputDto.setLastname(authorProfile.getLastname());
@@ -38,6 +42,10 @@ public class AuthorProfileMapper {
 
 
     public static List<AuthorProfileOutputDto> authorProfileModelListToOutputList(List<AuthorProfile> profiles) {
+        if(profiles.isEmpty()) {
+            throw new ResourceNotFoundException("No author profiles found.");
+        }
+
         List<AuthorProfileOutputDto> authorProfileOutputDtoList = new ArrayList<>();
 
         for(AuthorProfile authorProfile : profiles) {

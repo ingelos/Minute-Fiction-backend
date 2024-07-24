@@ -23,7 +23,7 @@ public class AuthorProfile {
 
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_username", nullable = true)
     private User user;
 
     @OneToMany(mappedBy = "authorProfile")

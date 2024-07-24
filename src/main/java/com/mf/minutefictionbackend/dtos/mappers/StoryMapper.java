@@ -34,27 +34,8 @@ public class StoryMapper {
         storyDto.setContent(story.getContent());
         storyDto.setStatus(story.getStatus());
         storyDto.setPublishDate(story.getPublishDate());
-
-        if(story.getAuthorProfile() != null) {
-            AuthorProfileOutputDto dto = new AuthorProfileOutputDto();
-            dto.setUsername(story.getAuthorProfile().getUsername());
-            dto.setFirstname(story.getAuthorProfile().getFirstname());
-            dto.setLastname(story.getAuthorProfile().getLastname());
-            dto.setBio(story.getAuthorProfile().getBio());
-            dto.setDob(story.getAuthorProfile().getDob());
-
-            storyDto.setAuthorProfile(dto);
-        }
-
-        if(story.getTheme() != null) {
-            ThemeOutputDto themeDto = new ThemeOutputDto();
-            themeDto.setId(story.getTheme().getId());
-            themeDto.setName(story.getTheme().getName());
-            themeDto.setDescription(story.getTheme().getDescription());
-
-            storyDto.setTheme(themeDto);
-        }
-
+        storyDto.setAuthorProfile(AuthorProfileMapper.authorProfileFromModelToOutputDto(story.getAuthorProfile()));
+        storyDto.setTheme(ThemeMapper.themeFromModelToOutputDto(story.getTheme()));
 
         return storyDto;
     }

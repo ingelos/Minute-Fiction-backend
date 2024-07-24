@@ -59,7 +59,6 @@ public class StoryService {
     }
 
 
-
     public List<StoryOutputDto> getStoriesByStatus(StoryStatus status) {
         List<Story> stories = storyRepository.findByStatus(status);
         if(stories.isEmpty()) {
@@ -70,10 +69,9 @@ public class StoryService {
 
 
     public StoryOutputDto getStoryById(Long id) {
-        Optional<Story> optionalStory = storyRepository.findById(id);
-        if(optionalStory.isPresent()) {
-            return StoryMapper.storyFromModelToOutputDto(optionalStory.get());
-        } else throw new ResourceNotFoundException("No story found with id " + id);
+        Story story = storyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No story found with id " + id));
+            return StoryMapper.storyFromModelToOutputDto(story);
     }
 
     public void deleteStoryById(Long id) {
@@ -82,8 +80,8 @@ public class StoryService {
         } else throw new ResourceNotFoundException("No story found with id " + id);
     }
 
-    public List<StoryOutputDto> getStoriesByAuthor(String username) {
-        List<Story> stories = storyRepository.findByAuthorProfile_Username(username);
+    public List<StoryOutputDto> getPublishedStoriesByAuthor(String username) {
+        List<Story> stories = storyRepository.findByAuthorProfile_UsernameAndStatus(username, StoryStatus.PUBLISHED);
         if(!stories.isEmpty()) {
             return StoryMapper.storyModelListToOutputList(stories);
         } else throw new ResourceNotFoundException("No stories found for username " + username);

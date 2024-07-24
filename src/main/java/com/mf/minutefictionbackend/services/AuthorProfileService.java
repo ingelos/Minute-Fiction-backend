@@ -3,6 +3,7 @@ package com.mf.minutefictionbackend.services;
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.AuthorProfileMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
+import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
@@ -35,12 +36,10 @@ public class AuthorProfileService {
 
 
     public AuthorProfileOutputDto getAuthorProfileByUsername(String username) {
-        Optional<AuthorProfile> optionalAuthor = authorProfileRepository.findById(username);
-        if (optionalAuthor.isPresent()) {
-            return AuthorProfileMapper.authorProfileFromModelToOutputDto(optionalAuthor.get());
-        } else {
-            throw new UsernameNotFoundException("No user found with username " + username);
-        }
+        AuthorProfile authorProfile = authorProfileRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No author profile found for user with username " + username));
+            return AuthorProfileMapper.authorProfileFromModelToOutputDto(authorProfile);
+
     }
 
     public AuthorProfileOutputDto updateAuthorProfile(String username, AuthorProfileOutputDto updatedProfile) {

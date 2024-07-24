@@ -39,12 +39,9 @@ public class UserService {
     }
 
     public UserOutputDto getUserByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isPresent()) {
-            return UserMapper.userFromModelToOutputDto(user.get());
-        } else {
-            throw new ResourceNotFoundException("No user found with username " + username);
-        }
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No user found with username " + username));
+            return UserMapper.userFromModelToOutputDto(user);
     }
 
     public void deleteUser(String username) {
@@ -65,7 +62,6 @@ public class UserService {
         Optional<User> u = userRepository.findByUsername(username);
         if (u.isPresent()) {
             User updateUser = u.get();
-            updateUser.setPassword(updatedUser.getPassword());
             updateUser.setUsername(updatedUser.getUsername());
             updateUser.setEmail(updatedUser.getEmail());
             updateUser.setSubscribedToMailing(updatedUser.getSubscribedToMailing());

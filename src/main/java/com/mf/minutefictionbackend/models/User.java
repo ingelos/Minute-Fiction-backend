@@ -22,7 +22,7 @@ public class User {
 
 
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", optional = true)
     private AuthorProfile authorProfile;
 
     @OneToMany(mappedBy = "user")

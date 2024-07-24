@@ -20,6 +20,7 @@ public class AuthorProfileController {
     private final AuthorProfileService authorProfileService;
     private final StoryService storyService;
 
+
     public AuthorProfileController(AuthorProfileService authorProfileService, StoryService storyService) {
         this.authorProfileService = authorProfileService;
         this.storyService = storyService;
@@ -55,10 +56,10 @@ public class AuthorProfileController {
         return ResponseEntity.ok().body(authorProfileDto);
     }
 
-// stories by author
+    // stories by author
     @GetMapping("/{username}/stories")
-    public ResponseEntity<List<StoryOutputDto>> getStoriesByAuthor(@PathVariable String username) {
-        List<StoryOutputDto> stories = storyService.getStoriesByAuthor(username);
+    public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByAuthor(@PathVariable String username) {
+        List<StoryOutputDto> stories = storyService.getPublishedStoriesByAuthor(username);
         return ResponseEntity.ok(stories);
     }
 

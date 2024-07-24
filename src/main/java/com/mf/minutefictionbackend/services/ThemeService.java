@@ -26,20 +26,21 @@ public class ThemeService {
 
     public ThemeOutputDto createTheme(ThemeInputDto themeInputDto) {
         Theme theme = themeRepository.save(themeFromInputDtoToModel(themeInputDto));
-        return themeFromModelToOutputDto(theme);
+        return ThemeMapper.themeFromModelToOutputDto(theme);
     }
 
     public List<ThemeOutputDto> getAllThemes() {
         List<Theme> allThemes = themeRepository.findAll();
-        return themeModelListToOutputList(allThemes);
+        return ThemeMapper.themeModelListToOutputList(allThemes);
     }
 
     public ThemeOutputDto getThemeById(Long id) {
-        Optional<Theme> optionalTheme = themeRepository.findById(id);
-        if (optionalTheme.isPresent()) {
-            return themeFromModelToOutputDto(optionalTheme.get());
-        } else throw new ResourceNotFoundException("No theme found with id " + id);
+        Theme theme = themeRepository.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + id));
+            return ThemeMapper.themeFromModelToOutputDto(theme);
     }
+
+
 
     public void deleteTheme(Long id) {
         if (themeRepository.existsById(id)) {
