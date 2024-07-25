@@ -13,14 +13,11 @@ public class StoryInputDto {
     @NotBlank
     @MaxWordCount(message = "Story has to have no more than a 100 words!")
     public String content;
-//    @NotNull
-//    public Long themeId;
 
 
 
-    public StoryInputDto(String title, String content) {
-        this.title = title;
-        this.content = content;
+
+    public StoryInputDto() {
     }
 
 

@@ -14,8 +14,8 @@ public class AuthorProfileOutputDto {
     public String bio;
     public LocalDate dob;
 
-    public List<StoryOutputDto> storyOutputDtoList = new ArrayList<>();
-    public UserOutputDto user;
+    public List<String> storyTitles;
+//    public UserOutputDto user;
 
 
 
@@ -71,20 +71,27 @@ public class AuthorProfileOutputDto {
         this.dob = dob;
     }
 
-
-    public List<StoryOutputDto> getStoryOutputDtoList() {
-        return storyOutputDtoList;
+    public List<String> getStoryTitles() {
+        return storyTitles;
     }
 
-    public void setStoryOutputDtoList(List<StoryOutputDto> storyOutputDtoList) {
-        this.storyOutputDtoList = storyOutputDtoList;
+    public void setStoryTitles(List<String> storyTitles) {
+        this.storyTitles = storyTitles;
     }
 
-    public UserOutputDto getUser() {
-        return user;
-    }
-
-    public void setUser(UserOutputDto user) {
-        this.user = user;
-    }
+//    public List<StoryOutputDto> getStories() {
+//        return stories;
+//    }
+//
+//    public void setStories(List<StoryOutputDto> stories) {
+//        this.stories = stories;
+//    }
+//
+//    public UserOutputDto getUser() {
+//        return user;
+//    }
+//
+//    public void setUser(UserOutputDto user) {
+//        this.user = user;
+//    }
 }

@@ -13,9 +13,11 @@ public class UserInputDto {
     public String password;
     @Email(message = "Invalid email")
     public String email;
-
     public Boolean subscribedToMailing;
 
+
+    public UserInputDto() {
+    }
 
     public String getUsername() {
         return username;

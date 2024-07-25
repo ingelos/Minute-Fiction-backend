@@ -33,12 +33,8 @@ public class MailingMapper {
         if(mailings.isEmpty()) {
             throw new ResourceNotFoundException("No mailings found.");
         }
-
         List<MailingOutputDto> mailingOutputDtoList = new ArrayList<>();
-
-        for(Mailing mailing : mailings) {
-            mailingOutputDtoList.add(mailingFromModelToOutputDto(mailing));
-        }
+        mailings.forEach((mailing) -> mailingOutputDtoList.add(mailingFromModelToOutputDto(mailing)));
         return mailingOutputDtoList;
     }
 

@@ -10,6 +10,11 @@ public class CommentInputDto {
 
 
 
+
+    public CommentInputDto() {
+
+    }
+
     public String getContent() {
         return content;
     }
@@ -17,4 +22,6 @@ public class CommentInputDto {
     public void setContent(String content) {
         this.content = content;
     }
+
+
 }

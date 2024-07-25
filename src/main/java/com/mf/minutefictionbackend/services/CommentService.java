@@ -33,39 +33,47 @@ public class CommentService {
     }
 
 
-    public CommentOutputDto addComment(Long storyId, String username, CommentInputDto commentInputDto) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        Optional<Story> optionalStory = storyRepository.findById(storyId);
+//    public CommentOutputDto addComment(Long storyId, String username, CommentInputDto commentInputDto) {
+//        Optional<User> optionalUser = userRepository.findByUsername(username);
+//        Optional<Story> optionalStory = storyRepository.findById(storyId);
+//
+//        if (optionalUser.isEmpty() || optionalStory.isEmpty()) {
+//            throw new ResourceNotFoundException("User or story not found");
+//        }
+//        User user = optionalUser.get();
+//        Story story = optionalStory.get();
+//        Comment comment = commentRepository.save(CommentMapper.commentFromInputDtoToModel(commentInputDto, user, story));
+//
+//        return CommentMapper.commentFromModelToOutputDto(comment);
+//    }
 
-        if (optionalUser.isEmpty() || optionalStory.isEmpty()) {
-            throw new ResourceNotFoundException("User or story not found");
-        }
-        User user = optionalUser.get();
-        Story story = optionalStory.get();
-        Comment comment = commentRepository.save(CommentMapper.commentFromInputDtoToModel(commentInputDto, user, story));
+    public CommentOutputDto addComment(CommentInputDto commentInputDto, Long storyId, String username) {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("No story found"));
 
-        return CommentMapper.commentFromModelToOutputDto(comment);
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No user found"));
+
+        Comment comment = CommentMapper.commentFromInputDtoToModel(commentInputDto, story, user);
+        Comment savedComment = commentRepository.save(comment);
+
+        return CommentMapper.commentFromModelToOutputDto(savedComment);
+
     }
 
 
-    public void deleteCommentById(Long storyId, Long commentId) {
-        Optional<Story> optionalStory = storyRepository.findById(storyId);
-        Optional<Comment> optionalComment = commentRepository.findById(commentId);
-        if (optionalStory.isPresent() && optionalComment.isPresent()) {
-            commentRepository.deleteById(commentId);
-        } else throw new ResourceNotFoundException("No comment found");
+    public void deleteCommentById(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("No comment found"));
+        commentRepository.deleteById(commentId);
     }
 
 
 
-    public CommentOutputDto getCommentById(Long storyId, Long commentId) {
-        Optional<Story> optionalStory = storyRepository.findById(storyId);
-        Optional<Comment> optionalComment = commentRepository.findById(commentId);
-        if (optionalComment.isPresent() && optionalStory.isPresent()) {
-            return CommentMapper.commentFromModelToOutputDto(optionalComment.get());
-        } else {
-            throw new ResourceNotFoundException("No comment found with id " + commentId);
-        }
+    public CommentOutputDto getCommentById(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("No comment found"));
+            return CommentMapper.commentFromModelToOutputDto(comment);
     }
 
     public CommentOutputDto updateComment(Long storyId, Long commentId, CommentInputDto updatedComment) {
@@ -84,13 +92,10 @@ public class CommentService {
     }
 
     public List<CommentOutputDto> getCommentsByStory(Long storyId) {
-        Optional<Story> optionalStory = storyRepository.findById(storyId);
-        if (optionalStory.isPresent()) {
-            List<Comment> comments = commentRepository.findCommentsByStory_Id(storyId);
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("No story found for id " + storyId));
+            List<Comment> comments = commentRepository.findCommentsByStory(story);
             return CommentMapper.commentModelListToOutputList(comments);
-        } else {
-            throw new ResourceNotFoundException("No story found");
-        }
     }
 
 

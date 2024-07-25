@@ -37,6 +37,10 @@ public class AuthorProfileMapper {
         authorProfileOutputDto.setBio(authorProfile.getBio());
         authorProfileOutputDto.setDob(authorProfile.getDob());
 
+        List<String> storyTitles = new ArrayList<>();
+        authorProfile.getStories().forEach(story -> storyTitles.add(story.getTitle()));
+        authorProfileOutputDto.setStoryTitles(storyTitles);
+
         return authorProfileOutputDto;
     }
 
@@ -45,12 +49,8 @@ public class AuthorProfileMapper {
         if(profiles.isEmpty()) {
             throw new ResourceNotFoundException("No author profiles found.");
         }
-
         List<AuthorProfileOutputDto> authorProfileOutputDtoList = new ArrayList<>();
-
-        for(AuthorProfile authorProfile : profiles) {
-            authorProfileOutputDtoList.add(authorProfileFromModelToOutputDto(authorProfile));
-        }
+        profiles.forEach((profile) -> authorProfileOutputDtoList.add(authorProfileFromModelToOutputDto(profile)));
         return authorProfileOutputDtoList;
     }
 

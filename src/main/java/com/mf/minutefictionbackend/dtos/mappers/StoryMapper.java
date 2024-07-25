@@ -1,10 +1,9 @@
 package com.mf.minutefictionbackend.dtos.mappers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
 import com.mf.minutefictionbackend.enums.StoryStatus;
+import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
@@ -34,18 +33,21 @@ public class StoryMapper {
         storyDto.setContent(story.getContent());
         storyDto.setStatus(story.getStatus());
         storyDto.setPublishDate(story.getPublishDate());
-        storyDto.setAuthorProfile(AuthorProfileMapper.authorProfileFromModelToOutputDto(story.getAuthorProfile()));
-        storyDto.setTheme(ThemeMapper.themeFromModelToOutputDto(story.getTheme()));
+
+        storyDto.setAuthorUsername(story.getAuthorProfile().getUsername());
+        storyDto.setThemeName(story.getTheme().getName());
+
 
         return storyDto;
     }
 
     public static List<StoryOutputDto> storyModelListToOutputList(List<Story> stories) {
-        List<StoryOutputDto> storyOutputDtoList = new ArrayList<>();
-
-        for(Story story : stories) {
-            storyOutputDtoList.add(storyFromModelToOutputDto(story));
+        if(stories.isEmpty()) {
+            throw new ResourceNotFoundException("No stories found.");
         }
+
+        List<StoryOutputDto> storyOutputDtoList = new ArrayList<>();
+        stories.forEach((story) -> storyOutputDtoList.add(storyFromModelToOutputDto(story)));
         return storyOutputDtoList;
     }
 

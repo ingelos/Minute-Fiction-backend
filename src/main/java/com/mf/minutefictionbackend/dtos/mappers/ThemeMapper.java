@@ -36,10 +36,7 @@ public class ThemeMapper {
             throw new ResourceNotFoundException("No themes found.");
         }
         List<ThemeOutputDto> themeOutputDtoList = new ArrayList<>();
-
-        for(Theme theme : themes) {
-            themeOutputDtoList.add(themeFromModelToOutputDto(theme));
-        }
+        themes.forEach((theme) -> themeOutputDtoList.add(themeFromModelToOutputDto(theme)));
         return themeOutputDtoList;
     }
 

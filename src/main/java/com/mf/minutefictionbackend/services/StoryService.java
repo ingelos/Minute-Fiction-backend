@@ -82,15 +82,14 @@ public class StoryService {
 
     public List<StoryOutputDto> getPublishedStoriesByAuthor(String username) {
         List<Story> stories = storyRepository.findByAuthorProfile_UsernameAndStatus(username, StoryStatus.PUBLISHED);
-        if(!stories.isEmpty()) {
-            return StoryMapper.storyModelListToOutputList(stories);
-        } else throw new ResourceNotFoundException("No stories found for username " + username);
+        return StoryMapper.storyModelListToOutputList(stories);
     }
 
 
     public List<StoryOutputDto> getStoriesByStatusAndTheme(StoryStatus status, Long themeId) {
         Theme theme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + themeId));
+
         List<Story> stories = storyRepository.findByStatusAndTheme(status, theme);
         return StoryMapper.storyModelListToOutputList(stories);
     }

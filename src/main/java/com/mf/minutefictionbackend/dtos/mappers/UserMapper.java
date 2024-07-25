@@ -1,10 +1,8 @@
 package com.mf.minutefictionbackend.dtos.mappers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
-import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.User;
 
 import java.util.HashSet;
@@ -39,9 +37,7 @@ public class UserMapper {
 
         Set<UserOutputDto> userOutputDtoSet = new HashSet<>();
 
-        for(User user : users) {
-            userOutputDtoSet.add(userFromModelToOutputDto(user));
-        }
+        users.forEach((user) -> userOutputDtoSet.add(userFromModelToOutputDto(user)));
         return userOutputDtoSet;
     }
     
