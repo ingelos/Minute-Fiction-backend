@@ -11,8 +11,8 @@ INSERT INTO themes (id, name, description, open_date, closing_date) VALUES (1001
 INSERT INTO mailings (id, subject, body, date) VALUES (1001, 'Sci-fi', 'This month the theme to submit to was Fantasy,\n\n You''ve all been very enthusiastic in submitting your stories.\n\nThe following story was regarded very highly, by John Doe: ''There once was...''', '2024-07-20');
 
 
-INSERT INTO profiles (username, firstname, lastname, bio, dob, user_username) VALUES ('author1', 'John', 'Doe', 'Been writing since the good old days', '1989-02-04', 'author1'),
-                                                                      ('author2', 'Jane', 'Smith', 'Loves writing', '1982-06-05', 'author2');
+INSERT INTO profiles (id, firstname, lastname, bio, dob, username) VALUES ('1001', 'John', 'Doe', 'Been writing since the good old days', '1989-02-04', 'author1'),
+                                                                      ('1002', 'Jane', 'Smith', 'Loves writing', '1982-06-05', 'author2');
 
 INSERT INTO stories (id, title, content, status, publish_date, author_profile_username, theme_id) VALUES (1001, 'A Fantasy adventure', 'There once was...', 'PUBLISHED', '2024-07-21', 'author1', 1002),
                                                                                                                 (1002, 'Having a laugh', 'Two guys walk into a bar...', 'SUBMITTED', NULL, 'author2', 1003);

@@ -2,7 +2,6 @@ package com.mf.minutefictionbackend.dtos.inputDtos;
 
 import com.mf.minutefictionbackend.validators.MaxWordCount;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class StoryInputDto {

@@ -1,6 +1,5 @@
 package com.mf.minutefictionbackend.dtos.outputDtos;
 
-import java.util.List;
 
 public class UserOutputDto {
 
@@ -9,8 +8,6 @@ public class UserOutputDto {
     public Boolean subscribedToMailing;
 
     public AuthorProfileOutputDto authorProfile;
-
-    public List<CommentOutputDto> commentOutputDtoList;
 
 
     public UserOutputDto() {
@@ -56,11 +53,5 @@ public class UserOutputDto {
         this.authorProfile = authorProfile;
     }
 
-    public List<CommentOutputDto> getCommentOutputDtoList() {
-        return commentOutputDtoList;
-    }
 
-    public void setCommentOutputDtoList(List<CommentOutputDto> commentOutputDtoList) {
-        this.commentOutputDtoList = commentOutputDtoList;
-    }
 }

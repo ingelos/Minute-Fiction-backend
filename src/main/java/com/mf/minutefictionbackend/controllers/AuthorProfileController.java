@@ -1,15 +1,12 @@
 package com.mf.minutefictionbackend.controllers;
 
-import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.services.AuthorProfileService;
 import com.mf.minutefictionbackend.services.StoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 
@@ -26,42 +23,42 @@ public class AuthorProfileController {
         this.storyService = storyService;
     }
 
-
-    @PostMapping
-    public ResponseEntity<AuthorProfileOutputDto> createAuthorProfile(AuthorProfileInputDto authorProfileInputDto) {
-        AuthorProfileOutputDto authorProfile = authorProfileService.createAuthorProfile(authorProfileInputDto);
-
-        URI uri = URI.create(ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/" + authorProfile.username).toUriString());
-
-        return ResponseEntity.created(uri).body(authorProfile);
-    }
-
-
     @GetMapping
     public ResponseEntity<List<AuthorProfileOutputDto>> getAllAuthorProfiles() {
         return ResponseEntity.ok().body(authorProfileService.getAllAuthorProfiles());
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<AuthorProfileOutputDto> getAuthorProfileByUsername(@PathVariable("username") String username) {
-        AuthorProfileOutputDto optionalAuthorProfile = authorProfileService.getAuthorProfileByUsername(username);
-        return ResponseEntity.ok().body(optionalAuthorProfile);
+    @GetMapping("/{id}")
+    public ResponseEntity<AuthorProfileOutputDto> getAuthorProfileById(@PathVariable("id") Long id) {
+        AuthorProfileOutputDto authorProfile = authorProfileService.getAuthorProfileById(id);
+        return ResponseEntity.ok(authorProfile);
     }
 
-    @PutMapping("/{username}")
-    public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@PathVariable("username") String username, @RequestBody AuthorProfileOutputDto updatedProfile) {
-        AuthorProfileOutputDto authorProfileDto = authorProfileService.updateAuthorProfile(username, updatedProfile);
+    @PutMapping("/{id}")
+    public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@PathVariable("id") Long id, @RequestBody AuthorProfileOutputDto updatedProfile) {
+        AuthorProfileOutputDto authorProfileDto = authorProfileService.updateAuthorProfile(id, updatedProfile);
         return ResponseEntity.ok().body(authorProfileDto);
     }
 
-    // stories by author
-    @GetMapping("/{username}/stories")
-    public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByAuthor(@PathVariable String username) {
-        List<StoryOutputDto> stories = storyService.getPublishedStoriesByAuthor(username);
-        return ResponseEntity.ok(stories);
+
+    @GetMapping("/{username}")
+    public ResponseEntity<AuthorProfileOutputDto> getAuthorProfileByUsername(@PathVariable("username") String username) {
+        AuthorProfileOutputDto authorProfile = authorProfileService.getAuthorProfileByUsername(username);
+        return ResponseEntity.ok().body(authorProfile);
     }
+
+
+
+
+
+
+    // stories by author
+//    @GetMapping("/{username}/stories")
+//    public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByAuthor(@PathVariable String username) {
+//        List<StoryOutputDto> stories = storyService.getPublishedStoriesByAuthor(username);
+//        return ResponseEntity.ok(stories);
+//    }
+
 
 
 }

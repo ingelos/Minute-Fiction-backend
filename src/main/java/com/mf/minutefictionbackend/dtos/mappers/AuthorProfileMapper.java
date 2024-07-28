@@ -16,7 +16,6 @@ public class AuthorProfileMapper {
 
     public static AuthorProfile authorProfileFromInputDtoToModel(AuthorProfileInputDto authorProfileInputDto) {
         AuthorProfile authorProfile = new AuthorProfile();
-        authorProfile.setUsername(authorProfileInputDto.getUsername());
         authorProfile.setFirstname(authorProfileInputDto.getFirstname());
         authorProfile.setLastname(authorProfileInputDto.getLastname());
         authorProfile.setBio(authorProfileInputDto.getBio());
@@ -30,18 +29,22 @@ public class AuthorProfileMapper {
             return null;
         }
 
-        AuthorProfileOutputDto authorProfileOutputDto = new AuthorProfileOutputDto();
-        authorProfileOutputDto.setUsername(authorProfile.getUsername());
-        authorProfileOutputDto.setFirstname(authorProfile.getFirstname());
-        authorProfileOutputDto.setLastname(authorProfile.getLastname());
-        authorProfileOutputDto.setBio(authorProfile.getBio());
-        authorProfileOutputDto.setDob(authorProfile.getDob());
+        AuthorProfileOutputDto dto = new AuthorProfileOutputDto();
+        dto.setId(authorProfile.getId());
+        dto.setFirstname(authorProfile.getFirstname());
+        dto.setLastname(authorProfile.getLastname());
+        dto.setBio(authorProfile.getBio());
+        dto.setDob(authorProfile.getDob());
 
-        List<String> storyTitles = new ArrayList<>();
-        authorProfile.getStories().forEach(story -> storyTitles.add(story.getTitle()));
-        authorProfileOutputDto.setStoryTitles(storyTitles);
+        if(authorProfile.getStories() != null) {
+            List<String> storyTitles = new ArrayList<>();
+            authorProfile.getStories().forEach(story -> storyTitles.add(story.getTitle()));
+            dto.setStoryTitles(storyTitles);
+        } else {
+            dto.setStoryTitles(new ArrayList<>());
+        }
 
-        return authorProfileOutputDto;
+        return dto;
     }
 
 

@@ -9,7 +9,6 @@ import com.mf.minutefictionbackend.repositories.ThemeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.mf.minutefictionbackend.dtos.mappers.ThemeMapper.*;
 
@@ -37,33 +36,29 @@ public class ThemeService {
     public ThemeOutputDto getThemeById(Long id) {
         Theme theme = themeRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + id));
-            return ThemeMapper.themeFromModelToOutputDto(theme);
+        return ThemeMapper.themeFromModelToOutputDto(theme);
     }
 
 
-
-    public void deleteTheme(Long id) {
-        if (themeRepository.existsById(id)) {
-            themeRepository.deleteById(id);
-        } else {
-            throw new ResourceNotFoundException("No user found with username " + id);
+    public void deleteThemeById(Long themeId) {
+        if (!themeRepository.existsById(themeId)) {
+            throw new ResourceNotFoundException("No user found with username " + themeId);
         }
+        themeRepository.deleteById(themeId);
     }
 
-    public ThemeOutputDto updateTheme(Long id, ThemeInputDto updatedTheme) {
-        Optional<Theme> optionalTheme = themeRepository.findById(id);
-        if (optionalTheme.isPresent()) {
-            Theme updateTheme = optionalTheme.get();
-            updateTheme.setName(updatedTheme.getName());
-            updateTheme.setDescription(updatedTheme.getDescription());
+    public ThemeOutputDto updateTheme(Long themeId, ThemeInputDto updatedTheme) {
+        Theme updateTheme = themeRepository.findById(themeId)
+                .orElseThrow(() -> new ResourceNotFoundException("No theme found"));
 
-            Theme returnTheme = themeRepository.save(updateTheme);
-            return ThemeMapper.themeFromModelToOutputDto(returnTheme);
-        } else {
-            throw new ResourceNotFoundException("No theme found with id " + id);
-        }
+        updateTheme.setName(updatedTheme.getName());
+        updateTheme.setDescription(updatedTheme.getDescription());
+        updateTheme.setOpenDate(updatedTheme.getOpenDate());
+        updateTheme.setClosingDate(updatedTheme.getClosingDate());
+
+        Theme returnTheme = themeRepository.save(updateTheme);
+        return ThemeMapper.themeFromModelToOutputDto(returnTheme);
     }
-
 
 
 }

@@ -34,7 +34,12 @@ public class StoryMapper {
         storyDto.setStatus(story.getStatus());
         storyDto.setPublishDate(story.getPublishDate());
 
-        storyDto.setAuthorUsername(story.getAuthorProfile().getUsername());
+        if(story.getAuthorProfile() != null && story.getAuthorProfile().getUser() != null) {
+            storyDto.setAuthorUsername(story.getAuthorProfile().getUser().getUsername());
+        } else {
+            storyDto.setAuthorUsername(null);
+        }
+
         storyDto.setThemeName(story.getTheme().getName());
 
 

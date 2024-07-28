@@ -28,6 +28,12 @@ public class Comment {
 
 
 
+    public Comment() {
+        this.created = LocalDateTime.now();
+    }
+
+
+
     public Long getId() {
         return id;
     }

@@ -35,10 +35,16 @@ public class MailingController {
         return ResponseEntity.ok().body(mailingService.getAllMailings());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<MailingOutputDto> updateMailing(@Valid @PathVariable("id") Long id, @RequestBody MailingOutputDto mailingDto) {
-        MailingOutputDto updatedMailing = mailingService.updateMailing(id, mailingDto);
+    @PutMapping("/{mailingId}")
+    public ResponseEntity<MailingOutputDto> updateMailing(@Valid @PathVariable("mailingId") Long mailingId, @RequestBody MailingOutputDto mailingDto) {
+        MailingOutputDto updatedMailing = mailingService.updateMailing(mailingId, mailingDto);
         return ResponseEntity.ok().body(updatedMailing);
+    }
+
+    @DeleteMapping("/{mailingId}")
+    public ResponseEntity<Void> deleteMailingById(@PathVariable("mailingId") Long mailingId) {
+        mailingService.deleteMailingById(mailingId);
+        return ResponseEntity.noContent().build();
     }
 
 //    @PostMapping("/{id}/send")

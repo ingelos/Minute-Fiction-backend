@@ -42,7 +42,11 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
     }
 
-
+    @PutMapping("/stories/{storyId}/comments/{commentId}")
+    public ResponseEntity<CommentOutputDto> updateComment(@PathVariable("storyId") Long storyId, @PathVariable("commentId") Long commentId, @RequestBody CommentInputDto updatedComment) {
+        CommentOutputDto updatedCommentDto = commentService.updateComment(storyId, commentId, updatedComment);
+        return ResponseEntity.ok().body(updatedCommentDto);
+    }
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable("commentId") Long commentId) {
         commentService.deleteCommentById(commentId);
@@ -57,11 +61,7 @@ public class CommentController {
 
 
 
-    @PutMapping("/comments/{commentId}")
-    public ResponseEntity<CommentOutputDto> updateComment(@PathVariable("storyId") Long storyId, @PathVariable("commentId") Long commentId, @RequestBody CommentInputDto updatedComment) {
-        CommentOutputDto commentDto = commentService.updateComment(storyId, commentId, updatedComment);
-        return ResponseEntity.ok().body(commentDto);
-    }
+
 
 
 

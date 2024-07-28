@@ -2,7 +2,6 @@ package com.mf.minutefictionbackend.dtos.mappers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.CommentInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Comment;
 import com.mf.minutefictionbackend.models.Story;

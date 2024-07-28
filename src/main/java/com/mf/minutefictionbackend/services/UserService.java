@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 
@@ -40,42 +39,37 @@ public class UserService {
 
     public UserOutputDto getUserByUsername(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("No user found with username " + username));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
             return UserMapper.userFromModelToOutputDto(user);
     }
 
     public void deleteUser(String username) {
-        Optional<User> optionalUser = userRepository.findById(username);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (user.getAuthorProfile() != null) {
-                authorProfileRepository.delete(user.getAuthorProfile());
-            }
-            userRepository.delete(user);
-        } else {
-            throw new ResourceNotFoundException("No user found with username " + username);
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        if (user.getAuthorProfile() != null) {
+            authorProfileRepository.delete(user.getAuthorProfile());
         }
+        userRepository.delete(user);
     }
 
 
     public UserOutputDto updateUser(String username, UserOutputDto updatedUser) {
-        Optional<User> u = userRepository.findByUsername(username);
-        if (u.isPresent()) {
-            User updateUser = u.get();
-            updateUser.setUsername(updatedUser.getUsername());
-            updateUser.setEmail(updatedUser.getEmail());
-            updateUser.setSubscribedToMailing(updatedUser.getSubscribedToMailing());
+        User updateUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No user found with username " + username));
 
-            User returnUser = userRepository.save(updateUser);
-            return UserMapper.userFromModelToOutputDto(returnUser);
-        } else {
-            throw new UsernameNotFoundException("No user found with username " + username);
-        }
+        updateUser.setUsername(updatedUser.getUsername());
+        updateUser.setEmail(updateUser.getEmail());
+        updateUser.setSubscribedToMailing(updatedUser.getSubscribedToMailing());
+
+        User returnUser = userRepository.save(updateUser);
+        return UserMapper.userFromModelToOutputDto(returnUser);
     }
 
 
     // setAuthorities
+
     // addAuthorities
+
     // removeAuthorities
 
 }

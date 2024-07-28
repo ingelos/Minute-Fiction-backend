@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AuthorProfileOutputDto {
 
-    public String username;
+    public Long id;
     public String firstname;
     public String lastname;
     public String bio;
@@ -23,20 +23,22 @@ public class AuthorProfileOutputDto {
 
     }
 
-    public AuthorProfileOutputDto(String username, String firstname, String lastname, String bio, LocalDate dob) {
-        this.username = username;
+
+    public AuthorProfileOutputDto(Long id, String firstname, String lastname, String bio, LocalDate dob) {
+        this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.bio = bio;
         this.dob = dob;
     }
 
-    public String getUsername() {
-        return username;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstname() {
