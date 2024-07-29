@@ -12,8 +12,8 @@ import java.util.List;
 public class AuthorProfile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column
+    private String username;
     @Column
     private String firstname;
     @Column
@@ -25,18 +25,25 @@ public class AuthorProfile {
 
 
     @OneToOne
-    @JoinColumn(name = "username", nullable = true)
-    @JsonIgnore
+    @MapsId
+    @JoinColumn(name = "username")
     private User user;
 
-    @OneToMany(mappedBy = "authorProfile", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "authorProfile")
+    @JsonIgnore
     private List<Story> stories = new ArrayList<>();
 
 
 
-    public Long getId() {
-        return id;
+
+    public String getUsername() {
+        return username;
     }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getFirstname() {
         return firstname;
     }

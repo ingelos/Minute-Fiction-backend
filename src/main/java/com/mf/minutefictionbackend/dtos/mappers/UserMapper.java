@@ -25,6 +25,7 @@ public class UserMapper {
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
         userDto.setSubscribedToMailing(user.getSubscribedToMailing());
+
         userDto.setAuthorProfile(AuthorProfileMapper.authorProfileFromModelToOutputDto(user.getAuthorProfile()));
 
         return userDto;

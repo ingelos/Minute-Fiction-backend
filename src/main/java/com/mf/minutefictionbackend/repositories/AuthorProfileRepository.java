@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface AuthorProfileRepository extends JpaRepository<AuthorProfile, Long> {
+public interface AuthorProfileRepository extends JpaRepository<AuthorProfile, String> {
     Optional<AuthorProfile> findByUser(User user);
 
 

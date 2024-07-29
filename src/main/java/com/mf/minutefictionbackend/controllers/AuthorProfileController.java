@@ -1,9 +1,11 @@
 package com.mf.minutefictionbackend.controllers;
 
+import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.services.AuthorProfileService;
 import com.mf.minutefictionbackend.services.StoryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,28 +17,23 @@ import java.util.List;
 public class AuthorProfileController {
 
     private final AuthorProfileService authorProfileService;
-    private final StoryService storyService;
+//    private final StoryService storyService;
 
 
-    public AuthorProfileController(AuthorProfileService authorProfileService, StoryService storyService) {
+    public AuthorProfileController(AuthorProfileService authorProfileService) {
         this.authorProfileService = authorProfileService;
-        this.storyService = storyService;
     }
 
     @GetMapping
     public ResponseEntity<List<AuthorProfileOutputDto>> getAllAuthorProfiles() {
-        return ResponseEntity.ok().body(authorProfileService.getAllAuthorProfiles());
+        List<AuthorProfileOutputDto> authorProfiles = authorProfileService.getAllAuthorProfiles();
+        return ResponseEntity.ok(authorProfiles);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<AuthorProfileOutputDto> getAuthorProfileById(@PathVariable("id") Long id) {
-        AuthorProfileOutputDto authorProfile = authorProfileService.getAuthorProfileById(id);
-        return ResponseEntity.ok(authorProfile);
-    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@PathVariable("id") Long id, @RequestBody AuthorProfileOutputDto updatedProfile) {
-        AuthorProfileOutputDto authorProfileDto = authorProfileService.updateAuthorProfile(id, updatedProfile);
+    @PutMapping("/{username}")
+    public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@PathVariable("username") String username, @RequestBody AuthorProfileOutputDto updatedProfile) {
+        AuthorProfileOutputDto authorProfileDto = authorProfileService.updateAuthorProfile(username, updatedProfile);
         return ResponseEntity.ok().body(authorProfileDto);
     }
 
@@ -46,10 +43,6 @@ public class AuthorProfileController {
         AuthorProfileOutputDto authorProfile = authorProfileService.getAuthorProfileByUsername(username);
         return ResponseEntity.ok().body(authorProfile);
     }
-
-
-
-
 
 
     // stories by author

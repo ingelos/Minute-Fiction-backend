@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -65,6 +66,7 @@ public class UserController {
 
     // create authorprofile for user
 
+
     @PostMapping("/{username}/authorprofiles")
     public ResponseEntity<AuthorProfileOutputDto> createAuthorProfile(@PathVariable String username, @RequestBody AuthorProfileInputDto authorProfileInputDto) {
         AuthorProfileOutputDto createdProfile = authorProfileService.createAuthorProfile(username, authorProfileInputDto);
@@ -72,11 +74,9 @@ public class UserController {
     }
 
 
-//        URI uri = URI.create(ServletUriComponentsBuilder
-//                .fromCurrentRequest()
-//                .path("/" + createdProfile.username).toUriString());
-//
-//        return ResponseEntity.created(uri).body(createdProfile);
+
+
+
     }
 
 

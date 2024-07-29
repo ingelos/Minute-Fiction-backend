@@ -31,7 +31,7 @@ public class StoryService {
     }
 
 
-    public StoryOutputDto submitStory(StoryInputDto storyInputDto, Long profileId, Long themeId) {
+    public StoryOutputDto submitStory(StoryInputDto storyInputDto, String profileId, Long themeId) {
         AuthorProfile authorProfile = authorProfileRepository.findById(profileId)
                 .orElseThrow(() -> new ResourceNotFoundException("Authorprofile not found"));
         Theme theme = themeRepository.findById(themeId)

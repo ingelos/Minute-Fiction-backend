@@ -8,8 +8,8 @@ import java.time.LocalDate;
 
 public class AuthorProfileInputDto {
 
-    @NotBlank
-    public String username;
+//    @NotBlank
+//    public String username;
     @NotBlank(message = "First name is required.")
     @Size(min=3, max=64)
     public String firstname;
@@ -22,21 +22,14 @@ public class AuthorProfileInputDto {
 
 
 
-    public AuthorProfileInputDto(String username, String firstname, String lastname, String bio, LocalDate dob) {
-        this.username = username;
+    public AuthorProfileInputDto(String firstname, String lastname, String bio, LocalDate dob) {
+
         this.firstname = firstname;
         this.lastname = lastname;
         this.bio = bio;
         this.dob = dob;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getFirstname() {
         return firstname;

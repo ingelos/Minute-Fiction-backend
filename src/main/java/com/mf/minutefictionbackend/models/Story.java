@@ -34,9 +34,11 @@ public class Story {
 
     @ManyToOne
     @JoinColumn(name = "theme_id")
+    @JsonIgnore
     private Theme theme;
 
     @OneToMany(mappedBy = "story")
+    @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
 

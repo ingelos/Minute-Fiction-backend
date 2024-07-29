@@ -1,21 +1,19 @@
 package com.mf.minutefictionbackend.dtos.outputDtos;
 
-import com.mf.minutefictionbackend.models.AuthorProfile;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorProfileOutputDto {
 
-    public Long id;
+    public String username;
     public String firstname;
     public String lastname;
     public String bio;
     public LocalDate dob;
 
+
     public List<String> storyTitles;
-//    public UserOutputDto user;
 
 
 
@@ -23,9 +21,8 @@ public class AuthorProfileOutputDto {
 
     }
 
-
-    public AuthorProfileOutputDto(Long id, String firstname, String lastname, String bio, LocalDate dob) {
-        this.id = id;
+    public AuthorProfileOutputDto(String username, String firstname, String lastname, String bio, LocalDate dob) {
+        this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         this.bio = bio;
@@ -33,13 +30,6 @@ public class AuthorProfileOutputDto {
     }
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getFirstname() {
         return firstname;
@@ -71,6 +61,14 @@ public class AuthorProfileOutputDto {
 
     public void setDob(LocalDate dob) {
         this.dob = dob;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public List<String> getStoryTitles() {

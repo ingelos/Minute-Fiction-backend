@@ -1,5 +1,6 @@
 package com.mf.minutefictionbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -20,10 +21,12 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "story_id")
+    @JsonIgnore
     private Story story;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
 

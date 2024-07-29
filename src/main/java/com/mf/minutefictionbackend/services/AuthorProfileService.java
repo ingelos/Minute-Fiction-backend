@@ -9,6 +9,7 @@ import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,12 +27,14 @@ public class AuthorProfileService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public AuthorProfileOutputDto createAuthorProfile(String username, AuthorProfileInputDto authorProfileInputDto) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
 
         AuthorProfile authorProfile = AuthorProfileMapper.authorProfileFromInputDtoToModel(authorProfileInputDto);
         authorProfile.setUser(user);
+
         AuthorProfile savedProfile = authorProfileRepository.save(authorProfile);
 
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(savedProfile);
@@ -43,11 +46,6 @@ public class AuthorProfileService {
         return AuthorProfileMapper.authorProfileModelListToOutputList(allAuthorProfiles);
     }
 
-    public AuthorProfileOutputDto getAuthorProfileById(Long id) {
-        AuthorProfile authorProfile = authorProfileRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Author profile not found"));
-        return AuthorProfileMapper.authorProfileFromModelToOutputDto(authorProfile);
-    }
 
     public AuthorProfileOutputDto getAuthorProfileByUsername(String username) {
         User user = userRepository.findById(username)
@@ -58,9 +56,9 @@ public class AuthorProfileService {
             return AuthorProfileMapper.authorProfileFromModelToOutputDto(authorProfile);
     }
 
-    public AuthorProfileOutputDto updateAuthorProfile(Long id, AuthorProfileOutputDto updatedProfile) {
-        AuthorProfile updateProfile = authorProfileRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No author profile found for username " + id));
+    public AuthorProfileOutputDto updateAuthorProfile(String username, AuthorProfileOutputDto updatedProfile) {
+        AuthorProfile updateProfile = authorProfileRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No author profile found for username " + username));
 
         updateProfile.setFirstname(updatedProfile.getFirstname());
         updateProfile.setLastname(updatedProfile.getLastname());
@@ -70,4 +68,6 @@ public class AuthorProfileService {
         AuthorProfile returnAuthorProfile = authorProfileRepository.save(updateProfile);
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(returnAuthorProfile);
     }
+
+
 }

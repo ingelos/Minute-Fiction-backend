@@ -29,7 +29,7 @@ public class StoryController {
 
 
     @PostMapping("/stories/submit")
-    public ResponseEntity<StoryOutputDto> submitStory(@Valid @RequestBody StoryInputDto storyInputDto, @RequestParam Long profileId, @RequestParam Long themeId) {
+    public ResponseEntity<StoryOutputDto> submitStory(@Valid @RequestBody StoryInputDto storyInputDto, @RequestParam String profileId, @RequestParam Long themeId) {
         StoryOutputDto storyDto = storyService.submitStory(storyInputDto, profileId, themeId);
 
         URI uri = URI.create(ServletUriComponentsBuilder
