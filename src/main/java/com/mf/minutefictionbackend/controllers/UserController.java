@@ -1,14 +1,19 @@
 package com.mf.minutefictionbackend.controllers;
 
+import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
+import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
+import com.mf.minutefictionbackend.services.AuthorProfileService;
 import com.mf.minutefictionbackend.services.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -16,9 +21,12 @@ import java.util.Set;
 public class UserController {
 
     private final UserService userService;
+    private final AuthorProfileService authorProfileService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AuthorProfileService authorProfileService) {
         this.userService = userService;
+
+        this.authorProfileService = authorProfileService;
     }
 
     @PostMapping
@@ -56,4 +64,20 @@ public class UserController {
         return ResponseEntity.ok().body(updatedUser);
     }
 
-}
+    // create authorprofile for user
+
+
+    @PostMapping("/{username}/authorprofiles")
+    public ResponseEntity<AuthorProfileOutputDto> createAuthorProfile(@PathVariable String username, @RequestBody AuthorProfileInputDto authorProfileInputDto) {
+        AuthorProfileOutputDto createdProfile = authorProfileService.createAuthorProfile(username, authorProfileInputDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProfile);
+    }
+
+
+
+
+
+    }
+
+
+

@@ -1,10 +1,9 @@
 package com.mf.minutefictionbackend.dtos.mappers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
 import com.mf.minutefictionbackend.enums.StoryStatus;
+import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
@@ -35,36 +34,25 @@ public class StoryMapper {
         storyDto.setStatus(story.getStatus());
         storyDto.setPublishDate(story.getPublishDate());
 
-        if(story.getAuthorProfile() != null) {
-            AuthorProfileOutputDto dto = new AuthorProfileOutputDto();
-            dto.setUsername(story.getAuthorProfile().getUsername());
-            dto.setFirstname(story.getAuthorProfile().getFirstname());
-            dto.setLastname(story.getAuthorProfile().getLastname());
-            dto.setBio(story.getAuthorProfile().getBio());
-            dto.setDob(story.getAuthorProfile().getDob());
-
-            storyDto.setAuthorProfile(dto);
+        if(story.getAuthorProfile() != null && story.getAuthorProfile().getUser() != null) {
+            storyDto.setAuthorUsername(story.getAuthorProfile().getUser().getUsername());
+        } else {
+            storyDto.setAuthorUsername(null);
         }
 
-        if(story.getTheme() != null) {
-            ThemeOutputDto themeDto = new ThemeOutputDto();
-            themeDto.setId(story.getTheme().getId());
-            themeDto.setName(story.getTheme().getName());
-            themeDto.setDescription(story.getTheme().getDescription());
-
-            storyDto.setTheme(themeDto);
-        }
+        storyDto.setThemeName(story.getTheme().getName());
 
 
         return storyDto;
     }
 
     public static List<StoryOutputDto> storyModelListToOutputList(List<Story> stories) {
-        List<StoryOutputDto> storyOutputDtoList = new ArrayList<>();
-
-        for(Story story : stories) {
-            storyOutputDtoList.add(storyFromModelToOutputDto(story));
+        if(stories.isEmpty()) {
+            throw new ResourceNotFoundException("No stories found.");
         }
+
+        List<StoryOutputDto> storyOutputDtoList = new ArrayList<>();
+        stories.forEach((story) -> storyOutputDtoList.add(storyFromModelToOutputDto(story)));
         return storyOutputDtoList;
     }
 

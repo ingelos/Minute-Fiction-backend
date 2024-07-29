@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AuthorProfileRepository extends JpaRepository<AuthorProfile, String> {
+    Optional<AuthorProfile> findByUser(User user);
 
 
 }

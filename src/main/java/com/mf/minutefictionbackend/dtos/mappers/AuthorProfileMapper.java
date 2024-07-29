@@ -2,11 +2,8 @@ package com.mf.minutefictionbackend.dtos.mappers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
+import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
-import com.mf.minutefictionbackend.models.Comment;
-import com.mf.minutefictionbackend.models.Story;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,35 +11,53 @@ import java.util.List;
 public class AuthorProfileMapper {
 
     public static AuthorProfile authorProfileFromInputDtoToModel(AuthorProfileInputDto authorProfileInputDto) {
+        if(authorProfileInputDto == null) {
+            return null;
+        }
+
         AuthorProfile authorProfile = new AuthorProfile();
-        authorProfile.setUsername(authorProfileInputDto.username);
-        authorProfile.setFirstname(authorProfileInputDto.firstname);
-        authorProfile.setLastname(authorProfileInputDto.lastname);
-        authorProfile.setBio(authorProfileInputDto.bio);
-        authorProfile.setDob(authorProfileInputDto.dob);
+
+        authorProfile.setFirstname(authorProfileInputDto.getFirstname());
+        authorProfile.setLastname(authorProfileInputDto.getLastname());
+        authorProfile.setBio(authorProfileInputDto.getBio());
+        authorProfile.setDob(authorProfileInputDto.getDob());
 
         return authorProfile;
     }
 
+
     public static AuthorProfileOutputDto authorProfileFromModelToOutputDto(AuthorProfile authorProfile) {
-        AuthorProfileOutputDto authorProfileOutputDto = new AuthorProfileOutputDto();
+        if (authorProfile == null) {
+            return null;
+        }
 
-        authorProfileOutputDto.setUsername(authorProfile.getUsername());
-        authorProfileOutputDto.setFirstname(authorProfile.getFirstname());
-        authorProfileOutputDto.setLastname(authorProfile.getLastname());
-        authorProfileOutputDto.setBio(authorProfile.getBio());
-        authorProfileOutputDto.setDob(authorProfile.getDob());
+        AuthorProfileOutputDto dto = new AuthorProfileOutputDto();
 
-        return authorProfileOutputDto;
+        dto.setUsername(authorProfile.getUsername());
+
+        dto.setFirstname(authorProfile.getFirstname());
+        dto.setLastname(authorProfile.getLastname());
+        dto.setBio(authorProfile.getBio());
+        dto.setDob(authorProfile.getDob());
+
+        if (authorProfile.getStories() != null) {
+            List<String> storyTitles = new ArrayList<>();
+            authorProfile.getStories().forEach(story -> storyTitles.add(story.getTitle()));
+            dto.setStoryTitles(storyTitles);
+        } else {
+            dto.setStoryTitles(new ArrayList<>());
+        }
+
+        return dto;
     }
 
 
     public static List<AuthorProfileOutputDto> authorProfileModelListToOutputList(List<AuthorProfile> profiles) {
-        List<AuthorProfileOutputDto> authorProfileOutputDtoList = new ArrayList<>();
-
-        for(AuthorProfile authorProfile : profiles) {
-            authorProfileOutputDtoList.add(authorProfileFromModelToOutputDto(authorProfile));
+        if (profiles.isEmpty()) {
+            throw new ResourceNotFoundException("No author profiles found.");
         }
+        List<AuthorProfileOutputDto> authorProfileOutputDtoList = new ArrayList<>();
+        profiles.forEach((profile) -> authorProfileOutputDtoList.add(authorProfileFromModelToOutputDto(profile)));
         return authorProfileOutputDtoList;
     }
 

@@ -2,6 +2,7 @@ package com.mf.minutefictionbackend.dtos.mappers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.ThemeInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
+import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Theme;
 
 import java.util.ArrayList;
@@ -31,11 +32,11 @@ public class ThemeMapper {
     }
 
     public static List<ThemeOutputDto> themeModelListToOutputList(List<Theme> themes) {
-        List<ThemeOutputDto> themeOutputDtoList = new ArrayList<>();
-
-        for(Theme theme : themes) {
-            themeOutputDtoList.add(themeFromModelToOutputDto(theme));
+        if(themes.isEmpty()) {
+            throw new ResourceNotFoundException("No themes found.");
         }
+        List<ThemeOutputDto> themeOutputDtoList = new ArrayList<>();
+        themes.forEach((theme) -> themeOutputDtoList.add(themeFromModelToOutputDto(theme)));
         return themeOutputDtoList;
     }
 

@@ -1,5 +1,6 @@
 package com.mf.minutefictionbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mf.minutefictionbackend.enums.StoryStatus;
 import jakarta.persistence.*;
 
@@ -28,13 +29,16 @@ public class Story {
 
     @ManyToOne
     @JoinColumn(name = "author_profile_username", referencedColumnName = "username")
+    @JsonIgnore
     private AuthorProfile authorProfile;
 
     @ManyToOne
     @JoinColumn(name = "theme_id")
+    @JsonIgnore
     private Theme theme;
 
     @OneToMany(mappedBy = "story")
+    @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
 

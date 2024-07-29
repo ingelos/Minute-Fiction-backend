@@ -13,14 +13,13 @@ public class StoryOutputDto {
     public StoryStatus status;
     public LocalDate publishDate;
 
-    public AuthorProfileOutputDto authorProfile;
-    public ThemeOutputDto theme;
+    public String authorUsername;
+    public String themeName;
     public List<CommentOutputDto> comments;
 
 
 
     public StoryOutputDto() {
-
     }
 
     public StoryOutputDto(Long id, String title, String content, StoryStatus status, LocalDate publishDate) {
@@ -71,20 +70,20 @@ public class StoryOutputDto {
         this.publishDate = publishDate;
     }
 
-    public AuthorProfileOutputDto getAuthorProfile() {
-        return authorProfile;
+    public String getAuthorUsername() {
+        return authorUsername;
     }
 
-    public void setAuthorProfile(AuthorProfileOutputDto authorProfile) {
-        this.authorProfile = authorProfile;
+    public void setAuthorUsername(String authorUsername) {
+        this.authorUsername = authorUsername;
     }
 
-    public ThemeOutputDto getTheme() {
-        return theme;
+    public String getThemeName() {
+        return themeName;
     }
 
-    public void setTheme(ThemeOutputDto theme) {
-        this.theme = theme;
+    public void setThemeName(String themeName) {
+        this.themeName = themeName;
     }
 
     public List<CommentOutputDto> getComments() {

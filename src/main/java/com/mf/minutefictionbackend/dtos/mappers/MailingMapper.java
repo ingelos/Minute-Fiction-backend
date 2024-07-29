@@ -2,6 +2,7 @@ package com.mf.minutefictionbackend.dtos.mappers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.MailingInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.MailingOutputDto;
+import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Mailing;
 
 import java.util.ArrayList;
@@ -29,11 +30,11 @@ public class MailingMapper {
     }
 
     public static List<MailingOutputDto> mailingFromModelListToOutputList(List<Mailing> mailings) {
-        List<MailingOutputDto> mailingOutputDtoList = new ArrayList<>();
-
-        for(Mailing mailing : mailings) {
-            mailingOutputDtoList.add(mailingFromModelToOutputDto(mailing));
+        if(mailings.isEmpty()) {
+            throw new ResourceNotFoundException("No mailings found.");
         }
+        List<MailingOutputDto> mailingOutputDtoList = new ArrayList<>();
+        mailings.forEach((mailing) -> mailingOutputDtoList.add(mailingFromModelToOutputDto(mailing)));
         return mailingOutputDtoList;
     }
 

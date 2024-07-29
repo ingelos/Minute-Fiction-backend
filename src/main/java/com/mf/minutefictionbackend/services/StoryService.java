@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -32,8 +31,8 @@ public class StoryService {
     }
 
 
-    public StoryOutputDto submitStory(StoryInputDto storyInputDto, String username, Long themeId) {
-        AuthorProfile authorProfile = authorProfileRepository.findById(username)
+    public StoryOutputDto submitStory(StoryInputDto storyInputDto, String profileId, Long themeId) {
+        AuthorProfile authorProfile = authorProfileRepository.findById(profileId)
                 .orElseThrow(() -> new ResourceNotFoundException("Authorprofile not found"));
         Theme theme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Theme not found"));
@@ -44,8 +43,9 @@ public class StoryService {
 
         Story story = StoryMapper.storyFromInputDtoToModel(storyInputDto, authorProfile, theme);
         story.setStatus(StoryStatus.SUBMITTED);
-        story = storyRepository.save(story);
-        return StoryMapper.storyFromModelToOutputDto(story);
+
+        Story savedStory = storyRepository.save(story);
+        return StoryMapper.storyFromModelToOutputDto(savedStory);
     }
 
     public StoryOutputDto publishStory(Long storyId) {
@@ -59,7 +59,6 @@ public class StoryService {
     }
 
 
-
     public List<StoryOutputDto> getStoriesByStatus(StoryStatus status) {
         List<Story> stories = storyRepository.findByStatus(status);
         if(stories.isEmpty()) {
@@ -70,29 +69,28 @@ public class StoryService {
 
 
     public StoryOutputDto getStoryById(Long id) {
-        Optional<Story> optionalStory = storyRepository.findById(id);
-        if(optionalStory.isPresent()) {
-            return StoryMapper.storyFromModelToOutputDto(optionalStory.get());
-        } else throw new ResourceNotFoundException("No story found with id " + id);
+        Story story = storyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No story found with id " + id));
+            return StoryMapper.storyFromModelToOutputDto(story);
     }
 
     public void deleteStoryById(Long id) {
         if (storyRepository.existsById(id)) {
-            storyRepository.deleteById(id);
-        } else throw new ResourceNotFoundException("No story found with id " + id);
+          throw new ResourceNotFoundException("No story found with id " + id);
+        }
+        storyRepository.deleteById(id);
     }
 
-    public List<StoryOutputDto> getStoriesByAuthor(String username) {
-        List<Story> stories = storyRepository.findByAuthorProfile_Username(username);
-        if(!stories.isEmpty()) {
-            return StoryMapper.storyModelListToOutputList(stories);
-        } else throw new ResourceNotFoundException("No stories found for username " + username);
-    }
+//    public List<StoryOutputDto> getPublishedStoriesByAuthor(String username) {
+//        List<Story> stories = storyRepository.findByAuthorProfile_User_UsernameAndStatus(username, StoryStatus.PUBLISHED);
+//        return StoryMapper.storyModelListToOutputList(stories);
+//    }
 
 
     public List<StoryOutputDto> getStoriesByStatusAndTheme(StoryStatus status, Long themeId) {
         Theme theme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + themeId));
+
         List<Story> stories = storyRepository.findByStatusAndTheme(status, theme);
         return StoryMapper.storyModelListToOutputList(stories);
     }

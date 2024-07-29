@@ -39,23 +39,27 @@ public class MailingService {
         return MailingMapper.mailingFromModelListToOutputList(allMailings);
     }
 
-    public MailingOutputDto updateMailing(Long id, MailingOutputDto updatedMailing) {
-        Optional<Mailing> mailing = mailingRepository.findById(id);
-        if (mailing.isPresent()) {
-            Mailing updateMailing = mailing.get();
-            updateMailing.setSubject(updatedMailing.getSubject());
-            updateMailing.setBody(updatedMailing.getBody());
-            updateMailing.setDate(updatedMailing.getDate());
+    public MailingOutputDto updateMailing(Long mailingId, MailingOutputDto updatedMailing) {
+        Mailing updateMailing = mailingRepository.findById(mailingId)
+                .orElseThrow(() -> new ResourceNotFoundException("No mailing found"));
 
-            Mailing returnMailing = mailingRepository.save(updateMailing);
-            return MailingMapper.mailingFromModelToOutputDto(returnMailing);
-        } else {
-            throw new ResourceNotFoundException("No mailing found with id " + id);
-        }
+        updateMailing.setSubject(updatedMailing.getSubject());
+        updateMailing.setBody(updateMailing.getBody());
+        updateMailing.setDate(updatedMailing.getDate());
+
+        Mailing returnMailing = mailingRepository.save(updateMailing);
+        return MailingMapper.mailingFromModelToOutputDto(returnMailing);
     }
 
-    // uitzoeken hoe dat zit met javaMailSender en neppe email etc.!!!
+    public void deleteMailingById(Long mailingId) {
+        if (!mailingRepository.existsById(mailingId)) {
+            throw new ResourceNotFoundException("No mailing found");
+        }
+        mailingRepository.deleteById(mailingId);
+    }
 
+
+    // uitzoeken hoe dat zit met javaMailSender en neppe email etc.!!!
 
 
 //    public void sendMailing(Long mailingId) {
