@@ -1,6 +1,7 @@
 package com.mf.minutefictionbackend.dtos.mappers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.ThemeInputDto;
+import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Theme;
@@ -27,6 +28,14 @@ public class ThemeMapper {
         themeOutputDto.setDescription(theme.getDescription());
         themeOutputDto.setOpenDate(theme.getOpenDate());
         themeOutputDto.setClosingDate(theme.getClosingDate());
+
+        if(theme.getStories() != null) {
+            List<String> storyTitles = new ArrayList<>();
+            theme.getStories().forEach(story -> storyTitles.add(story.getTitle()));
+            themeOutputDto.setStoryTitles(storyTitles);
+        } else {
+            themeOutputDto.setStoryTitles(new ArrayList<>());
+        }
 
         return themeOutputDto;
     }

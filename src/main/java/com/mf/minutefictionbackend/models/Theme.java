@@ -12,7 +12,6 @@ public class Theme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column
     private String name;
     @Column
@@ -23,10 +22,8 @@ public class Theme {
     private LocalDate closingDate;
 
 
-
     @OneToMany(mappedBy = "theme")
     private List<Story> stories;
-
 
 
     public Long getId() {

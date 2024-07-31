@@ -16,9 +16,7 @@ public class AuthorProfileOutputDto {
     public List<String> storyTitles;
 
 
-
     public AuthorProfileOutputDto() {
-
     }
 
     public AuthorProfileOutputDto(String username, String firstname, String lastname, String bio, LocalDate dob) {

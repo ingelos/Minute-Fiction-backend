@@ -34,21 +34,15 @@ public class StoryMapper {
         storyDto.setStatus(story.getStatus());
         storyDto.setPublishDate(story.getPublishDate());
 
-        if(story.getAuthorProfile() != null && story.getAuthorProfile().getUser() != null) {
-            storyDto.setAuthorUsername(story.getAuthorProfile().getUser().getUsername());
-        } else {
-            storyDto.setAuthorUsername(null);
-        }
-
+        storyDto.setAuthorUsername(story.getAuthorProfile().getUsername());
         storyDto.setThemeName(story.getTheme().getName());
-
 
         return storyDto;
     }
 
     public static List<StoryOutputDto> storyModelListToOutputList(List<Story> stories) {
         if(stories.isEmpty()) {
-            throw new ResourceNotFoundException("No stories found.");
+            throw new ResourceNotFoundException("No stories found for your search criteria");
         }
 
         List<StoryOutputDto> storyOutputDtoList = new ArrayList<>();

@@ -37,6 +37,9 @@ public class AuthorProfileService {
 
         AuthorProfile savedProfile = authorProfileRepository.save(authorProfile);
 
+        user.setAuthorProfile(savedProfile);
+        userRepository.save(user);
+
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(savedProfile);
     }
 

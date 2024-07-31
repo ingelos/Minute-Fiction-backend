@@ -1,11 +1,9 @@
 package com.mf.minutefictionbackend.controllers;
 
-import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.services.AuthorProfileService;
 import com.mf.minutefictionbackend.services.StoryService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +15,12 @@ import java.util.List;
 public class AuthorProfileController {
 
     private final AuthorProfileService authorProfileService;
-//    private final StoryService storyService;
+    private final StoryService storyService;
 
 
-    public AuthorProfileController(AuthorProfileService authorProfileService) {
+    public AuthorProfileController(AuthorProfileService authorProfileService, StoryService storyService) {
         this.authorProfileService = authorProfileService;
+        this.storyService = storyService;
     }
 
     @GetMapping
@@ -45,12 +44,12 @@ public class AuthorProfileController {
     }
 
 
-    // stories by author
-//    @GetMapping("/{username}/stories")
-//    public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByAuthor(@PathVariable String username) {
-//        List<StoryOutputDto> stories = storyService.getPublishedStoriesByAuthor(username);
-//        return ResponseEntity.ok(stories);
-//    }
+    // get published stories by author
+    @GetMapping("/{username}/stories")
+    public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByAuthor(@PathVariable String username) {
+        List<StoryOutputDto> stories = storyService.getPublishedStoriesByAuthor(username);
+        return ResponseEntity.ok(stories);
+    }
 
 
 
