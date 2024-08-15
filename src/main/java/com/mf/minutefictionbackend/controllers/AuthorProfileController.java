@@ -43,6 +43,12 @@ public class AuthorProfileController {
         return ResponseEntity.ok().body(authorProfile);
     }
 
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Void> deleteAuthorProfile(@PathVariable("username") String username) {
+        authorProfileService.deleteAuthorProfile(username);
+        return ResponseEntity.noContent().build();
+    }
+
 
     // get published stories by author
     @GetMapping("/{username}/stories")

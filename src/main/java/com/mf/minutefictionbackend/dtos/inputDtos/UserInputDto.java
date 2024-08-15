@@ -3,6 +3,7 @@ package com.mf.minutefictionbackend.dtos.inputDtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class UserInputDto {
 
@@ -13,7 +14,8 @@ public class UserInputDto {
     public String password;
     @Email(message = "Invalid email")
     public String email;
-    public Boolean subscribedToMailing;
+    @NotNull
+    public Boolean isSubscribedToMailing;
 
 
     public UserInputDto() {
@@ -39,11 +41,11 @@ public class UserInputDto {
         this.email = email;
     }
 
-    public Boolean getSubscribedToMailing() {
-        return subscribedToMailing;
+    public Boolean getIsSubscribedToMailing() {
+        return isSubscribedToMailing;
     }
 
-    public void setSubscribedToMailing(Boolean subscribedToMailing) {
-        this.subscribedToMailing = subscribedToMailing;
+    public void setIsSubscribedToMailing(Boolean isSubscribedToMailing) {
+        this.isSubscribedToMailing = isSubscribedToMailing;
     }
 }

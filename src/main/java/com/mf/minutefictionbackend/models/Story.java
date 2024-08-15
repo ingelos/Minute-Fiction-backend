@@ -5,7 +5,6 @@ import com.mf.minutefictionbackend.enums.StoryStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,9 +27,9 @@ public class Story {
 
 
     @ManyToOne
-    @JoinColumn(name = "author_profile_username", referencedColumnName = "username")
+    @JoinColumn(name = "author_id", referencedColumnName = "username")
     @JsonIgnore
-    private AuthorProfile authorProfile;
+    private AuthorProfile author;
 
     @ManyToOne
     @JoinColumn(name = "theme_id")
@@ -39,7 +38,7 @@ public class Story {
 
     @OneToMany(mappedBy = "story")
     @JsonIgnore
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments;
 
 
 
@@ -79,12 +78,13 @@ public class Story {
         this.publishDate = publishDate;
     }
 
-    public AuthorProfile getAuthorProfile() {
-        return authorProfile;
+
+    public AuthorProfile getAuthor() {
+        return author;
     }
 
-    public void setAuthorProfile(AuthorProfile authorProfile) {
-        this.authorProfile = authorProfile;
+    public void setAuthor(AuthorProfile author) {
+        this.author = author;
     }
 
     public void setTheme(Theme theme) {

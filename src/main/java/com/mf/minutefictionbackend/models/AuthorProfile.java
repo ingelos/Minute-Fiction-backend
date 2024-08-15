@@ -29,7 +29,7 @@ public class AuthorProfile {
     @JoinColumn(name = "username")
     private User user;
 
-    @OneToMany(mappedBy = "authorProfile")
+    @OneToMany(mappedBy = "author")
     @JsonIgnore
     private List<Story> stories = new ArrayList<>();
 

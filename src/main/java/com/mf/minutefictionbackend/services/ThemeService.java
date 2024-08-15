@@ -34,17 +34,16 @@ public class ThemeService {
     }
 
     public ThemeOutputDto getThemeById(Long id) {
-        Theme theme = themeRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + id));
+        Theme theme = themeRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + id));
         return ThemeMapper.themeFromModelToOutputDto(theme);
     }
 
 
     public void deleteThemeById(Long themeId) {
-        if (!themeRepository.existsById(themeId)) {
-            throw new ResourceNotFoundException("No user found with username " + themeId);
-        }
-        themeRepository.deleteById(themeId);
+        Theme theme = themeRepository.findById(themeId)
+                .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + themeId));
+        themeRepository.delete(theme);
     }
 
     public ThemeOutputDto updateTheme(Long themeId, ThemeInputDto updatedTheme) {

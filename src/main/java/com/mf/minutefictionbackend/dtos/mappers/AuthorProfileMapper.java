@@ -32,9 +32,7 @@ public class AuthorProfileMapper {
         }
 
         AuthorProfileOutputDto dto = new AuthorProfileOutputDto();
-
         dto.setUsername(authorProfile.getUsername());
-
         dto.setFirstname(authorProfile.getFirstname());
         dto.setLastname(authorProfile.getLastname());
         dto.setBio(authorProfile.getBio());

@@ -36,7 +36,7 @@ public class StoryService {
 
     public StoryOutputDto submitStory(StoryInputDto storyInputDto, String username, Long themeId) {
         AuthorProfile authorProfile = authorProfileRepository.findById(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Authorprofile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Authorprofile required for submitting stories"));
         Theme theme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Theme not found"));
 
@@ -78,11 +78,10 @@ public class StoryService {
     }
 
     public void deleteStoryById(Long id) {
-        if (storyRepository.existsById(id)) {
-            throw new ResourceNotFoundException("No story found with id " + id);
+        Story story = storyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No story found with id " + id));
+            storyRepository.delete(story);
         }
-        storyRepository.deleteById(id);
-    }
 
 
     public List<StoryOutputDto> getStoriesByStatusAndThemeId(StoryStatus status, Long themeId) {
@@ -105,7 +104,7 @@ public class StoryService {
 
     public List<StoryOutputDto> getPublishedStoriesByAuthor(String username) {
 
-        List<Story> stories = storyRepository.findByAuthorProfile_UsernameAndStatus(username, StoryStatus.PUBLISHED);
+        List<Story> stories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.PUBLISHED);
         return StoryMapper.storyModelListToOutputList(stories);
     }
 

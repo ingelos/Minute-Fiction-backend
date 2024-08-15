@@ -14,13 +14,13 @@ import java.util.List;
 
 public class StoryMapper {
 
-    public static Story storyFromInputDtoToModel(StoryInputDto storyInputDto, AuthorProfile authorProfile, Theme theme) {
+    public static Story storyFromInputDtoToModel(StoryInputDto storyInputDto, AuthorProfile author, Theme theme) {
         Story story = new Story();
         story.setTitle(storyInputDto.getTitle());
         story.setContent(storyInputDto.getContent());
         story.setStatus(StoryStatus.SUBMITTED);
         story.setPublishDate(null);
-        story.setAuthorProfile(authorProfile);
+        story.setAuthor(author);
         story.setTheme(theme);
 
         return story;
@@ -34,15 +34,17 @@ public class StoryMapper {
         storyDto.setStatus(story.getStatus());
         storyDto.setPublishDate(story.getPublishDate());
 
-        storyDto.setAuthorUsername(story.getAuthorProfile().getUsername());
+        storyDto.setAuthorUsername(story.getAuthor().getUsername());
         storyDto.setThemeName(story.getTheme().getName());
+
+        storyDto.setComments(CommentMapper.commentModelListToOutputList(story.getComments()));
 
         return storyDto;
     }
 
     public static List<StoryOutputDto> storyModelListToOutputList(List<Story> stories) {
         if(stories.isEmpty()) {
-            throw new ResourceNotFoundException("No stories found for your search criteria");
+            throw new ResourceNotFoundException("No stories found.");
         }
 
         List<StoryOutputDto> storyOutputDtoList = new ArrayList<>();

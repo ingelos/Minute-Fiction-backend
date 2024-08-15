@@ -3,6 +3,7 @@ package com.mf.minutefictionbackend.services;
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.AuthorProfileMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
+import com.mf.minutefictionbackend.exceptions.AuthorProfileDeletionException;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
@@ -73,4 +74,16 @@ public class AuthorProfileService {
     }
 
 
+    public void deleteAuthorProfile(String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("user not found"));
+        AuthorProfile authorProfile = user.getAuthorProfile();
+
+        if(authorProfile != null && !authorProfile.getStories().isEmpty()) {
+            throw new AuthorProfileDeletionException("Cannot delete profile. Author has existing stories.");
+        }
+        authorProfileRepository.deleteById(username);
+        user.setAuthorProfile(null);
+        userRepository.save(user);
+    }
 }

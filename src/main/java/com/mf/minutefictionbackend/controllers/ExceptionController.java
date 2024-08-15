@@ -1,5 +1,6 @@
 package com.mf.minutefictionbackend.controllers;
 
+import com.mf.minutefictionbackend.exceptions.AuthorProfileDeletionException;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class ExceptionController {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+    @ExceptionHandler(value = AuthorProfileDeletionException.class)
+    public ResponseEntity<String> handleAuthorProfileDeleteException(AuthorProfileDeletionException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

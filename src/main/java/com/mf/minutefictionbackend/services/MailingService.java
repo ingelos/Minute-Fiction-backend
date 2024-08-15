@@ -52,10 +52,9 @@ public class MailingService {
     }
 
     public void deleteMailingById(Long mailingId) {
-        if (!mailingRepository.existsById(mailingId)) {
-            throw new ResourceNotFoundException("No mailing found");
-        }
-        mailingRepository.deleteById(mailingId);
+        Mailing mailing = mailingRepository.findById(mailingId)
+                .orElseThrow(() -> new ResourceNotFoundException("No mailing found with id " + mailingId));
+        mailingRepository.delete(mailing);
     }
 
 

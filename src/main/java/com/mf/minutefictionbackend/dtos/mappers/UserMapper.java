@@ -15,7 +15,7 @@ public class UserMapper {
         user.setUsername(userInputDto.getUsername());
         user.setPassword(userInputDto.getPassword());
         user.setEmail(userInputDto.getEmail());
-        user.setSubscribedToMailing(userInputDto.getSubscribedToMailing());
+        user.setSubscribedToMailing(userInputDto.getIsSubscribedToMailing());
 
         return user;
     }
@@ -24,9 +24,8 @@ public class UserMapper {
         UserOutputDto userDto = new UserOutputDto();
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
-        userDto.setSubscribedToMailing(user.getSubscribedToMailing());
-
-        userDto.setAuthorProfile(AuthorProfileMapper.authorProfileFromModelToOutputDto(user.getAuthorProfile()));
+        userDto.setIsSubscribedToMailing(user.isSubscribedToMailing());
+        userDto.setHasAuthorProfile(user.getAuthorProfile() != null);
 
         return userDto;
     }
@@ -35,9 +34,7 @@ public class UserMapper {
         if(users.isEmpty()) {
             throw new ResourceNotFoundException("No users found.");
         }
-
         Set<UserOutputDto> userOutputDtoSet = new HashSet<>();
-
         users.forEach((user) -> userOutputDtoSet.add(userFromModelToOutputDto(user)));
         return userOutputDtoSet;
     }
