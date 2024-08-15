@@ -10,7 +10,8 @@ import java.util.List;
 public class Theme {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "theme_sequence")
+    @SequenceGenerator(name = "theme_sequence", sequenceName = "theme_sequence", initialValue = 1004, allocationSize = 1)
     private Long id;
     @Column
     private String name;
