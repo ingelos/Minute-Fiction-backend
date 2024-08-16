@@ -46,6 +46,10 @@ public class AuthorProfileMapper {
             dto.setStoryTitles(new ArrayList<>());
         }
 
+        if (authorProfile.getProfilePhoto() != null) {
+            dto.setProfilePhotoFileName(authorProfile.getProfilePhoto().getFileName());
+        }
+
         return dto;
     }
 

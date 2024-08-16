@@ -2,12 +2,25 @@ package com.mf.minutefictionbackend.controllers;
 
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
+import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.services.AuthorProfileService;
+import com.mf.minutefictionbackend.services.PhotoService;
 import com.mf.minutefictionbackend.services.StoryService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.print.attribute.standard.Media;
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 
 @RestController
@@ -16,11 +29,13 @@ public class AuthorProfileController {
 
     private final AuthorProfileService authorProfileService;
     private final StoryService storyService;
+    private final PhotoService photoService;
 
 
-    public AuthorProfileController(AuthorProfileService authorProfileService, StoryService storyService) {
+    public AuthorProfileController(AuthorProfileService authorProfileService, StoryService storyService, PhotoService photoService) {
         this.authorProfileService = authorProfileService;
         this.storyService = storyService;
+        this.photoService = photoService;
     }
 
     @GetMapping
@@ -57,6 +72,40 @@ public class AuthorProfileController {
         return ResponseEntity.ok(stories);
     }
 
+    // add and get author photo
+
+    @PostMapping("/{username}/photo")
+    public ResponseEntity<AuthorProfile> addPhotoToAuthorProfile(@PathVariable("username") String username, @RequestBody MultipartFile file)
+        throws IOException {
+
+        String fileName = photoService.storeFile(file);
+        AuthorProfile authorProfile = authorProfileService.assignPhotoToAuthorProfile(fileName, username);
+
+            String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/authorprofiles")
+                    .path(Objects.requireNonNull(username))
+                    .path("/photo")
+                    .toUriString();
+
+            return ResponseEntity.created(URI.create(url)).body(authorProfile);
+    }
+
+    @GetMapping("/{username}/photo")
+    public ResponseEntity<Resource> getAuthorProfilePhoto(@PathVariable("username") String username, HttpServletRequest request) {
+        Resource resource = authorProfileService.getPhotoForAuthorProfile(username);
+        String mimeType;
+
+        try {
+            mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException e) {
+            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(mimeType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + resource.getFilename())
+                .body(resource);
+    }
 
 
 }

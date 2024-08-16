@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,5 +36,12 @@ public class ExceptionController {
     public ResponseEntity<String> handleAuthorProfileDeleteException(AuthorProfileDeletionException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = IOException.class)
+    public ResponseEntity<String> handleIOException(IOException ex){
+        return new ResponseEntity<>("An error occurred while processing the file: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
 
 }

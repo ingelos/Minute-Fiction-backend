@@ -21,7 +21,7 @@ public class User {
 
 
     @OneToOne(mappedBy = "user", optional = true)
-//    @JsonIgnore
+    @JsonIgnore
     private AuthorProfile authorProfile;
 
     @OneToMany(mappedBy = "user")
