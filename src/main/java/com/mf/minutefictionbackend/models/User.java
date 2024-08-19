@@ -1,8 +1,6 @@
 package com.mf.minutefictionbackend.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -23,7 +21,7 @@ public class User {
 
 
     @OneToOne(mappedBy = "user", optional = true)
-//    @JsonIgnore
+    @JsonIgnore
     private AuthorProfile authorProfile;
 
     @OneToMany(mappedBy = "user")
@@ -55,7 +53,7 @@ public class User {
         this.email = email;
     }
 
-    public Boolean getSubscribedToMailing() {
+    public boolean isSubscribedToMailing() {
         return subscribedToMailing;
     }
 

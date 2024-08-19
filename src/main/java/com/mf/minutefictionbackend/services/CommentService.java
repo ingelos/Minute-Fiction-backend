@@ -60,16 +60,15 @@ public class CommentService {
 
 
     public void deleteCommentById(Long commentId) {
-        if (!commentRepository.existsById(commentId)) {
-            throw new ResourceNotFoundException("No comment found");
-        }
-        commentRepository.deleteById(commentId);
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("No comment found with id " + commentId));
+        commentRepository.delete(comment);
     }
 
 
     public CommentOutputDto getCommentById(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("No comment found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No comment found with id " + commentId));
             return CommentMapper.commentFromModelToOutputDto(comment);
     }
 

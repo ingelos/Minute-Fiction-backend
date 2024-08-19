@@ -14,13 +14,13 @@ import java.util.List;
 
 public class StoryMapper {
 
-    public static Story storyFromInputDtoToModel(StoryInputDto storyInputDto, AuthorProfile authorProfile, Theme theme) {
+    public static Story storyFromInputDtoToModel(StoryInputDto storyInputDto, AuthorProfile author, Theme theme) {
         Story story = new Story();
         story.setTitle(storyInputDto.getTitle());
         story.setContent(storyInputDto.getContent());
         story.setStatus(StoryStatus.SUBMITTED);
         story.setPublishDate(null);
-        story.setAuthorProfile(authorProfile);
+        story.setAuthor(author);
         story.setTheme(theme);
 
         return story;
@@ -34,14 +34,10 @@ public class StoryMapper {
         storyDto.setStatus(story.getStatus());
         storyDto.setPublishDate(story.getPublishDate());
 
-        if(story.getAuthorProfile() != null && story.getAuthorProfile().getUser() != null) {
-            storyDto.setAuthorUsername(story.getAuthorProfile().getUser().getUsername());
-        } else {
-            storyDto.setAuthorUsername(null);
-        }
-
+        storyDto.setAuthorUsername(story.getAuthor().getUsername());
         storyDto.setThemeName(story.getTheme().getName());
 
+        storyDto.setComments(CommentMapper.commentModelListToOutputList(story.getComments()));
 
         return storyDto;
     }

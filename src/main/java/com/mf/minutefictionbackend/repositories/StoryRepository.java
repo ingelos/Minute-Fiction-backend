@@ -12,7 +12,7 @@ import java.util.List;
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
     List<Story> findByStatus(StoryStatus status);
-    List<Story> findByAuthorProfile_User_UsernameAndStatus(String username, StoryStatus status);
+    List<Story> findByAuthor_UsernameAndStatus(String username, StoryStatus status);
     List<Story> findByStatusAndTheme(StoryStatus status, Theme theme);
 
 }

@@ -30,13 +30,12 @@ public class CommentMapper {
         commentDto.setStoryId(comment.getStory().getId());
         commentDto.setUsername(comment.getUser().getUsername());
 
-
         return commentDto;
     }
 
     public static List<CommentOutputDto> commentModelListToOutputList(List<Comment> comments) {
-        if(comments.isEmpty()) {
-            throw new ResourceNotFoundException("No comments found.");
+        if(comments == null || comments.isEmpty()) {
+            return new ArrayList<>();
         }
         List<CommentOutputDto> commentOutputDtoList = new ArrayList<>();
         comments.forEach((comment) -> commentOutputDtoList.add(commentFromModelToOutputDto(comment)));

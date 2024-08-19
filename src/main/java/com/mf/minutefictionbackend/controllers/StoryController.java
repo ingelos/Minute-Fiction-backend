@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-//@RequestMapping("/stories")
+@RequestMapping("/stories")
 public class StoryController {
 
     private final StoryService storyService;
@@ -28,9 +28,9 @@ public class StoryController {
 
 
 
-    @PostMapping("/stories/submit")
-    public ResponseEntity<StoryOutputDto> submitStory(@Valid @RequestBody StoryInputDto storyInputDto, @RequestParam String profileId, @RequestParam Long themeId) {
-        StoryOutputDto storyDto = storyService.submitStory(storyInputDto, profileId, themeId);
+    @PostMapping("/submit")
+    public ResponseEntity<StoryOutputDto> submitStory(@Valid @RequestBody StoryInputDto storyInputDto, @RequestParam String username, @RequestParam Long themeId) {
+        StoryOutputDto storyDto = storyService.submitStory(storyInputDto, username, themeId);
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -39,7 +39,7 @@ public class StoryController {
     }
 
 
-    @PutMapping("stories/publish/{storyId}")
+    @PutMapping("/publish/{storyId}")
     public ResponseEntity<StoryOutputDto> publishStory(@PathVariable Long storyId) {
         StoryOutputDto story = storyService.publishStory(storyId);
         return ResponseEntity.ok(story);
@@ -47,13 +47,13 @@ public class StoryController {
 
     // divide in getSubmittedStories and getPublishedStories
 
-    @GetMapping("stories/submitted")
+    @GetMapping("/submitted")
     public ResponseEntity<List<StoryOutputDto>> getAllSubmittedStories() {
         List<StoryOutputDto> stories = storyService.getStoriesByStatus(StoryStatus.SUBMITTED);
         return ResponseEntity.ok(stories);
     }
 
-    @GetMapping("stories/published")
+    @GetMapping("/published")
     public ResponseEntity<List<StoryOutputDto>> getAllPublishedStories() {
         List<StoryOutputDto> stories = storyService.getStoriesByStatus(StoryStatus.PUBLISHED);
         return ResponseEntity.ok(stories);
@@ -61,31 +61,41 @@ public class StoryController {
 
 
 
-    @GetMapping("stories/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<StoryOutputDto> getStoryById(@PathVariable ("id") Long id) {
         StoryOutputDto optionalStory = storyService.getStoryById(id);
         return ResponseEntity.ok().body(optionalStory);
     }
 
-    @DeleteMapping("stories/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStory(@PathVariable("id") Long id) {
         storyService.deleteStoryById(id);
         return ResponseEntity.noContent().build();
     }
 
-    // get submitted stories by theme
+    // get submitted stories by theme id
 
-    @GetMapping("/stories/submitted/{themeId}")
-    public ResponseEntity<List<StoryOutputDto>> getSubmittedStoriesByTheme(@PathVariable("themeId") Long themeId) {
-        List<StoryOutputDto> stories = storyService.getStoriesByStatusAndTheme(StoryStatus.SUBMITTED, themeId);
+    @GetMapping("/submitted/{themeId}")
+    public ResponseEntity<List<StoryOutputDto>> getSubmittedStoriesByThemeId(@PathVariable("themeId") Long themeId) {
+        List<StoryOutputDto> stories = storyService.getStoriesByStatusAndThemeId(StoryStatus.SUBMITTED, themeId);
         return ResponseEntity.ok(stories);
     }
 
-    // get published stories by theme
+    // get published stories by theme id
 
-    @GetMapping("/stories/published/{themeId}")
-    public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByTheme(@PathVariable("themeId") Long themeId) {
-        List<StoryOutputDto> stories = storyService.getStoriesByStatusAndTheme(StoryStatus.PUBLISHED, themeId);
+    @GetMapping("/published/{themeId}")
+    public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByThemeId(@PathVariable("themeId") Long themeId) {
+        List<StoryOutputDto> stories = storyService.getStoriesByStatusAndThemeId(StoryStatus.PUBLISHED, themeId);
+        return ResponseEntity.ok(stories);
+    }
+
+
+
+    // get published stories by theme name
+
+    @GetMapping("/published/themes/{themeName}")
+    public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByThemeName(@PathVariable("themeName") String themeName) {
+        List<StoryOutputDto> stories = storyService.getStoriesByStatusAndThemeName(StoryStatus.PUBLISHED, themeName);
         return ResponseEntity.ok(stories);
     }
 
@@ -94,7 +104,7 @@ public class StoryController {
 
     // get comments on story
 
-    @GetMapping("/stories/{storyId}/comments")
+    @GetMapping("/{storyId}/comments")
     public ResponseEntity<List<CommentOutputDto>> getCommentsByStory(@PathVariable Long storyId) {
         List<CommentOutputDto> comments = commentService.getCommentsByStory(storyId);
         return ResponseEntity.ok(comments);

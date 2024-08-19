@@ -59,7 +59,7 @@ public class UserService {
 
         updateUser.setUsername(updatedUser.getUsername());
         updateUser.setEmail(updateUser.getEmail());
-        updateUser.setSubscribedToMailing(updatedUser.getSubscribedToMailing());
+        updateUser.setSubscribedToMailing(updatedUser.getIsSubscribedToMailing());
 
         User returnUser = userRepository.save(updateUser);
         return UserMapper.userFromModelToOutputDto(returnUser);

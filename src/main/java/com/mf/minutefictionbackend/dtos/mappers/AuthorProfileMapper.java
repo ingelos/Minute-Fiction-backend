@@ -32,9 +32,7 @@ public class AuthorProfileMapper {
         }
 
         AuthorProfileOutputDto dto = new AuthorProfileOutputDto();
-
         dto.setUsername(authorProfile.getUsername());
-
         dto.setFirstname(authorProfile.getFirstname());
         dto.setLastname(authorProfile.getLastname());
         dto.setBio(authorProfile.getBio());
@@ -46,6 +44,10 @@ public class AuthorProfileMapper {
             dto.setStoryTitles(storyTitles);
         } else {
             dto.setStoryTitles(new ArrayList<>());
+        }
+
+        if (authorProfile.getProfilePhoto() != null) {
+            dto.setProfilePhoto(ProfilePhotoMapper.profilePhotoFromModelToOutputDto(authorProfile.getProfilePhoto()));
         }
 
         return dto;

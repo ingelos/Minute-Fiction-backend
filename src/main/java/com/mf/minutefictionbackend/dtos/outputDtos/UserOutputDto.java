@@ -5,21 +5,20 @@ public class UserOutputDto {
 
     public String username;
     public String email;
-    public Boolean subscribedToMailing;
-
-    public AuthorProfileOutputDto authorProfile;
+    public Boolean isSubscribedToMailing;
+    public Boolean hasAuthorProfile;
 
 
     public UserOutputDto() {
 
     }
 
-    public UserOutputDto(String username, String email, Boolean subscribedToMailing) {
+    public UserOutputDto(String username, String email, Boolean isSubscribedToMailing, Boolean hasAuthorProfile) {
         this.username = username;
         this.email = email;
-        this.subscribedToMailing = subscribedToMailing;
+        this.isSubscribedToMailing = isSubscribedToMailing;
+        this.hasAuthorProfile = hasAuthorProfile;
     }
-
 
     public String getUsername() {
         return username;
@@ -37,21 +36,19 @@ public class UserOutputDto {
         this.email = email;
     }
 
-    public Boolean getSubscribedToMailing() {
-        return subscribedToMailing;
+    public Boolean getIsSubscribedToMailing() {
+        return isSubscribedToMailing;
     }
 
-    public void setSubscribedToMailing(Boolean subscribedToMailing) {
-        this.subscribedToMailing = subscribedToMailing;
+    public void setIsSubscribedToMailing(Boolean isSubscribedToMailing) {
+        this.isSubscribedToMailing = isSubscribedToMailing;
     }
 
-    public AuthorProfileOutputDto getAuthorProfile() {
-        return authorProfile;
+    public Boolean getHasAuthorProfile() {
+        return hasAuthorProfile;
     }
 
-    public void setAuthorProfile(AuthorProfileOutputDto authorProfile) {
-        this.authorProfile = authorProfile;
+    public void setHasAuthorProfile(Boolean hasAuthorProfile) {
+        this.hasAuthorProfile = hasAuthorProfile;
     }
-
-
 }

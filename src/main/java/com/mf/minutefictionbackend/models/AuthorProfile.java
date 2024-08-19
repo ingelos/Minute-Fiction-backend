@@ -27,9 +27,13 @@ public class AuthorProfile {
     @OneToOne
     @MapsId
     @JoinColumn(name = "username")
+    @JsonIgnore
     private User user;
 
-    @OneToMany(mappedBy = "authorProfile")
+    @OneToOne(mappedBy = "authorProfile")
+    private ProfilePhoto profilePhoto;
+
+    @OneToMany(mappedBy = "author")
     @JsonIgnore
     private List<Story> stories = new ArrayList<>();
 
@@ -75,6 +79,15 @@ public class AuthorProfile {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public ProfilePhoto getProfilePhoto() {
+        return profilePhoto;
+    }
+
+    public void setProfilePhoto(ProfilePhoto profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
+
     public List<Story> getStories() {
         return stories;
     }
