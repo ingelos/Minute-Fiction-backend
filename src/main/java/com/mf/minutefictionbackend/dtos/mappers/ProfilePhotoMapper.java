@@ -3,7 +3,6 @@ package com.mf.minutefictionbackend.dtos.mappers;
 import com.mf.minutefictionbackend.dtos.inputDtos.ProfilePhotoInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.ProfilePhotoOutputDto;
 import com.mf.minutefictionbackend.models.ProfilePhoto;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 public class ProfilePhotoMapper {
 

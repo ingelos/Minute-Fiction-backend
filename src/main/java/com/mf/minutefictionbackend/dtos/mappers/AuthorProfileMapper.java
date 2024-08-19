@@ -47,7 +47,7 @@ public class AuthorProfileMapper {
         }
 
         if (authorProfile.getProfilePhoto() != null) {
-            dto.setProfilePhotoFileName(authorProfile.getProfilePhoto().getFileName());
+            dto.setProfilePhoto(ProfilePhotoMapper.profilePhotoFromModelToOutputDto(authorProfile.getProfilePhoto()));
         }
 
         return dto;

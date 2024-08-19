@@ -29,4 +29,12 @@ public class ProfilePhoto {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    public AuthorProfile getAuthorProfile() {
+        return authorProfile;
+    }
+
+    public void setAuthorProfile(AuthorProfile authorProfile) {
+        this.authorProfile = authorProfile;
+    }
 }

@@ -2,11 +2,9 @@ package com.mf.minutefictionbackend.controllers;
 
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
-import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.services.AuthorProfileService;
 import com.mf.minutefictionbackend.services.PhotoService;
 import com.mf.minutefictionbackend.services.StoryService;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -75,17 +72,17 @@ public class AuthorProfileController {
     // add and get author photo
 
     @PostMapping("/{username}/photo")
-    public ResponseEntity<AuthorProfile> addPhotoToAuthorProfile(@PathVariable("username") String username, @RequestBody MultipartFile file)
+    public ResponseEntity<AuthorProfileOutputDto> addPhotoToAuthorProfile(@PathVariable("username") String username, @RequestBody MultipartFile file)
         throws IOException {
 
-        String fileName = photoService.storeFile(file);
-        AuthorProfile authorProfile = authorProfileService.assignPhotoToAuthorProfile(fileName, username);
-
             String url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/authorprofiles")
+                    .path("/authorprofiles/")
                     .path(Objects.requireNonNull(username))
                     .path("/photo")
                     .toUriString();
+
+        String fileName = photoService.storeFile(file);
+        AuthorProfileOutputDto authorProfile = authorProfileService.assignPhotoToAuthorProfile(fileName, username);
 
             return ResponseEntity.created(URI.create(url)).body(authorProfile);
     }

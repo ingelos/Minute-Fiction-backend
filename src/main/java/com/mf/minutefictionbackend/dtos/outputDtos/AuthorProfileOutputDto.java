@@ -11,9 +11,7 @@ public class AuthorProfileOutputDto {
     public String lastname;
     public String bio;
     public LocalDate dob;
-    public String profilePhotoFileName;
-
-
+    public ProfilePhotoOutputDto profilePhoto;
     public List<String> storyTitles;
 
 
@@ -70,12 +68,12 @@ public class AuthorProfileOutputDto {
         this.username = username;
     }
 
-    public String getProfilePhotoFileName() {
-        return profilePhotoFileName;
+    public ProfilePhotoOutputDto getProfilePhoto() {
+        return profilePhoto;
     }
 
-    public void setProfilePhotoFileName(String profilePhotoFileName) {
-        this.profilePhotoFileName = profilePhotoFileName;
+    public void setProfilePhoto(ProfilePhotoOutputDto profilePhoto) {
+        this.profilePhoto = profilePhoto;
     }
 
     public List<String> getStoryTitles() {

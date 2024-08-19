@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -35,9 +36,9 @@ public class PhotoService {
     public String storeFile(MultipartFile file) throws IOException {
 
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        Path filePath = Paths.get(fileStoragePath + "\\" + fileName);
-
+        Path filePath = Paths.get(fileStoragePath + File.separator + fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
         fileUploadRepository.save(new ProfilePhoto(fileName));
         return fileName;
     }
@@ -48,15 +49,14 @@ public class PhotoService {
 
         try {
             resource = new UrlResource(path.toUri());
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new RuntimeException("The file doesn't exist or isn't readable");
+            }
         } catch (MalformedURLException e) {
             throw new RuntimeException("Issue in reading the file", e);
         }
+        return resource;
 
-        if(resource.exists() && resource.isReadable()) {
-            return resource;
-        } else {
-            throw new RuntimeException("The file doesn't exist or isn't readable");
-        }
     }
 
 }

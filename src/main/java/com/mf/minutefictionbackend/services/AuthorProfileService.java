@@ -66,7 +66,7 @@ public class AuthorProfileService {
 
         AuthorProfile authorProfile = authorProfileRepository.findByUser(user)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for user with username " + username));
-            return AuthorProfileMapper.authorProfileFromModelToOutputDto(authorProfile);
+        return AuthorProfileMapper.authorProfileFromModelToOutputDto(authorProfile);
     }
 
     public AuthorProfileOutputDto updateAuthorProfile(String username, AuthorProfileOutputDto updatedProfile) {
@@ -88,7 +88,7 @@ public class AuthorProfileService {
                 .orElseThrow(() -> new ResourceNotFoundException("user not found"));
         AuthorProfile authorProfile = user.getAuthorProfile();
 
-        if(authorProfile != null && !authorProfile.getStories().isEmpty()) {
+        if (authorProfile != null && !authorProfile.getStories().isEmpty()) {
             throw new AuthorProfileDeletionException("Cannot delete profile. Author has existing stories.");
         }
         authorProfileRepository.deleteById(username);
@@ -101,33 +101,18 @@ public class AuthorProfileService {
 
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-
         AuthorProfile authorProfile = authorProfileRepository.findByUser(user)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for user with username " + username));
-
         ProfilePhoto photo = authorProfile.getProfilePhoto();
-        if(photo == null) {
+        if (photo == null) {
             throw new ResourceNotFoundException("Author " + username + " has no photo.");
         }
         return photoService.downLoadFile(photo.getFileName());
     }
 
-    //        return ProfilePhotoMapper.profilePhotoFromModelToOutputDto(photo);
-
-
-//        Optional<AuthorProfile> optionalAuthorProfile = authorProfileRepository.findById(username);
-//        if(optionalAuthorProfile.isEmpty()) {
-//            throw new ResourceNotFoundException("No authorprofile found for author with username " + username);
-//        }
-//        ProfilePhoto photo = optionalAuthorProfile.get().getAuthorProfilePhoto();
-//        if(photo == null) {
-//            throw new ResourceNotFoundException("Author with username " + username + " has no photo");
-//        }
-//        return photoService.downLoadFile(photo.getFileName());
-
 
     @Transactional
-    public AuthorProfile assignPhotoToAuthorProfile(String fileName, String username) {
+    public AuthorProfileOutputDto assignPhotoToAuthorProfile(String fileName, String username) {
 
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
@@ -136,23 +121,13 @@ public class AuthorProfileService {
         ProfilePhoto photo = fileUploadRepository.findByFileName(fileName)
                 .orElseThrow(() -> new ResourceNotFoundException("No author photo found."));
 
+        photo.setAuthorProfile(authorProfile);
         authorProfile.setProfilePhoto(photo);
-        return authorProfileRepository.save(authorProfile);
-        }
-
-
-//
-//        Optional<AuthorProfile> optionalAuthorProfile = authorProfileRepository.findById(username);
-//        Optional<ProfilePhoto> optionalAuthorProfilePhoto = fileUploadRepository.findByFileName(filename);
-//
-//        if(optionalAuthorProfile.isPresent() && optionalAuthorProfilePhoto.isPresent()) {
-//            ProfilePhoto photo = optionalAuthorProfilePhoto.get();
-//            AuthorProfile authorProfile = optionalAuthorProfile.get();
-//            authorProfile.setProfilePhoto(photo);
-//            return authorProfileRepository.save(authorProfile);
-//        } else {
-//            throw new ResourceNotFoundException("Author or photo not found");
-//        }
+        authorProfileRepository.save(authorProfile);
+        fileUploadRepository.save(photo);
+        return AuthorProfileMapper.authorProfileFromModelToOutputDto(authorProfile);
     }
+
+}
 
 
