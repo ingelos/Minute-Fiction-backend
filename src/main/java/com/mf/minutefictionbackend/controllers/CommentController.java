@@ -20,21 +20,6 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-//    @PostMapping("/stories/{storyId}/comments")
-//    public ResponseEntity<CommentOutputDto> addComment(@PathVariable Long storyId, @RequestParam String username, @RequestBody CommentInputDto commentInputDto) {
-//        CommentOutputDto commentDto = commentService.addComment(storyId, username, commentInputDto);
-//
-//        URI uri = URI.create(ServletUriComponentsBuilder
-//                .fromCurrentRequest()
-//                .path("/{id}")
-//                .buildAndExpand(commentDto.getId())
-//                .toUriString());
-//
-//        return ResponseEntity.created(uri).body(commentDto);
-//    }
-
-
-
 
     @PostMapping("/stories/{storyId}/comments")
     public ResponseEntity<CommentOutputDto> addComment(@PathVariable Long storyId, @RequestParam String username, @RequestBody CommentInputDto commentInputDto) {

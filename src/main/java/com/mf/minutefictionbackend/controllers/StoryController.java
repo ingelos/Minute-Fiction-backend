@@ -90,7 +90,6 @@ public class StoryController {
     }
 
 
-
     // get published stories by theme name
 
     @GetMapping("/published/themes/{themeName}")
@@ -100,8 +99,6 @@ public class StoryController {
     }
 
 
-
-
     // get comments on story
 
     @GetMapping("/{storyId}/comments")
@@ -109,6 +106,8 @@ public class StoryController {
         List<CommentOutputDto> comments = commentService.getCommentsByStory(storyId);
         return ResponseEntity.ok(comments);
     }
+
+
 
 
 

@@ -30,6 +30,11 @@ public class MailingController {
         return ResponseEntity.created(uri).body(mailing);
     }
 
+    @GetMapping("/{mailingId}")
+    public ResponseEntity<MailingOutputDto> getMailingById(@Valid@PathVariable("mailingId") Long mailingId) {
+        return ResponseEntity.ok().body(mailingService.getMailingById(mailingId));
+    }
+
     @GetMapping
     public ResponseEntity<List<MailingOutputDto>> getAllMailings() {
         return ResponseEntity.ok().body(mailingService.getAllMailings());
@@ -47,11 +52,11 @@ public class MailingController {
         return ResponseEntity.noContent().build();
     }
 
-//    @PostMapping("/{id}/send")
-//    public ResponseEntity<Void> sendMailing(@PathVariable Long id) {
-//        mailingService.sendMailing(id);
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping("/{mailingId}/send")
+    public ResponseEntity<Void> sendMailing(@PathVariable Long mailingId) {
+        mailingService.sendMailing(mailingId);
+        return ResponseEntity.ok().build();
+    }
 
     // sendMailing - authorisation Editor
 

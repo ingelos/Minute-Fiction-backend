@@ -6,12 +6,15 @@ import com.mf.minutefictionbackend.dtos.outputDtos.MailingOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Mailing;
 
+import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.repositories.MailingRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
+
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -19,18 +22,24 @@ public class MailingService {
 
     private final MailingRepository mailingRepository;
     private final UserRepository userRepository;
+    private final JavaMailSender mailSender;
 
-//    private JavaMailSender mailSender;
 
-
-    public MailingService(MailingRepository mailingRepository, UserRepository userRepository) {
+    public MailingService(MailingRepository mailingRepository, UserRepository userRepository, JavaMailSender mailSender) {
         this.mailingRepository = mailingRepository;
         this.userRepository = userRepository;
+        this.mailSender = mailSender;
     }
 
 
     public MailingOutputDto createMailing(MailingInputDto mailingInputDto) {
         Mailing mailing = mailingRepository.save(MailingMapper.mailingFromInputDtoToModel(mailingInputDto));
+        return MailingMapper.mailingFromModelToOutputDto(mailing);
+    }
+
+    public MailingOutputDto getMailingById(Long mailingId) {
+        Mailing mailing = mailingRepository.findById(mailingId)
+                .orElseThrow(() -> new ResourceNotFoundException("No mailing found with id " + mailingId));
         return MailingMapper.mailingFromModelToOutputDto(mailing);
     }
 
@@ -58,32 +67,29 @@ public class MailingService {
     }
 
 
-    // uitzoeken hoe dat zit met javaMailSender en neppe email etc.!!!
+    public void sendMailing(Long mailingId) {
+        Mailing mailing = mailingRepository.findById(mailingId)
+                .orElseThrow(() -> new ResourceNotFoundException("No mailing found with id " + mailingId));
+
+        List<User> subscribers = userRepository.findBySubscribedToMailingTrue();
+
+        if(subscribers.isEmpty()) {
+            throw new RuntimeException("No subscribers to the mailing at this moment.");
+        }
+        subscribers.forEach(user -> sendEmail(user.getEmail(), mailing.getSubject(), mailing.getBody()));
+        }
 
 
-//    public void sendMailing(Long mailingId) {
-//        Optional<Mailing> optionalMailing = mailingRepository.findById(mailingId);
-//        if(optionalMailing.isPresent()) {
-//            Mailing mailing = optionalMailing.get();
-//            List<User> subscribers = userRepository.findBySubscribedToMailing();
-//
-//            if(!subscribers.isEmpty()) {
-//                for (User user : subscribers) {
-//                    sendEmail(user.getEmail(), mailing.getTitle(), mailing.getContent());
-//                }
-//            }
-//        } else {
-//            throw new ResourceNotFoundException("No mailing found.");
-//        }
-//    }
+        // html of html template?
 
-//    private void sendEmail(String to, String subject, String body) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(to);
-//        message.setSubject(subject);
-//        message.setText(body);
-//        emailSender.send(message);
-//    }
+    private void sendEmail(String to, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("noreply@minutefiction.com");
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        mailSender.send(message);
+    }
 
 
 }

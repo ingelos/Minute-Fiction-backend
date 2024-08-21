@@ -69,6 +69,13 @@ public class AuthorProfileController {
         return ResponseEntity.ok(stories);
     }
 
+
+    // download function for downloading own published stories??
+
+
+
+
+
     // add and get author photo
 
     @PostMapping("/{username}/photo")
