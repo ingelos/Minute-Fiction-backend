@@ -128,6 +128,19 @@ public class AuthorProfileService {
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(authorProfile);
     }
 
+    public void deletePhotoByUsername(String username) {
+        AuthorProfile authorProfile = authorProfileRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No authorprofile found for " + username));
+        ProfilePhoto photo = authorProfile.getProfilePhoto();
+        if(photo == null) {
+            throw new ResourceNotFoundException("No profile photo found for this author.");
+        }
+        authorProfile.setProfilePhoto(null);
+        authorProfileRepository.save(authorProfile);
+
+        fileUploadRepository.delete(photo);
+        photoService.deleteFile(photo.getFileName());
+    }
 }
 
 

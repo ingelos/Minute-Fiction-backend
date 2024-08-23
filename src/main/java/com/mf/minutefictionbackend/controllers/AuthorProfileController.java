@@ -111,5 +111,13 @@ public class AuthorProfileController {
                 .body(resource);
     }
 
+    @DeleteMapping("/{username}/photo")
+    public ResponseEntity<Void> deleteProfilePhoto(@PathVariable("username") String username) {
+        authorProfileService.deletePhotoByUsername(username);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 
 }
