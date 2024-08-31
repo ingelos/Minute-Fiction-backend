@@ -6,6 +6,7 @@ import com.mf.minutefictionbackend.services.AuthorProfileService;
 import com.mf.minutefictionbackend.services.PhotoService;
 import com.mf.minutefictionbackend.services.StoryService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -43,7 +44,7 @@ public class AuthorProfileController {
 
 
     @PutMapping("/{username}")
-    public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@PathVariable("username") String username, @RequestBody AuthorProfileOutputDto updatedProfile) {
+    public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@Valid @PathVariable("username") String username, @RequestBody AuthorProfileOutputDto updatedProfile) {
         AuthorProfileOutputDto authorProfileDto = authorProfileService.updateAuthorProfile(username, updatedProfile);
         return ResponseEntity.ok().body(authorProfileDto);
     }
@@ -79,7 +80,7 @@ public class AuthorProfileController {
     // add and get author photo
 
     @PostMapping("/{username}/photo")
-    public ResponseEntity<AuthorProfileOutputDto> addPhotoToAuthorProfile(@PathVariable("username") String username, @RequestBody MultipartFile file)
+    public ResponseEntity<AuthorProfileOutputDto> addPhotoToAuthorProfile(@Valid @PathVariable("username") String username, @RequestBody MultipartFile file)
         throws IOException {
 
             String url = ServletUriComponentsBuilder.fromCurrentContextPath()

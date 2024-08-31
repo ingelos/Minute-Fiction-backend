@@ -12,7 +12,7 @@ public class AuthorProfileOutputDto {
     public String bio;
     public LocalDate dob;
     public ProfilePhotoOutputDto profilePhoto;
-    public List<String> storyTitles;
+  
 
 
     public AuthorProfileOutputDto() {
@@ -74,14 +74,6 @@ public class AuthorProfileOutputDto {
 
     public void setProfilePhoto(ProfilePhotoOutputDto profilePhoto) {
         this.profilePhoto = profilePhoto;
-    }
-
-    public List<String> getStoryTitles() {
-        return storyTitles;
-    }
-
-    public void setStoryTitles(List<String> storyTitles) {
-        this.storyTitles = storyTitles;
     }
 
 }

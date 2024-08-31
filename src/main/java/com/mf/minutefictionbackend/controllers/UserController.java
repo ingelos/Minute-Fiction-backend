@@ -36,7 +36,7 @@ public class UserController {
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/" + user.username).toUriString());
+                .path("/" + user.getUsername()).toUriString());
 
         return ResponseEntity.created(uri).body(user);
     }
@@ -68,7 +68,7 @@ public class UserController {
 
 
     @PostMapping("/{username}/authorprofiles")
-    public ResponseEntity<AuthorProfileOutputDto> createAuthorProfile(@PathVariable String username, @RequestBody AuthorProfileInputDto authorProfileInputDto) {
+    public ResponseEntity<AuthorProfileOutputDto> createAuthorProfile(@Valid @PathVariable String username, @RequestBody AuthorProfileInputDto authorProfileInputDto) {
         AuthorProfileOutputDto createdProfile = authorProfileService.createAuthorProfile(username, authorProfileInputDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProfile);
     }

@@ -29,14 +29,6 @@ public class ThemeMapper {
         themeOutputDto.setOpenDate(theme.getOpenDate());
         themeOutputDto.setClosingDate(theme.getClosingDate());
 
-        if(theme.getStories() != null) {
-            List<String> storyTitles = new ArrayList<>();
-            theme.getStories().forEach(story -> storyTitles.add(story.getTitle()));
-            themeOutputDto.setStoryTitles(storyTitles);
-        } else {
-            themeOutputDto.setStoryTitles(new ArrayList<>());
-        }
-
         return themeOutputDto;
     }
 

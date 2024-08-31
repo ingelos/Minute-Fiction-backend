@@ -4,19 +4,22 @@ import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.StoryMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.enums.StoryStatus;
-import com.mf.minutefictionbackend.exceptions.MethodArgumentNotValidException;
+import com.mf.minutefictionbackend.exceptions.NotAllowedToUpdatePublishedStoryException;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
+import com.mf.minutefictionbackend.exceptions.ThemeClosedException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
+import com.mf.minutefictionbackend.models.Comment;
 import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
 import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
+import com.mf.minutefictionbackend.repositories.CommentRepository;
 import com.mf.minutefictionbackend.repositories.StoryRepository;
 import com.mf.minutefictionbackend.repositories.ThemeRepository;
-import jakarta.validation.ConstraintViolationException;
-import org.apache.coyote.BadRequestException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,36 +30,44 @@ public class StoryService {
     private final AuthorProfileRepository authorProfileRepository;
     private final ThemeRepository themeRepository;
 
-    public StoryService(StoryRepository storyRepository, AuthorProfileRepository authorProfileRepository, ThemeRepository themeRepository) {
+    private final CommentRepository commentRepository;
+
+    public StoryService(StoryRepository storyRepository, AuthorProfileRepository authorProfileRepository, ThemeRepository themeRepository, CommentRepository commentRepository) {
         this.storyRepository = storyRepository;
         this.authorProfileRepository = authorProfileRepository;
         this.themeRepository = themeRepository;
+        this.commentRepository = commentRepository;
     }
 
 
-    public StoryOutputDto submitStory(StoryInputDto storyInputDto, String username, Long themeId) {
+    public StoryOutputDto submitStory(StoryInputDto storyInputDto, Long themeId, String username) {
         AuthorProfile authorProfile = authorProfileRepository.findById(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Authorprofile required for submitting stories"));
+                .orElseThrow(() -> new ResourceNotFoundException("Author profile is required for submitting stories."));
         Theme theme = themeRepository.findById(themeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Theme not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Theme not found."));
 
         if (theme.getClosingDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Theme closing date has passed");
+            throw new ThemeClosedException("Theme closing date has already passed.");
         }
 
-        Story story = StoryMapper.storyFromInputDtoToModel(storyInputDto, authorProfile, theme);
+        Story story = StoryMapper.storyFromInputDtoToModel(storyInputDto);
         story.setStatus(StoryStatus.SUBMITTED);
+        story.setAuthor(authorProfile);
+        story.setTheme(theme);
+        story.setPublishDate(null);
 
         Story savedStory = storyRepository.save(story);
         return StoryMapper.storyFromModelToOutputDto(savedStory);
     }
 
+
     public StoryOutputDto publishStory(Long storyId) {
         Story story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Story not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Story not found."));
 
         story.setStatus(StoryStatus.PUBLISHED);
         story.setPublishDate(LocalDate.now());
+
         Story publishedStory = storyRepository.save(story);
         return StoryMapper.storyFromModelToOutputDto(publishedStory);
     }
@@ -71,15 +82,16 @@ public class StoryService {
     }
 
 
-    public StoryOutputDto getStoryById(Long id) {
-        Story story = storyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No story found with id " + id));
+    public StoryOutputDto getStoryById(Long storyId) {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("No story found with id " + storyId));
         return StoryMapper.storyFromModelToOutputDto(story);
     }
 
-    public void deleteStoryById(Long id) {
-        Story story = storyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No story found with id " + id));
+    @Transactional
+    public void deleteStoryById(Long storyId) {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("No story found with id " + storyId));
             storyRepository.delete(story);
         }
 
@@ -103,10 +115,25 @@ public class StoryService {
 
 
     public List<StoryOutputDto> getPublishedStoriesByAuthor(String username) {
-
         List<Story> stories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.PUBLISHED);
         return StoryMapper.storyModelListToOutputList(stories);
     }
 
+
+    @Transactional
+    public StoryOutputDto updateStory(Long storyId, StoryInputDto updatedStory) {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("No story found."));
+
+        if(!story.getStatus().equals(StoryStatus.SUBMITTED)) {
+            throw new NotAllowedToUpdatePublishedStoryException("This story is already published, therefore changes are not allowed.");
+        }
+        if (story.getTheme().getClosingDate().isBefore(LocalDate.now())) {
+            throw new ThemeClosedException("Theme closing date has already passed, changes are no longer allowed.");
+            }
+        story.setContent(updatedStory.getContent());
+        Story returnStory = storyRepository.save(story);
+        return StoryMapper.storyFromModelToOutputDto(returnStory);
+    }
 
 }

@@ -4,6 +4,7 @@ import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.enums.StoryStatus;
+import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.services.CommentService;
 import com.mf.minutefictionbackend.services.StoryService;
 import jakarta.validation.Valid;
@@ -27,30 +28,37 @@ public class StoryController {
     }
 
 
-
-    @PostMapping("/submit")
-    public ResponseEntity<StoryOutputDto> submitStory(@Valid @RequestBody StoryInputDto storyInputDto, @RequestParam String username, @RequestParam Long themeId) {
-        StoryOutputDto storyDto = storyService.submitStory(storyInputDto, username, themeId);
+    @PostMapping("/submit/{themeId}")
+    public ResponseEntity<StoryOutputDto> submitStory(@Valid @PathVariable Long themeId, @RequestParam String username, @RequestBody StoryInputDto storyInputDto) {
+        StoryOutputDto storyDto = storyService.submitStory(storyInputDto, themeId, username);
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/" + storyDto.id).toUriString());
+                .path("/" + storyDto.getId()).toUriString());
+
         return ResponseEntity.created(uri).body(storyDto);
     }
 
-
-    @PutMapping("/publish/{storyId}")
-    public ResponseEntity<StoryOutputDto> publishStory(@PathVariable Long storyId) {
-        StoryOutputDto story = storyService.publishStory(storyId);
-        return ResponseEntity.ok(story);
+    @PatchMapping("/{storyId}")
+    public ResponseEntity<StoryOutputDto> updateSubmittedStory(@Valid @PathVariable("storyId") Long storyId, @RequestBody StoryInputDto updatedStory) {
+        StoryOutputDto updatedStoryDto = storyService.updateStory(storyId, updatedStory);
+        return ResponseEntity.ok().body(updatedStoryDto);
     }
-
-    // divide in getSubmittedStories and getPublishedStories
 
     @GetMapping("/submitted")
     public ResponseEntity<List<StoryOutputDto>> getAllSubmittedStories() {
         List<StoryOutputDto> stories = storyService.getStoriesByStatus(StoryStatus.SUBMITTED);
         return ResponseEntity.ok(stories);
+    }
+
+
+    @PatchMapping("/publish/{storyId}")
+    public ResponseEntity<StoryOutputDto> publishStory(@PathVariable Long storyId) {
+        StoryOutputDto story = storyService.publishStory(storyId);
+
+        //authority editor
+
+        return ResponseEntity.ok(story);
     }
 
     @GetMapping("/published")
@@ -60,16 +68,15 @@ public class StoryController {
     }
 
 
-
-    @GetMapping("/{id}")
-    public ResponseEntity<StoryOutputDto> getStoryById(@PathVariable ("id") Long id) {
-        StoryOutputDto optionalStory = storyService.getStoryById(id);
-        return ResponseEntity.ok().body(optionalStory);
+    @GetMapping("/{storyId}")
+    public ResponseEntity<StoryOutputDto> getStoryById(@PathVariable ("storyId") Long storyId) {
+        StoryOutputDto storyDto = storyService.getStoryById(storyId);
+        return ResponseEntity.ok().body(storyDto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStory(@PathVariable("id") Long id) {
-        storyService.deleteStoryById(id);
+    @DeleteMapping("/{storyId}")
+    public ResponseEntity<Void> deleteStory(@PathVariable("storyId") Long storyId) {
+        storyService.deleteStoryById(storyId);
         return ResponseEntity.noContent().build();
     }
 

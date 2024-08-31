@@ -4,6 +4,7 @@ import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.UserMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
+import com.mf.minutefictionbackend.exceptions.UsernameAlreadyExistsException;
 import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
 import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
@@ -28,6 +29,9 @@ public class UserService {
 
 
     public UserOutputDto createUser(UserInputDto userInputDto) {
+        if(userRepository.existsById(userInputDto.getUsername())) {
+            throw new UsernameAlreadyExistsException("Username is already taken, try another.");
+        }
         User user = userRepository.save(UserMapper.userFromInputDtoToModel(userInputDto));
         return UserMapper.userFromModelToOutputDto(user);
     }
@@ -58,7 +62,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("No user found with username " + username));
 
         updateUser.setUsername(updatedUser.getUsername());
-        updateUser.setEmail(updateUser.getEmail());
+        updateUser.setEmail(updatedUser.getEmail());
         updateUser.setSubscribedToMailing(updatedUser.getIsSubscribedToMailing());
 
         User returnUser = userRepository.save(updateUser);

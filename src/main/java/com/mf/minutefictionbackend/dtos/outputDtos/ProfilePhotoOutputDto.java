@@ -14,6 +14,8 @@ public class ProfilePhotoOutputDto {
         this.fileName = fileName;
     }
 
+
+
     public String getFileName() {
         return fileName;
     }

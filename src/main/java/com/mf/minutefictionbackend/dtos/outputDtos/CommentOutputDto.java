@@ -9,21 +9,17 @@ public class CommentOutputDto {
     public LocalDateTime created;
 
     public String username;
-    public Long storyId;
-
-
 
 
     public CommentOutputDto() {
 
     }
 
-    public CommentOutputDto(Long id, String content, LocalDateTime created, String username, Long storyId) {
+    public CommentOutputDto(Long id, String content, LocalDateTime created, String username) {
         this.id = id;
         this.content = content;
         this.created = created;
         this.username = username;
-        this.storyId = storyId;
     }
 
     public Long getId() {
@@ -58,11 +54,4 @@ public class CommentOutputDto {
         this.username = username;
     }
 
-    public Long getStoryId() {
-        return storyId;
-    }
-
-    public void setStoryId(Long storyId) {
-        this.storyId = storyId;
-    }
 }

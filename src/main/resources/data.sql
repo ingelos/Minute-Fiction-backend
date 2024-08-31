@@ -20,4 +20,5 @@ INSERT INTO stories (id, title, content, status, publish_date, author_id, theme_
                                                                                            (1003, 'Sci-fi-fun', 'When the air runs out...', 'PUBLISHED', '2024-06-01', 'author1', 1001);
 
 INSERT INTO comments (id, content, created, story_id, user_id) VALUES (1001, 'Lovely story!!', '2024-07-14 12:30:10', 1001, 'reader1'),
-                                                                      (1002, 'Great to read!', '2024-07-18 13:20:33', 1001, 'author2');
+                                                                      (1002, 'Great to read!', '2024-07-18 13:20:33', 1001, 'author2'),
+                                                                        (1003, 'Absolutely wonderful!', '2024-08-29 12:03:22', 1003, 'reader1');

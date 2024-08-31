@@ -2,11 +2,8 @@ package com.mf.minutefictionbackend.dtos.mappers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
-import com.mf.minutefictionbackend.enums.StoryStatus;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
-import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.Story;
-import com.mf.minutefictionbackend.models.Theme;
 
 
 import java.util.ArrayList;
@@ -14,14 +11,10 @@ import java.util.List;
 
 public class StoryMapper {
 
-    public static Story storyFromInputDtoToModel(StoryInputDto storyInputDto, AuthorProfile author, Theme theme) {
+    public static Story storyFromInputDtoToModel(StoryInputDto storyInputDto) {
         Story story = new Story();
         story.setTitle(storyInputDto.getTitle());
         story.setContent(storyInputDto.getContent());
-        story.setStatus(StoryStatus.SUBMITTED);
-        story.setPublishDate(null);
-        story.setAuthor(author);
-        story.setTheme(theme);
 
         return story;
     }
@@ -34,10 +27,10 @@ public class StoryMapper {
         storyDto.setStatus(story.getStatus());
         storyDto.setPublishDate(story.getPublishDate());
 
-        storyDto.setAuthorUsername(story.getAuthor().getUsername());
+        storyDto.setUsername(story.getAuthor().getUsername());
+        storyDto.setAuthorFirstname(story.getAuthor().getFirstname());
+        storyDto.setAuthorLastname(story.getAuthor().getLastname());
         storyDto.setThemeName(story.getTheme().getName());
-
-        storyDto.setComments(CommentMapper.commentModelListToOutputList(story.getComments()));
 
         return storyDto;
     }

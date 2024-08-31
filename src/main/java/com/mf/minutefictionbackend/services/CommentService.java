@@ -10,6 +10,7 @@ import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.repositories.CommentRepository;
 import com.mf.minutefictionbackend.repositories.StoryRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,26 +33,28 @@ public class CommentService {
 
     public CommentOutputDto addComment(CommentInputDto commentInputDto, Long storyId, String username) {
         Story story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new ResourceNotFoundException("No story found"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("No story found."));
         User user = userRepository.findById(username)
-                .orElseThrow(() -> new ResourceNotFoundException("No user found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No user found."));
 
-        Comment comment = CommentMapper.commentFromInputDtoToModel(commentInputDto, story, user);
+        Comment comment = CommentMapper.commentFromInputDtoToModel(commentInputDto);
+        comment.setStory(story);
+        comment.setUser(user);
         comment.setCreated(LocalDateTime.now());
 
         Comment savedComment = commentRepository.save(comment);
         return CommentMapper.commentFromModelToOutputDto(savedComment);
     }
 
+    @Transactional
     public CommentOutputDto updateComment(Long storyId, Long commentId, CommentInputDto updatedComment) {
         Story story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new ResourceNotFoundException("No story found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No story found."));
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("No comment found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No comment found."));
 
         if(!comment.getStory().equals(story)) {
-            throw new IllegalArgumentException("Comment does not belong to the specific story");
+            throw new IllegalArgumentException("Comment does not belong to the specific story.");
         }
         comment.setContent(updatedComment.getContent());
         Comment returnComment = commentRepository.save(comment);

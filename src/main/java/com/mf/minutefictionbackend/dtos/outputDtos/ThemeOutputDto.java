@@ -6,12 +6,13 @@ import java.util.List;
 public class ThemeOutputDto {
 
     public Long id;
+
     public String name;
     public String description;
     public LocalDate openDate;
     public LocalDate closingDate;
 
-    public List<String> storyTitles;
+
 
 
     public ThemeOutputDto(Long id, String name, String description, LocalDate openDate, LocalDate closingDate) {
@@ -66,11 +67,4 @@ public class ThemeOutputDto {
         this.closingDate = closingDate;
     }
 
-    public List<String> getStoryTitles() {
-        return storyTitles;
-    }
-
-    public void setStoryTitles(List<String> storyTitles) {
-        this.storyTitles = storyTitles;
-    }
 }

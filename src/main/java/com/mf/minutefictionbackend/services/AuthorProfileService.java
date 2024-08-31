@@ -2,11 +2,8 @@ package com.mf.minutefictionbackend.services;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.AuthorProfileMapper;
-import com.mf.minutefictionbackend.dtos.mappers.ProfilePhotoMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
-import com.mf.minutefictionbackend.exceptions.AuthorProfileDeletionException;
-import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
-import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
+import com.mf.minutefictionbackend.exceptions.*;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.ProfilePhoto;
 import com.mf.minutefictionbackend.models.User;
@@ -18,7 +15,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -40,8 +36,11 @@ public class AuthorProfileService {
     @Transactional
     public AuthorProfileOutputDto createAuthorProfile(String username, AuthorProfileInputDto authorProfileInputDto) {
         User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        if (user.getAuthorProfile() != null) {
+            throw new AuthorProfileAlreadyExistsException("User already has an author profile.");
+        }
         AuthorProfile authorProfile = AuthorProfileMapper.authorProfileFromInputDtoToModel(authorProfileInputDto);
         authorProfile.setUser(user);
 

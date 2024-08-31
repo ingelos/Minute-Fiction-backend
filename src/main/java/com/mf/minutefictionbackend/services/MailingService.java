@@ -51,13 +51,19 @@ public class MailingService {
         return MailingMapper.mailingFromModelListToOutputList(allMailings);
     }
 
-    public MailingOutputDto updateMailing(Long mailingId, MailingOutputDto updatedMailing) {
+    public MailingOutputDto updateMailing(Long mailingId, MailingInputDto updatedMailing) {
         Mailing updateMailing = mailingRepository.findById(mailingId)
                 .orElseThrow(() -> new ResourceNotFoundException("No mailing found"));
 
-        updateMailing.setSubject(updatedMailing.getSubject());
-        updateMailing.setBody(updateMailing.getBody());
-        updateMailing.setDate(updatedMailing.getDate());
+        if(updatedMailing.getSubject() != null) {
+            updateMailing.setSubject(updatedMailing.getSubject());
+        }
+        if(updatedMailing.getBody() != null) {
+            updateMailing.setBody(updatedMailing.getBody());
+        }
+        if(updatedMailing.getDate() != null) {
+            updateMailing.setDate(updatedMailing.getDate());
+        }
 
         Mailing returnMailing = mailingRepository.save(updateMailing);
         return MailingMapper.mailingFromModelToOutputDto(returnMailing);
