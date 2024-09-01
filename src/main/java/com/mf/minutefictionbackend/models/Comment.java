@@ -2,12 +2,21 @@ package com.mf.minutefictionbackend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Comment {
 
+    @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
     @SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", initialValue = 1004, allocationSize = 1)
@@ -29,46 +38,12 @@ public class Comment {
     private User user;
 
 
-
-    public Comment() {
-        this.created = LocalDateTime.now();
+    @PrePersist
+    public void onPrePersist() {
+        this.setCreated(LocalDateTime.now());
     }
 
 
 
-    public Long getId() {
-        return id;
-    }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
-    }
-
-    public Story getStory() {
-        return story;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setStory(Story story) {
-        this.story = story;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

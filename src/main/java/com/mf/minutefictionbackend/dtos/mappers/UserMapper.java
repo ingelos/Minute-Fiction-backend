@@ -11,13 +11,12 @@ import java.util.Set;
 public class UserMapper {
 
     public static User userFromInputDtoToModel(UserInputDto userInputDto) {
-        User user = new User();
-        user.setUsername(userInputDto.getUsername());
-        user.setPassword(userInputDto.getPassword());
-        user.setEmail(userInputDto.getEmail());
-        user.setSubscribedToMailing(userInputDto.getIsSubscribedToMailing());
-
-        return user;
+        return new User(
+                userInputDto.getUsername(),
+                userInputDto.getPassword(),
+                userInputDto.getEmail(),
+                userInputDto.getIsSubscribedToMailing()
+        );
     }
 
     public static UserOutputDto userFromModelToOutputDto(User user) {

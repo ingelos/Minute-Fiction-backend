@@ -4,6 +4,7 @@ import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
+import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.services.AuthorProfileService;
 import com.mf.minutefictionbackend.services.UserService;
 import jakarta.validation.Valid;
@@ -35,7 +36,8 @@ public class UserController {
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/" + user.getUsername()).toUriString());
+                .path("/" + user.getUsername())
+                .toUriString());
 
         return ResponseEntity.created(uri).body(user);
     }
@@ -63,13 +65,6 @@ public class UserController {
         return ResponseEntity.ok().body(updatedUser);
     }
 
-    // create authorprofile for user
-
-    @PostMapping("/{username}/authorprofiles")
-    public ResponseEntity<AuthorProfileOutputDto> createAuthorProfile(@Valid @PathVariable String username, @RequestBody AuthorProfileInputDto authorProfileInputDto) {
-        AuthorProfileOutputDto createdProfile = authorProfileService.createAuthorProfile(username, authorProfileInputDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProfile);
-    }
 
 
 

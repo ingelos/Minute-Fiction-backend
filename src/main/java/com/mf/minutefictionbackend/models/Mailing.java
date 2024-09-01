@@ -1,13 +1,22 @@
 package com.mf.minutefictionbackend.models;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
 
 @Entity
 @Table(name = "mailings")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Mailing {
 
+    @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mailing_sequence")
     @SequenceGenerator(name = "mailing_sequence", sequenceName = "mailing_sequence", initialValue = 1003, allocationSize = 1)
@@ -23,37 +32,7 @@ public class Mailing {
 
 
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
 
 
 }

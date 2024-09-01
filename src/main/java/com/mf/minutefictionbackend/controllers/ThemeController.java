@@ -27,7 +27,7 @@ public class ThemeController {
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/" + theme.name).toUriString());
+                .path("/" + theme.getName()).toUriString());
 
         return ResponseEntity.created(uri).body(theme);
     }
