@@ -12,7 +12,7 @@ import com.mf.minutefictionbackend.repositories.UserRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.SimpleMailMessage;
+import jakarta.transaction.Transactional;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -76,18 +76,17 @@ public class MailingService {
     }
 
 
+    @Transactional
     public void sendMailing(Long mailingId) {
         Mailing mailing = mailingRepository.findById(mailingId)
                 .orElseThrow(() -> new ResourceNotFoundException("No mailing found with id " + mailingId));
 
         List<User> subscribers = userRepository.findBySubscribedToMailingTrue();
-
         if(subscribers.isEmpty()) {
             throw new RuntimeException("No subscribers to the mailing at this time.");
         }
         subscribers.forEach(user -> sendMailing(user.getEmail(), mailing.getSubject(), mailing.getBody()));
-        }
-
+    }
 
     private void sendMailing(String to, String subject, String body) {
         MimeMessage mimeMessage = mailSender.createMimeMessage();

@@ -8,8 +8,6 @@ import java.time.LocalDate;
 
 public class AuthorProfileInputDto {
 
-//    @NotBlank
-//    public String username;
     @NotBlank(message = "First name is required.")
     @Size(min=3, max=64)
     public String firstname;

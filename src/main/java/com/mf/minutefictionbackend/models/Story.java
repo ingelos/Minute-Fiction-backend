@@ -37,7 +37,7 @@ public class Story {
     @JsonIgnore
     private Theme theme;
 
-    @OneToMany(mappedBy = "story", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "story")
     @JsonIgnore
     private List<Comment> comments;
 

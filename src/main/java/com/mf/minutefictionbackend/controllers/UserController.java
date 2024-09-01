@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -58,14 +57,13 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{username}")
-    public ResponseEntity<UserOutputDto> updateUser(@Valid @PathVariable("username") String username, @RequestBody UserOutputDto userDto) {
+    @PatchMapping("/{username}")
+    public ResponseEntity<UserOutputDto> updateUser(@Valid @PathVariable("username") String username, @RequestBody UserInputDto userDto) {
         UserOutputDto updatedUser = userService.updateUser(username, userDto);
         return ResponseEntity.ok().body(updatedUser);
     }
 
     // create authorprofile for user
-
 
     @PostMapping("/{username}/authorprofiles")
     public ResponseEntity<AuthorProfileOutputDto> createAuthorProfile(@Valid @PathVariable String username, @RequestBody AuthorProfileInputDto authorProfileInputDto) {
@@ -75,9 +73,7 @@ public class UserController {
 
 
 
-
-
-    }
+}
 
 
 

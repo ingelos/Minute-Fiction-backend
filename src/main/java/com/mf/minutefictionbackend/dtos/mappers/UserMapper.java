@@ -38,8 +38,6 @@ public class UserMapper {
         users.forEach((user) -> userOutputDtoSet.add(userFromModelToOutputDto(user)));
         return userOutputDtoSet;
     }
-    
-
 
 
 }

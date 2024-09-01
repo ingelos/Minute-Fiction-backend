@@ -31,6 +31,7 @@ public class CommentService {
     }
 
 
+    @Transactional
     public CommentOutputDto addComment(CommentInputDto commentInputDto, Long storyId, String username) {
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("No story found."));
@@ -74,7 +75,6 @@ public class CommentService {
                 .orElseThrow(() -> new ResourceNotFoundException("No comment found with id " + commentId));
             return CommentMapper.commentFromModelToOutputDto(comment);
     }
-
 
 
     public List<CommentOutputDto> getCommentsByStory(Long storyId) {

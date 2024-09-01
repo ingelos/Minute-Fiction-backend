@@ -14,5 +14,7 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
     List<Story> findByStatus(StoryStatus status);
     List<Story> findByAuthor_UsernameAndStatus(String username, StoryStatus status);
     List<Story> findByStatusAndTheme(StoryStatus status, Theme theme);
+    boolean existsByThemeAndAuthorUsername(Theme theme, String username);
+    long countSubmissionsByTheme(Theme theme);
 
 }

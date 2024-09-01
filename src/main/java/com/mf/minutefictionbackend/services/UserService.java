@@ -9,6 +9,7 @@ import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
 import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -26,7 +27,6 @@ public class UserService {
         this.userRepository = userRepository;
         this.authorProfileRepository = authorProfileRepository;
     }
-
 
     public UserOutputDto createUser(UserInputDto userInputDto) {
         if(userRepository.existsById(userInputDto.getUsername())) {
@@ -47,6 +47,7 @@ public class UserService {
             return UserMapper.userFromModelToOutputDto(user);
     }
 
+    @Transactional
     public void deleteUser(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
@@ -57,13 +58,23 @@ public class UserService {
     }
 
 
-    public UserOutputDto updateUser(String username, UserOutputDto updatedUser) {
+    @Transactional
+    public UserOutputDto updateUser(String username, UserInputDto updatedUser) {
         User updateUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No user found with username " + username));
 
-        updateUser.setUsername(updatedUser.getUsername());
-        updateUser.setEmail(updatedUser.getEmail());
-        updateUser.setSubscribedToMailing(updatedUser.getIsSubscribedToMailing());
+        if(updatedUser.getUsername() != null) {
+            throw new IllegalArgumentException("Username cannot be changed.");
+        }
+        if(updatedUser.getEmail() != null) {
+            updateUser.setEmail(updatedUser.getEmail());
+        }
+        if(updatedUser.getIsSubscribedToMailing() != null) {
+            updateUser.setSubscribedToMailing(updatedUser.getIsSubscribedToMailing());
+        }
+        if(updatedUser.getPassword() != null) {
+            updateUser.setPassword(updatedUser.getPassword());
+        }
 
         User returnUser = userRepository.save(updateUser);
         return UserMapper.userFromModelToOutputDto(returnUser);
