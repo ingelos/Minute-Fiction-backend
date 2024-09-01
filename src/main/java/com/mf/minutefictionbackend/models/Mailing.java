@@ -10,10 +10,11 @@ public class Mailing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mailing_sequence")
-    @SequenceGenerator(name = "mailing_sequence", sequenceName = "mailing_sequence", initialValue = 1002, allocationSize = 1)
+    @SequenceGenerator(name = "mailing_sequence", sequenceName = "mailing_sequence", initialValue = 1003, allocationSize = 1)
     private Long id;
     @Column
     private String subject;
+    @Lob
     @Column(columnDefinition = "TEXT")
     private String body;
     @Column

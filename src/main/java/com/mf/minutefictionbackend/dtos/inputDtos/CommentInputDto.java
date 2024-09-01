@@ -1,19 +1,17 @@
 package com.mf.minutefictionbackend.dtos.inputDtos;
 
-import jakarta.validation.constraints.Size;
+import com.mf.minutefictionbackend.validators.MaxWordCount;
 
 public class CommentInputDto {
 
-    @Size(min=3, max=500, message= "Your comment must be under a 100 words")
+    @MaxWordCount(message= "Your comment can't be longer than the story! Keep it under a 100 words.")
     public String content;
-
-
-
 
 
     public CommentInputDto() {
 
     }
+
 
     public String getContent() {
         return content;

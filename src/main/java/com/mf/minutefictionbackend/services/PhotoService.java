@@ -59,4 +59,12 @@ public class PhotoService {
 
     }
 
+    public void deleteFile(String fileName) {
+        Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(fileName);
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete file " + fileName, e);
+        }
+    }
 }

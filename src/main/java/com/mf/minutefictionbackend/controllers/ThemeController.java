@@ -43,10 +43,10 @@ public class ThemeController {
         return ResponseEntity.ok().body(themeDto);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ThemeOutputDto> updateTheme(@PathVariable("id") Long id, @RequestBody ThemeInputDto updatedTheme) {
-        ThemeOutputDto themeDto = themeService.updateTheme(id, updatedTheme);
-        return ResponseEntity.ok().body(themeDto);
+    @PatchMapping("/{id}")
+    public ResponseEntity<ThemeOutputDto> updateTheme(@Valid @PathVariable("id") Long id, @RequestBody ThemeInputDto updatedThemeInputDto) {
+        ThemeOutputDto updatedTheme = themeService.updateTheme(id, updatedThemeInputDto);
+        return ResponseEntity.ok().body(updatedTheme);
     }
 
     @DeleteMapping("/{id}")

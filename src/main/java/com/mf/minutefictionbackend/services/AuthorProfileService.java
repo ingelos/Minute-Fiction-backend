@@ -2,11 +2,8 @@ package com.mf.minutefictionbackend.services;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.AuthorProfileMapper;
-import com.mf.minutefictionbackend.dtos.mappers.ProfilePhotoMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
-import com.mf.minutefictionbackend.exceptions.AuthorProfileDeletionException;
-import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
-import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
+import com.mf.minutefictionbackend.exceptions.*;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.ProfilePhoto;
 import com.mf.minutefictionbackend.models.User;
@@ -18,7 +15,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -40,8 +36,11 @@ public class AuthorProfileService {
     @Transactional
     public AuthorProfileOutputDto createAuthorProfile(String username, AuthorProfileInputDto authorProfileInputDto) {
         User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        if (user.getAuthorProfile() != null) {
+            throw new AuthorProfileAlreadyExistsException("User already has an author profile.");
+        }
         AuthorProfile authorProfile = AuthorProfileMapper.authorProfileFromInputDtoToModel(authorProfileInputDto);
         authorProfile.setUser(user);
 
@@ -49,40 +48,45 @@ public class AuthorProfileService {
 
         user.setAuthorProfile(savedProfile);
         userRepository.save(user);
-
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(savedProfile);
     }
 
     public List<AuthorProfileOutputDto> getAllAuthorProfiles() {
         List<AuthorProfile> allAuthorProfiles = authorProfileRepository.findAll();
-
         return AuthorProfileMapper.authorProfileModelListToOutputList(allAuthorProfiles);
     }
 
 
     public AuthorProfileOutputDto getAuthorProfileByUsername(String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-
-        AuthorProfile authorProfile = authorProfileRepository.findByUser(user)
+        AuthorProfile authorProfile = authorProfileRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for user with username " + username));
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(authorProfile);
     }
 
-    public AuthorProfileOutputDto updateAuthorProfile(String username, AuthorProfileOutputDto updatedProfile) {
+    @Transactional
+    public AuthorProfileOutputDto updateAuthorProfile(String username, AuthorProfileInputDto updatedProfile) {
         AuthorProfile updateProfile = authorProfileRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for username " + username));
 
-        updateProfile.setFirstname(updatedProfile.getFirstname());
-        updateProfile.setLastname(updatedProfile.getLastname());
-        updateProfile.setBio(updatedProfile.getBio());
-        updateProfile.setDob(updatedProfile.getDob());
+        if(updatedProfile.getFirstname() != null) {
+            updateProfile.setFirstname(updatedProfile.getFirstname());
+        }
+        if(updatedProfile.getLastname() != null) {
+            updateProfile.setLastname(updatedProfile.getLastname());
+        }
+        if(updatedProfile.getBio() != null) {
+            updateProfile.setBio(updatedProfile.getBio());
+        }
+        if(updatedProfile.getDob() != null) {
+            updateProfile.setDob(updatedProfile.getDob());
+        }
 
         AuthorProfile returnAuthorProfile = authorProfileRepository.save(updateProfile);
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(returnAuthorProfile);
     }
 
 
+    @Transactional
     public void deleteAuthorProfile(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("user not found"));
@@ -98,7 +102,6 @@ public class AuthorProfileService {
 
     @Transactional
     public Resource getPhotoForAuthorProfile(String username) {
-
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         AuthorProfile authorProfile = authorProfileRepository.findByUser(user)
@@ -113,7 +116,6 @@ public class AuthorProfileService {
 
     @Transactional
     public AuthorProfileOutputDto assignPhotoToAuthorProfile(String fileName, String username) {
-
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         AuthorProfile authorProfile = authorProfileRepository.findByUser(user)
@@ -128,6 +130,20 @@ public class AuthorProfileService {
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(authorProfile);
     }
 
+    @Transactional
+    public void deletePhotoByUsername(String username) {
+        AuthorProfile authorProfile = authorProfileRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No authorprofile found for " + username));
+        ProfilePhoto photo = authorProfile.getProfilePhoto();
+        if(photo == null) {
+            throw new ResourceNotFoundException("No profile photo found for this author.");
+        }
+        authorProfile.setProfilePhoto(null);
+        authorProfileRepository.save(authorProfile);
+
+        fileUploadRepository.delete(photo);
+        photoService.deleteFile(photo.getFileName());
+    }
 }
 
 

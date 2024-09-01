@@ -10,7 +10,7 @@ public class StoryInputDto {
     @Size(max=50, message = "Title must be under 50 characters")
     public String title;
     @NotBlank
-    @MaxWordCount(message = "Story has to have no more than a 100 words!")
+    @MaxWordCount(message = "Your story can be a maximum of a 100 words!")
     public String content;
 
 

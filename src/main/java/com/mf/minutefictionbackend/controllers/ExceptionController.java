@@ -1,8 +1,6 @@
 package com.mf.minutefictionbackend.controllers;
 
-import com.mf.minutefictionbackend.exceptions.AuthorProfileDeletionException;
-import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
-import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
+import com.mf.minutefictionbackend.exceptions.*;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
@@ -29,11 +27,36 @@ public class ExceptionController {
 
     @ExceptionHandler(value = UsernameNotFoundException.class)
     public ResponseEntity<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = AuthorProfileDeletionException.class)
     public ResponseEntity<String> handleAuthorProfileDeleteException(AuthorProfileDeletionException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = AuthorProfileAlreadyExistsException.class)
+    public ResponseEntity<String> handleAuthorProfileAlreadyExistsException(AuthorProfileAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UsernameAlreadyExistsException.class)
+    public ResponseEntity<String> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = ThemeClosedException.class)
+    public ResponseEntity<String> handleThemeClosedException(ThemeClosedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = NotAllowedToUpdatePublishedStoryException.class)
+    public ResponseEntity<String> handleNotAllowedToUpdatePublishedStoryException(NotAllowedToUpdatePublishedStoryException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

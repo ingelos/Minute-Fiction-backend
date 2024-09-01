@@ -10,7 +10,7 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
-    @SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", initialValue = 1003, allocationSize = 1)
+    @SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", initialValue = 1004, allocationSize = 1)
     private Long id;
     @Column
     private String content;

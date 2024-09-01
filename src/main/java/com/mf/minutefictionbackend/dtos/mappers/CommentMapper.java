@@ -12,11 +12,9 @@ import java.util.List;
 
 public class CommentMapper {
 
-    public static Comment commentFromInputDtoToModel(CommentInputDto commentInputDto, Story story, User user) {
+    public static Comment commentFromInputDtoToModel(CommentInputDto commentInputDto) {
         Comment comment = new Comment();
         comment.setContent(commentInputDto.getContent());
-        comment.setStory(story);
-        comment.setUser(user);
 
         return comment;
     }
@@ -27,7 +25,6 @@ public class CommentMapper {
         commentDto.setContent(comment.getContent());
         commentDto.setCreated(comment.getCreated());
 
-        commentDto.setStoryId(comment.getStory().getId());
         commentDto.setUsername(comment.getUser().getUsername());
 
         return commentDto;

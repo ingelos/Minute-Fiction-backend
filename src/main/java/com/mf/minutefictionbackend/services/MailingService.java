@@ -6,12 +6,18 @@ import com.mf.minutefictionbackend.dtos.outputDtos.MailingOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Mailing;
 
+import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.repositories.MailingRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -19,13 +25,13 @@ public class MailingService {
 
     private final MailingRepository mailingRepository;
     private final UserRepository userRepository;
+    private final JavaMailSender mailSender;
 
-//    private JavaMailSender mailSender;
 
-
-    public MailingService(MailingRepository mailingRepository, UserRepository userRepository) {
+    public MailingService(MailingRepository mailingRepository, UserRepository userRepository, JavaMailSender mailSender) {
         this.mailingRepository = mailingRepository;
         this.userRepository = userRepository;
+        this.mailSender = mailSender;
     }
 
 
@@ -34,18 +40,30 @@ public class MailingService {
         return MailingMapper.mailingFromModelToOutputDto(mailing);
     }
 
+    public MailingOutputDto getMailingById(Long mailingId) {
+        Mailing mailing = mailingRepository.findById(mailingId)
+                .orElseThrow(() -> new ResourceNotFoundException("No mailing found with id " + mailingId));
+        return MailingMapper.mailingFromModelToOutputDto(mailing);
+    }
+
     public List<MailingOutputDto> getAllMailings() {
         List<Mailing> allMailings = mailingRepository.findAll();
         return MailingMapper.mailingFromModelListToOutputList(allMailings);
     }
 
-    public MailingOutputDto updateMailing(Long mailingId, MailingOutputDto updatedMailing) {
+    public MailingOutputDto updateMailing(Long mailingId, MailingInputDto updatedMailing) {
         Mailing updateMailing = mailingRepository.findById(mailingId)
                 .orElseThrow(() -> new ResourceNotFoundException("No mailing found"));
 
-        updateMailing.setSubject(updatedMailing.getSubject());
-        updateMailing.setBody(updateMailing.getBody());
-        updateMailing.setDate(updatedMailing.getDate());
+        if(updatedMailing.getSubject() != null) {
+            updateMailing.setSubject(updatedMailing.getSubject());
+        }
+        if(updatedMailing.getBody() != null) {
+            updateMailing.setBody(updatedMailing.getBody());
+        }
+        if(updatedMailing.getDate() != null) {
+            updateMailing.setDate(updatedMailing.getDate());
+        }
 
         Mailing returnMailing = mailingRepository.save(updateMailing);
         return MailingMapper.mailingFromModelToOutputDto(returnMailing);
@@ -58,32 +76,31 @@ public class MailingService {
     }
 
 
-    // uitzoeken hoe dat zit met javaMailSender en neppe email etc.!!!
+    @Transactional
+    public void sendMailing(Long mailingId) {
+        Mailing mailing = mailingRepository.findById(mailingId)
+                .orElseThrow(() -> new ResourceNotFoundException("No mailing found with id " + mailingId));
 
+        List<User> subscribers = userRepository.findBySubscribedToMailingTrue();
+        if(subscribers.isEmpty()) {
+            throw new RuntimeException("No subscribers to the mailing at this time.");
+        }
+        subscribers.forEach(user -> sendMailing(user.getEmail(), mailing.getSubject(), mailing.getBody()));
+    }
 
-//    public void sendMailing(Long mailingId) {
-//        Optional<Mailing> optionalMailing = mailingRepository.findById(mailingId);
-//        if(optionalMailing.isPresent()) {
-//            Mailing mailing = optionalMailing.get();
-//            List<User> subscribers = userRepository.findBySubscribedToMailing();
-//
-//            if(!subscribers.isEmpty()) {
-//                for (User user : subscribers) {
-//                    sendEmail(user.getEmail(), mailing.getTitle(), mailing.getContent());
-//                }
-//            }
-//        } else {
-//            throw new ResourceNotFoundException("No mailing found.");
-//        }
-//    }
-
-//    private void sendEmail(String to, String subject, String body) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(to);
-//        message.setSubject(subject);
-//        message.setText(body);
-//        emailSender.send(message);
-//    }
+    private void sendMailing(String to, String subject, String body) {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true,"UTF-8");
+            helper.setFrom("noreply@minutefiction.com");
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(body, true);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send email", e);
+        }
+        mailSender.send(mimeMessage);
+    }
 
 
 }

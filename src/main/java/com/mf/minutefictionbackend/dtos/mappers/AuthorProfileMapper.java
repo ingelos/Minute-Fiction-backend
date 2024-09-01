@@ -16,7 +16,6 @@ public class AuthorProfileMapper {
         }
 
         AuthorProfile authorProfile = new AuthorProfile();
-
         authorProfile.setFirstname(authorProfileInputDto.getFirstname());
         authorProfile.setLastname(authorProfileInputDto.getLastname());
         authorProfile.setBio(authorProfileInputDto.getBio());
@@ -37,14 +36,6 @@ public class AuthorProfileMapper {
         dto.setLastname(authorProfile.getLastname());
         dto.setBio(authorProfile.getBio());
         dto.setDob(authorProfile.getDob());
-
-        if (authorProfile.getStories() != null) {
-            List<String> storyTitles = new ArrayList<>();
-            authorProfile.getStories().forEach(story -> storyTitles.add(story.getTitle()));
-            dto.setStoryTitles(storyTitles);
-        } else {
-            dto.setStoryTitles(new ArrayList<>());
-        }
 
         if (authorProfile.getProfilePhoto() != null) {
             dto.setProfilePhoto(ProfilePhotoMapper.profilePhotoFromModelToOutputDto(authorProfile.getProfilePhoto()));

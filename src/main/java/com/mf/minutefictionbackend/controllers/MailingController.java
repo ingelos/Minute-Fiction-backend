@@ -24,10 +24,17 @@ public class MailingController {
     @PostMapping
     public ResponseEntity<MailingOutputDto> createMailing(@Valid @RequestBody MailingInputDto mailingInputDto) {
         MailingOutputDto mailing = mailingService.createMailing(mailingInputDto);
+
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/" + mailing.subject).toUriString());
+                .path("/" + mailing.getSubject()).toUriString());
+
         return ResponseEntity.created(uri).body(mailing);
+    }
+
+    @GetMapping("/{mailingId}")
+    public ResponseEntity<MailingOutputDto> getMailingById(@PathVariable("mailingId") Long mailingId) {
+        return ResponseEntity.ok().body(mailingService.getMailingById(mailingId));
     }
 
     @GetMapping
@@ -35,9 +42,9 @@ public class MailingController {
         return ResponseEntity.ok().body(mailingService.getAllMailings());
     }
 
-    @PutMapping("/{mailingId}")
-    public ResponseEntity<MailingOutputDto> updateMailing(@Valid @PathVariable("mailingId") Long mailingId, @RequestBody MailingOutputDto mailingDto) {
-        MailingOutputDto updatedMailing = mailingService.updateMailing(mailingId, mailingDto);
+    @PatchMapping("/{mailingId}")
+    public ResponseEntity<MailingOutputDto> updateMailing(@Valid @PathVariable("mailingId") Long mailingId, @RequestBody MailingInputDto updatedMailingInputDto) {
+        MailingOutputDto updatedMailing = mailingService.updateMailing(mailingId, updatedMailingInputDto);
         return ResponseEntity.ok().body(updatedMailing);
     }
 
@@ -47,13 +54,14 @@ public class MailingController {
         return ResponseEntity.noContent().build();
     }
 
-//    @PostMapping("/{id}/send")
-//    public ResponseEntity<Void> sendMailing(@PathVariable Long id) {
-//        mailingService.sendMailing(id);
-//        return ResponseEntity.ok().build();
-//    }
-
     // sendMailing - authorisation Editor
+    @PostMapping("/{mailingId}/send")
+    public ResponseEntity<Void> sendMailing(@PathVariable Long mailingId) {
+        mailingService.sendMailing(mailingId);
+        return ResponseEntity.ok().build();
+    }
+
+
 
 
 }
