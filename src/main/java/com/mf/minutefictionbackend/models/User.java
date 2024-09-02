@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.print.attribute.HashAttributeSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -27,10 +30,19 @@ public class User {
     @Column
     private boolean subscribedToMailing;
 
+    @Setter(AccessLevel.NONE)
+    @OneToMany(
+            targetEntity = Authority.class,
+            mappedBy = "username",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
+    private Set<Authority> authorities = new HashSet<>();
+
+
     @OneToOne(mappedBy = "user", optional = true)
     @JsonIgnore
     private AuthorProfile authorProfile;
-
 
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "user")
@@ -43,4 +55,12 @@ public class User {
         this.email = email;
         this.subscribedToMailing = subscribedToMailing;
     }
+
+    public void addAuthority(Authority authority) {
+        this.authorities.add(authority);
+    }
+    public void removeAuthority(Authority authority) {
+        this.authorities.remove(authority);
+    }
+
 }

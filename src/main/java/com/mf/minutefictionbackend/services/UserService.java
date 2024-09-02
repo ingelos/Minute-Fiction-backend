@@ -6,6 +6,7 @@ import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.exceptions.UsernameAlreadyExistsException;
 import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
+import com.mf.minutefictionbackend.models.Authority;
 import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
@@ -28,6 +29,7 @@ public class UserService {
         this.authorProfileRepository = authorProfileRepository;
     }
 
+
     public UserOutputDto createUser(UserInputDto userInputDto) {
         if(userRepository.existsById(userInputDto.getUsername())) {
             throw new UsernameAlreadyExistsException("Username is already taken, try another.");
@@ -35,6 +37,7 @@ public class UserService {
         User user = userRepository.save(UserMapper.userFromInputDtoToModel(userInputDto));
         return UserMapper.userFromModelToOutputDto(user);
     }
+
 
     public Set<UserOutputDto> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
@@ -46,6 +49,8 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException(username));
             return UserMapper.userFromModelToOutputDto(user);
     }
+
+
 
     @Transactional
     public void deleteUser(String username) {
@@ -81,10 +86,44 @@ public class UserService {
     }
 
 
+    // internal method for authentication
+
+    public User getUser(String username) {
+        return userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No user found."));
+    }
+
+
     // setAuthorities
+
+    public Set<Authority> getAuthorities(String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No user found."));
+        UserOutputDto userDto = UserMapper.userFromModelToOutputDto(user);
+        return userDto.getAuthorities();
+    }
 
     // addAuthorities
 
+    public void addAuthority(String username, String authority) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No user found."));
+        user.addAuthority(new Authority(username, authority));
+        userRepository.save(user);
+    }
+
     // removeAuthorities
+
+    public void removeAuthority(String username, String authority) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No user found"));
+        Authority authorityToRemove = user.getAuthorities().stream()
+                .filter((a) -> a.getAuthority().equalsIgnoreCase(authority))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Authority " + authority + " not found for this user."));
+        user.removeAuthority(authorityToRemove);
+        userRepository.save(user);
+    }
+
 
 }

@@ -1,21 +1,26 @@
 package com.mf.minutefictionbackend.dtos.inputDtos;
 
 
+import com.mf.minutefictionbackend.models.Authority;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class UserInputDto {
 
     @NotBlank(message = "Username is required")
-    public String username;
+    private String username;
     @NotBlank(message = "Password is required")
-    public String password;
+    private String password;
     @Email(message = "Invalid email")
-    public String email;
+    private String email;
     @NotNull
-    public Boolean isSubscribedToMailing;
+    private Boolean isSubscribedToMailing;
+    private Set<Authority> authorities;
+
 
 }

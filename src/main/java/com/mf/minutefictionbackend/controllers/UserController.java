@@ -2,6 +2,7 @@ package com.mf.minutefictionbackend.controllers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
+import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,7 @@ public class UserController {
         UserOutputDto optionalUser = userService.getUserByUsername(username);
         return ResponseEntity.ok().body(optionalUser);
     }
+
 
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteUser(@PathVariable("username") String username) {
