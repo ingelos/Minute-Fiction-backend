@@ -16,57 +16,62 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ExceptionController {
 
-    @ExceptionHandler(value = ResourceNotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<String>> handleMethodArgumentNotValidException (MethodArgumentNotValidException ex) {
         return new ResponseEntity<>(ex.getBindingResult().getFieldErrors().stream().map(fieldError -> fieldError.getField() + " " + fieldError.getDefaultMessage()).collect(Collectors.toList()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = UsernameNotFoundException.class)
+    @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = AuthorProfileDeletionException.class)
+    @ExceptionHandler(AuthorProfileDeletionException.class)
     public ResponseEntity<String> handleAuthorProfileDeleteException(AuthorProfileDeletionException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = AuthorProfileAlreadyExistsException.class)
+    @ExceptionHandler(AuthorProfileAlreadyExistsException.class)
     public ResponseEntity<String> handleAuthorProfileAlreadyExistsException(AuthorProfileAlreadyExistsException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = UsernameAlreadyExistsException.class)
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
     public ResponseEntity<String> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = ThemeClosedException.class)
+    @ExceptionHandler(ThemeClosedException.class)
     public ResponseEntity<String> handleThemeClosedException(ThemeClosedException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = NotAllowedToUpdatePublishedStoryException.class)
+    @ExceptionHandler(NotAllowedToUpdatePublishedStoryException.class)
     public ResponseEntity<String> handleNotAllowedToUpdatePublishedStoryException(NotAllowedToUpdatePublishedStoryException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<String> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
         return new ResponseEntity<>("Choose a file under 2MB. " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = IllegalArgumentException.class)
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<String> handleBadRequestException(BadRequestException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = IOException.class)
+    @ExceptionHandler(IOException.class)
     public ResponseEntity<String> handleIOException(IOException ex){
         return new ResponseEntity<>("An error occurred while processing the file: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

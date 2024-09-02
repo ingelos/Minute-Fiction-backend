@@ -11,6 +11,7 @@ import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -23,19 +24,26 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AuthorProfileRepository authorProfileRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, AuthorProfileRepository authorProfileRepository) {
+    public UserService(UserRepository userRepository, AuthorProfileRepository authorProfileRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.authorProfileRepository = authorProfileRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
-    public UserOutputDto createUser(UserInputDto userInputDto) {
+    public User createUser(UserInputDto userInputDto) {
         if(userRepository.existsById(userInputDto.getUsername())) {
             throw new UsernameAlreadyExistsException("Username is already taken, try another.");
         }
-        User user = userRepository.save(UserMapper.userFromInputDtoToModel(userInputDto));
-        return UserMapper.userFromModelToOutputDto(user);
+
+        String encodedPassword = passwordEncoder.encode(userInputDto.getPassword());
+
+        User user = UserMapper.userFromInputDtoToModel(userInputDto, encodedPassword);
+        userRepository.save(user);
+
+        return user;
     }
 
 

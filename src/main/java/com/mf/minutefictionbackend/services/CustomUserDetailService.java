@@ -1,9 +1,5 @@
 package com.mf.minutefictionbackend.services;
 
-import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
-import com.mf.minutefictionbackend.exceptions.UsernameAlreadyExistsException;
-import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
 import com.mf.minutefictionbackend.models.Authority;
 import com.mf.minutefictionbackend.models.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,11 +16,11 @@ import java.util.Set;
 public class CustomUserDetailService implements UserDetailsService {
 
     private final UserService userService;
-
-
     public CustomUserDetailService(UserService userService) {
         this.userService = userService;
     }
+
+
 
     @Override
     public UserDetails loadUserByUsername(String username) {

@@ -49,11 +49,12 @@ public class User {
     @JsonIgnore
     private List<Comment> comments;
 
-    public User(String username, String password, String email, boolean subscribedToMailing) {
+    public User(String username, String password, String email, boolean subscribedToMailing, Set<Authority> authorities) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.subscribedToMailing = subscribedToMailing;
+        this.authorities = authorities;
     }
 
     public void addAuthority(Authority authority) {
