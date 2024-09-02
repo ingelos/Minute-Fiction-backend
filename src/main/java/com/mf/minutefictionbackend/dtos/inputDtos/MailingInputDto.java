@@ -10,11 +10,11 @@ import java.time.LocalDate;
 public class MailingInputDto {
 
     @NotNull(message = "Subject is required.")
-    public String subject;
+    private String subject;
     @NotNull(message = "Body is required.")
-    public String body;
+    private String body;
     @FutureOrPresent
-    public LocalDate date;
+    private LocalDate date;
 
 
 }

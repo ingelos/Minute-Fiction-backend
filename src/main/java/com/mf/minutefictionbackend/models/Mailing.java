@@ -23,7 +23,6 @@ public class Mailing {
     private Long id;
     @Column
     private String subject;
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String body;
     @Column

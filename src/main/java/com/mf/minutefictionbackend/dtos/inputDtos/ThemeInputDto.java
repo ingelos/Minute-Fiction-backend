@@ -12,13 +12,13 @@ import java.time.LocalDate;
 public class ThemeInputDto {
 
     @NotBlank(message = "Theme requires a name")
-    public String name;
+    private String name;
     @NotBlank(message = "Theme requires a description")
-    public String description;
+    private String description;
     @FutureOrPresent
-    public LocalDate openDate;
+    private LocalDate openDate;
     @NotNull(message = "Theme requires a closingDate")
     @Future
-    public LocalDate closingDate;
+    private LocalDate closingDate;
 
 }

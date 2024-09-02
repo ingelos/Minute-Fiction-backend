@@ -1,16 +1,13 @@
 package com.mf.minutefictionbackend.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import lombok.AccessLevel;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Entity
+@Table(name = "profile_photos")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,7 +19,6 @@ public class ProfilePhoto {
     @OneToOne
     @JoinColumn(name = "author_profile_id")
     private AuthorProfile authorProfile;
-
 
     public ProfilePhoto(String fileName) {
         this.fileName = fileName;
