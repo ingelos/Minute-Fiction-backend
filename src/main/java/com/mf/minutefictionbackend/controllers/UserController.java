@@ -8,6 +8,7 @@ import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,10 +29,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestBody UserInputDto userInputDto) {
-
         User createdUser = userService.createUser(userInputDto);
-        userService.addAuthority(createdUser.getUsername(), "ROLE_USER");
-
         UserOutputDto userOutputDto = UserMapper.userFromModelToOutputDto(createdUser);
 
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -43,39 +41,44 @@ public class UserController {
         return ResponseEntity.created(uri).body(userOutputDto);
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping
     public ResponseEntity<Set<UserOutputDto>> getAllUsers() {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
+    @PreAuthorize("#username == authentication.principal.username || hasAuthority('EDITOR')")
     @GetMapping("/{username}")
     public ResponseEntity<UserOutputDto> getUserByUsername(@PathVariable("username") String username) {
         UserOutputDto optionalUser = userService.getUserByUsername(username);
         return ResponseEntity.ok().body(optionalUser);
     }
 
-
+    @PreAuthorize("#username == authentication.principal.username || hasAuthority('EDITOR')")
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{username}")
+    @PreAuthorize("#username == authentication.principal.username || hasAuthority('EDITOR')")
+    @PutMapping("/{username}")
     public ResponseEntity<UserOutputDto> updateUser(@Valid @PathVariable("username") String username, @RequestBody UserInputDto userDto) {
         UserOutputDto updatedUser = userService.updateUser(username, userDto);
         return ResponseEntity.ok().body(updatedUser);
     }
 
 
-    // authorities
+    // MANAGE AUTHORITIES
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/{username}/authorities")
     public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {
         return ResponseEntity.ok().body(userService.getAuthorities(username));
     }
 
-    @PostMapping("/{username}/authorities")
+    @PreAuthorize("hasAuthority('EDITOR')")
+    @PostMapping("/{username}/authority")
     public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody Map<String, Object> fields) {
         try {
             String authorityName = (String) fields.get("authority");
@@ -87,6 +90,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @DeleteMapping("/{username}/authorities/{authority}")
     public ResponseEntity<Object> deleteUserAuthority(@PathVariable("username") String username, @PathVariable("authority") String authority) {
         userService.removeAuthority(username, authority);

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -19,8 +20,8 @@ public class UserInputDto {
     @Email(message = "Invalid email")
     private String email;
     @NotNull
-    private Boolean isSubscribedToMailing;
-    private Set<Authority> authorities;
+    private boolean subscribedToMailing;
+    private Set<AuthorityInputDto> authorities = new HashSet<>();
 
 
 }

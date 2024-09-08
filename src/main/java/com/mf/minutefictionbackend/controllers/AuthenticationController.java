@@ -1,11 +1,9 @@
 package com.mf.minutefictionbackend.controllers;
 
-import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.payload.AuthenticationRequest;
 import com.mf.minutefictionbackend.payload.AuthenticationResponse;
 import com.mf.minutefictionbackend.services.CustomUserDetailService;
 import com.mf.minutefictionbackend.utils.JwtUtil;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

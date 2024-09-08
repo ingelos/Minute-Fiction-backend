@@ -2,7 +2,9 @@ package com.mf.minutefictionbackend.services;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.StoryMapper;
+import com.mf.minutefictionbackend.dtos.mappers.ThemeMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
+import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
 import com.mf.minutefictionbackend.enums.StoryStatus;
 import com.mf.minutefictionbackend.exceptions.NotAllowedToUpdatePublishedStoryException;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
@@ -49,7 +51,7 @@ public class StoryService {
             throw new ThemeClosedException("Theme closing date has already passed.");
         }
 
-        long numberOfSubmissions = storyRepository.countSubmissionsByTheme(theme);
+        int numberOfSubmissions = storyRepository.countSubmissionsByTheme(theme);
         if(numberOfSubmissions >= 50) {
             throw new IllegalArgumentException("The maximum number of submissions for this theme has already been reached.");
         }
@@ -83,7 +85,7 @@ public class StoryService {
 
 
     public List<StoryOutputDto> getStoriesByStatus(StoryStatus status) {
-        List<Story> stories = storyRepository.findByStatus(status);
+        List<Story> stories = storyRepository.findByStatusOrderByPublishDateDesc(status);
         if (stories.isEmpty()) {
             throw new ResourceNotFoundException("No stories found with status " + status);
         }
@@ -151,4 +153,9 @@ public class StoryService {
         return StoryMapper.storyFromModelToOutputDto(returnStory);
     }
 
+    public StoryOutputDto getStoryByStatusAndStoryId(StoryStatus storyStatus, Long storyId) {
+        Story story = storyRepository.findByStatusAndId(storyStatus, storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Story not found"));
+        return StoryMapper.storyFromModelToOutputDto(story);
+    }
 }

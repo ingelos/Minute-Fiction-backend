@@ -48,15 +48,12 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentOutputDto updateComment(Long storyId, Long commentId, CommentInputDto updatedComment) {
-        Story story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new ResourceNotFoundException("No story found."));
+    public CommentOutputDto updateComment(Long commentId, CommentInputDto updatedComment) {
+
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundException("No comment found."));
 
-        if(!comment.getStory().equals(story)) {
-            throw new IllegalArgumentException("Comment does not belong to the specific story.");
-        }
+
         comment.setContent(updatedComment.getContent());
         Comment returnComment = commentRepository.save(comment);
         return CommentMapper.commentFromModelToOutputDto(returnComment);

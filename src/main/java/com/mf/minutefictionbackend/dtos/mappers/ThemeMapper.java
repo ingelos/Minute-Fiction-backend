@@ -21,6 +21,8 @@ public class ThemeMapper {
         return theme;
     }
 
+
+
     public static ThemeOutputDto themeFromModelToOutputDto(Theme theme) {
         ThemeOutputDto themeOutputDto = new ThemeOutputDto();
         themeOutputDto.setId(theme.getId());
@@ -29,8 +31,10 @@ public class ThemeMapper {
         themeOutputDto.setOpenDate(theme.getOpenDate());
         themeOutputDto.setClosingDate(theme.getClosingDate());
 
+
         return themeOutputDto;
     }
+
 
     public static List<ThemeOutputDto> themeModelListToOutputList(List<Theme> themes) {
         if(themes.isEmpty()) {

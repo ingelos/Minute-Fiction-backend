@@ -41,6 +41,8 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userInputDto.getPassword());
 
         User user = UserMapper.userFromInputDtoToModel(userInputDto, encodedPassword);
+        user.getAuthorities().add(new Authority("USER"));
+
         userRepository.save(user);
 
         return user;
@@ -79,15 +81,10 @@ public class UserService {
         if(updatedUser.getUsername() != null) {
             throw new IllegalArgumentException("Username cannot be changed.");
         }
-        if(updatedUser.getEmail() != null) {
-            updateUser.setEmail(updatedUser.getEmail());
-        }
-        if(updatedUser.getIsSubscribedToMailing() != null) {
-            updateUser.setSubscribedToMailing(updatedUser.getIsSubscribedToMailing());
-        }
-        if(updatedUser.getPassword() != null) {
-            updateUser.setPassword(updatedUser.getPassword());
-        }
+
+        updateUser.setPassword(updatedUser.getPassword());
+        updateUser.setEmail(updatedUser.getEmail());
+        updateUser.setSubscribedToMailing(updatedUser.isSubscribedToMailing());
 
         User returnUser = userRepository.save(updateUser);
         return UserMapper.userFromModelToOutputDto(returnUser);
@@ -98,33 +95,33 @@ public class UserService {
 
     public User getUser(String username) {
         return userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException("No user found."));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
 
-    // setAuthorities
+    // MANAGING AUTHORITIES
+
+
+    public void addAuthority(String username, String authority) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        user.addAuthority(new Authority(authority));
+        userRepository.save(user);
+    }
+
+
 
     public Set<Authority> getAuthorities(String username) {
         User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException("No user found."));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
         UserOutputDto userDto = UserMapper.userFromModelToOutputDto(user);
         return userDto.getAuthorities();
     }
 
-    // addAuthorities
-
-    public void addAuthority(String username, String authority) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException("No user found."));
-        user.addAuthority(new Authority(username, authority));
-        userRepository.save(user);
-    }
-
-    // removeAuthorities
 
     public void removeAuthority(String username, String authority) {
         User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException("No user found"));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
         Authority authorityToRemove = user.getAuthorities().stream()
                 .filter((a) -> a.getAuthority().equalsIgnoreCase(authority))
                 .findAny()

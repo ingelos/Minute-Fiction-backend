@@ -18,8 +18,9 @@ import java.util.function.Function;
 public class JwtUtil {
     private final static String SECRET_KEY = "weetevennietwatikhiermoetzettenalssecretkeytralalalalala";
 
-    private Key getSingingKey() {
+    private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        System.out.println("Using SECRET_KEY: " + SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -38,7 +39,7 @@ public class JwtUtil {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(getSingingKey())
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -58,8 +59,8 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60))
-                .signWith(getSingingKey(), SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 1 week
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 

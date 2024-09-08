@@ -31,14 +31,11 @@ public class User {
     private boolean subscribedToMailing;
 
     @Setter(AccessLevel.NONE)
-    @OneToMany(
-            targetEntity = Authority.class,
-            mappedBy = "username",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "users_authorities",
+            joinColumns = @JoinColumn(name = "username", referencedColumnName = "username"),
+            inverseJoinColumns = @JoinColumn(name = "authority", referencedColumnName = "authority"))
     private Set<Authority> authorities = new HashSet<>();
-
 
     @OneToOne(mappedBy = "user", optional = true)
     @JsonIgnore
@@ -49,7 +46,8 @@ public class User {
     @JsonIgnore
     private List<Comment> comments;
 
-    public User(String username, String password, String email, boolean subscribedToMailing, Set<Authority> authorities) {
+
+    public User(String username, String password, String email, Boolean subscribedToMailing, Set<Authority> authorities) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -60,6 +58,7 @@ public class User {
     public void addAuthority(Authority authority) {
         this.authorities.add(authority);
     }
+
     public void removeAuthority(Authority authority) {
         this.authorities.remove(authority);
     }

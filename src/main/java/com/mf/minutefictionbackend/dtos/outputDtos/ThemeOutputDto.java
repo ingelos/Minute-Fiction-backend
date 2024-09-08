@@ -13,4 +13,5 @@ public class ThemeOutputDto {
     private LocalDate openDate;
     private LocalDate closingDate;
 
+
 }

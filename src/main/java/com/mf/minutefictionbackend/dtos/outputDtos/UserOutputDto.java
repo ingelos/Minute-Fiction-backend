@@ -11,8 +11,8 @@ public class UserOutputDto {
 
     private String username;
     private String email;
-    private Boolean isSubscribedToMailing;
-    private Boolean hasAuthorProfile;
+    private boolean subscribedToMailing;
     private Set<Authority> authorities;
+    private boolean hasAuthorProfile;
 
 }

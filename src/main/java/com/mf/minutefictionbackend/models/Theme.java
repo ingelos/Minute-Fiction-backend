@@ -31,6 +31,7 @@ public class Theme {
     @Column
     private LocalDate closingDate;
 
+
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "theme")
     private List<Story> stories;
