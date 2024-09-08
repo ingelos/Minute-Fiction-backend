@@ -1,7 +1,9 @@
 package com.mf.minutefictionbackend.controllers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.ThemeInputDto;
+import com.mf.minutefictionbackend.dtos.mappers.ThemeMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
+import com.mf.minutefictionbackend.models.Theme;
 import com.mf.minutefictionbackend.services.ThemeService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,7 @@ public class ThemeController {
 
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/" + theme.name).toUriString());
+                .path("/" + theme.getName()).toUriString());
 
         return ResponseEntity.created(uri).body(theme);
     }
@@ -35,6 +37,13 @@ public class ThemeController {
     @GetMapping
     public ResponseEntity<List<ThemeOutputDto>> getAllThemes() {
         return ResponseEntity.ok().body(themeService.getAllThemes());
+    }
+
+    @GetMapping("/open")
+    public ResponseEntity<List<ThemeOutputDto>> getOpenThemes() {
+        List<Theme> openThemes = themeService.findOpenThemes();
+        List<ThemeOutputDto> openThemeDtoList = ThemeMapper.themeModelListToOutputList(openThemes);
+        return ResponseEntity.ok().body(openThemeDtoList);
     }
 
     @GetMapping("/{id}")

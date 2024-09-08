@@ -5,9 +5,11 @@ import com.mf.minutefictionbackend.dtos.mappers.ThemeMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Theme;
+import com.mf.minutefictionbackend.repositories.StoryRepository;
 import com.mf.minutefictionbackend.repositories.ThemeRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.mf.minutefictionbackend.dtos.mappers.ThemeMapper.*;
@@ -17,6 +19,7 @@ public class ThemeService {
 
 
     private final ThemeRepository themeRepository;
+
 
     public ThemeService(ThemeRepository themeRepository) {
         this.themeRepository = themeRepository;
@@ -68,4 +71,9 @@ public class ThemeService {
     }
 
 
+    public List<Theme> findOpenThemes() {
+        LocalDate now = LocalDate.now();
+
+        return themeRepository.findByClosingDateAfter(now);
+    }
 }

@@ -37,6 +37,19 @@ public class AuthorProfileController {
         this.photoService = photoService;
     }
 
+    @PostMapping("/{username}")
+    public ResponseEntity<AuthorProfileOutputDto> createAuthorProfile(@Valid @PathVariable String username, @RequestBody AuthorProfileInputDto authorProfileInputDto) {
+
+        AuthorProfileOutputDto createdProfile = authorProfileService.createAuthorProfile(username, authorProfileInputDto);
+
+        URI uri = URI.create(ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/" + createdProfile.getUsername())
+                .toUriString());
+
+        return ResponseEntity.created(uri).body(createdProfile);
+    }
+
     @GetMapping
     public ResponseEntity<List<AuthorProfileOutputDto>> getAllAuthorProfiles() {
         List<AuthorProfileOutputDto> authorProfiles = authorProfileService.getAllAuthorProfiles();

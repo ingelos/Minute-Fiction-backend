@@ -1,14 +1,23 @@
 package com.mf.minutefictionbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Table(name = "themes")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Theme {
 
+    @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "theme_sequence")
     @SequenceGenerator(name = "theme_sequence", sequenceName = "theme_sequence", initialValue = 1004, allocationSize = 1)
@@ -23,47 +32,9 @@ public class Theme {
     private LocalDate closingDate;
 
 
+    @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "theme")
     private List<Story> stories;
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDate getOpenDate() {
-        return openDate;
-    }
-
-    public void setOpenDate(LocalDate openDate) {
-        this.openDate = openDate;
-    }
-
-    public LocalDate getClosingDate() {
-        return closingDate;
-    }
-
-    public void setClosingDate(LocalDate closingDate) {
-        this.closingDate = closingDate;
-    }
-
-    public List<Story> getStories() {
-        return stories;
-    }
 }

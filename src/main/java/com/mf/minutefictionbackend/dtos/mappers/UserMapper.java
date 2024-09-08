@@ -3,6 +3,7 @@ package com.mf.minutefictionbackend.dtos.mappers;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
+import com.mf.minutefictionbackend.models.Authority;
 import com.mf.minutefictionbackend.models.User;
 
 import java.util.HashSet;
@@ -10,22 +11,25 @@ import java.util.Set;
 
 public class UserMapper {
 
-    public static User userFromInputDtoToModel(UserInputDto userInputDto) {
-        User user = new User();
-        user.setUsername(userInputDto.getUsername());
-        user.setPassword(userInputDto.getPassword());
-        user.setEmail(userInputDto.getEmail());
-        user.setSubscribedToMailing(userInputDto.getIsSubscribedToMailing());
+    public static User userFromInputDtoToModel(UserInputDto userInputDto, String encodedPassword) {
+        Set<Authority> authorities = AuthorityMapper.fromDtos(userInputDto.getAuthorities());
 
-        return user;
+        return new User(
+                userInputDto.getUsername(),
+                encodedPassword,
+                userInputDto.getEmail(),
+                userInputDto.isSubscribedToMailing(),
+                authorities
+        );
     }
 
     public static UserOutputDto userFromModelToOutputDto(User user) {
         UserOutputDto userDto = new UserOutputDto();
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
-        userDto.setIsSubscribedToMailing(user.isSubscribedToMailing());
+        userDto.setSubscribedToMailing(user.isSubscribedToMailing());
         userDto.setHasAuthorProfile(user.getAuthorProfile() != null);
+        userDto.setAuthorities(user.getAuthorities());
 
         return userDto;
     }

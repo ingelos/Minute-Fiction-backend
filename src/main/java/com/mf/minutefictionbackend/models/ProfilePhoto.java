@@ -1,11 +1,16 @@
 package com.mf.minutefictionbackend.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 
 @Entity
+@Table(name = "profile_photos")
+@Getter
+@Setter
+@NoArgsConstructor
 public class ProfilePhoto {
 
     @Id
@@ -19,22 +24,4 @@ public class ProfilePhoto {
         this.fileName = fileName;
     }
 
-    public ProfilePhoto() {
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public AuthorProfile getAuthorProfile() {
-        return authorProfile;
-    }
-
-    public void setAuthorProfile(AuthorProfile authorProfile) {
-        this.authorProfile = authorProfile;
-    }
 }

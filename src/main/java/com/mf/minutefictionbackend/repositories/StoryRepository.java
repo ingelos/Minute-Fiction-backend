@@ -7,14 +7,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
-    List<Story> findByStatus(StoryStatus status);
+    List<Story> findByStatusOrderByPublishDateDesc(StoryStatus status);
     List<Story> findByAuthor_UsernameAndStatus(String username, StoryStatus status);
     List<Story> findByStatusAndTheme(StoryStatus status, Theme theme);
+    Optional<Story> findByStatusAndId(StoryStatus status, Long storyId);
     boolean existsByThemeAndAuthorUsername(Theme theme, String username);
-    long countSubmissionsByTheme(Theme theme);
+    int countSubmissionsByTheme(Theme theme);
 
 }

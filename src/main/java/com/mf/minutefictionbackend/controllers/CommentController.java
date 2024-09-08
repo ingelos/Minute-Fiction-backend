@@ -31,9 +31,9 @@ public class CommentController {
         return ResponseEntity.created(uri).body(savedComment);
     }
 
-    @PatchMapping("/stories/{storyId}/comments/{commentId}")
-    public ResponseEntity<CommentOutputDto> updateComment(@Valid @PathVariable("storyId") Long storyId, @PathVariable("commentId") Long commentId, @RequestBody CommentInputDto updatedComment) {
-        CommentOutputDto updatedCommentDto = commentService.updateComment(storyId, commentId, updatedComment);
+    @PatchMapping("/comments/{commentId}")
+    public ResponseEntity<CommentOutputDto> updateComment(@Valid @PathVariable("commentId") Long commentId, @RequestBody CommentInputDto updatedComment) {
+        CommentOutputDto updatedCommentDto = commentService.updateComment(commentId, updatedComment);
         return ResponseEntity.ok().body(updatedCommentDto);
     }
 
