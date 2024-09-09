@@ -1,4 +1,4 @@
-package com.mf.minutefictionbackend.exceptions;
+package com.mf.minutefictionbackend.security;
 
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +16,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
         throws IOException {
-
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.getWriter().write("You do not have permission to perform this action.");
     }

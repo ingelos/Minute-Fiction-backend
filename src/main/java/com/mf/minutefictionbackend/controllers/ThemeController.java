@@ -21,18 +21,16 @@ import java.util.List;
 public class ThemeController {
 
     private final ThemeService themeService;
-    private final SecurityService securityService;
 
-    public ThemeController(ThemeService themeService, SecurityService securityService) {
+
+    public ThemeController(ThemeService themeService) {
         this.themeService = themeService;
-        this.securityService = securityService;
+
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @PostMapping
     public ResponseEntity<ThemeOutputDto> createTheme(@Valid @RequestBody ThemeInputDto themeInputDto) {
-        if(!securityService.isEditor()) {
-            throw new AccessDeniedException("Only editors have permission to create themes.");
-        }
         ThemeOutputDto theme = themeService.createTheme(themeInputDto);
 
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -60,20 +58,16 @@ public class ThemeController {
         return ResponseEntity.ok().body(themeDto);
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @PatchMapping("/{id}")
     public ResponseEntity<ThemeOutputDto> updateTheme(@Valid @PathVariable("id") Long id, @RequestBody ThemeInputDto updatedThemeInputDto) {
-        if(!securityService.isEditor()) {
-            throw new AccessDeniedException("You do not have permission to update themes.");
-        }
         ThemeOutputDto updatedTheme = themeService.updateTheme(id, updatedThemeInputDto);
         return ResponseEntity.ok().body(updatedTheme);
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteThemeById(@PathVariable("id") Long id) {
-        if(!securityService.isEditor()) {
-            throw new AccessDeniedException("You do not have permission to delete themes.");
-        }
         themeService.deleteThemeById(id);
         return ResponseEntity.noContent().build();
     }

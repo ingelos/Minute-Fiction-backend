@@ -7,6 +7,7 @@ import com.mf.minutefictionbackend.services.SecurityService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,13 +19,13 @@ import java.net.URI;
 public class CommentController {
 
     private final CommentService commentService;
-    private final SecurityService securityService;
-    public CommentController(CommentService commentService, SecurityService securityService) {
+
+    public CommentController(CommentService commentService) {
         this.commentService = commentService;
-        this.securityService = securityService;
     }
 
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/stories/{storyId}/comments")
     public ResponseEntity<CommentOutputDto> addCommentToStory(@Valid @PathVariable Long storyId, @RequestBody CommentInputDto commentInputDto) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -38,20 +39,18 @@ public class CommentController {
     }
 
 
+    @PreAuthorize("@securityService.isCommentOwner(commentId)")
     @PatchMapping("/comments/{commentId}")
     public ResponseEntity<CommentOutputDto> updateComment(@Valid @PathVariable("commentId") Long commentId, @RequestBody CommentInputDto updatedComment) {
-        if(!securityService.isCommentOwner(commentId)) {
-            throw new AccessDeniedException("You do not have permission to update this comment.");
-        }
+
         CommentOutputDto updatedCommentDto = commentService.updateComment(commentId, updatedComment);
         return ResponseEntity.ok().body(updatedCommentDto);
     }
 
+    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isCommentOwner(commentId)")
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable("commentId") Long commentId) {
-        if(!securityService.isCommentOwnerOrEditor(commentId)) {
-            throw new AccessDeniedException("You do not have permission to delete this comment.");
-        }
+
         commentService.deleteCommentById(commentId);
         return ResponseEntity.noContent().build();
     }

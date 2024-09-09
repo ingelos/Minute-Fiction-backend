@@ -1,5 +1,6 @@
 package com.mf.minutefictionbackend.controllers;
 
+import com.mf.minutefictionbackend.dtos.inputDtos.AuthorityInputDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.UserMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
@@ -22,12 +23,11 @@ import java.util.Set;
 public class UserController {
 
     private final UserService userService;
-    private final SecurityService securityService;
 
-    public UserController(UserService userService, SecurityService securityService) {
+
+    public UserController(UserService userService) {
         this.userService = userService;
 
-        this.securityService = securityService;
     }
 
     @PostMapping
@@ -44,37 +44,29 @@ public class UserController {
         return ResponseEntity.created(uri).body(userOutputDto);
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping
     public ResponseEntity<Set<UserOutputDto>> getAllUsers() {
-        if(!securityService.isEditor()) {
-            throw new AccessDeniedException("You do not have permission to perform this action.");
-        }
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
+    @PreAuthorize("hasAuthority('EDITOR') or #username == authentication.principal.username")
     @GetMapping("/{username}")
     public ResponseEntity<UserOutputDto> getUserByUsername(@PathVariable("username") String username) {
-        if(!securityService.isOwnerOrEditor(username)) {
-            throw new AccessDeniedException("You do not have permission to see this users data.");
-        }
         UserOutputDto optionalUser = userService.getUserByUsername(username);
         return ResponseEntity.ok().body(optionalUser);
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteUser(@PathVariable("username") String username) {
-        if(!securityService.isOwnerOrEditor(username)) {
-            throw new AccessDeniedException("You do not have permission to delete this user.");
-        }
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAuthority('EDITOR') or #username == authentication.principal.username")
     @PutMapping("/{username}")
     public ResponseEntity<UserOutputDto> updateUser(@Valid @PathVariable("username") String username, @RequestBody UserInputDto userDto) {
-        if(!securityService.isOwner(username)) {
-            throw new AccessDeniedException("You do not have permission to update this users data.");
-        }
         UserOutputDto updatedUser = userService.updateUser(username, userDto);
         return ResponseEntity.ok().body(updatedUser);
     }
@@ -82,20 +74,20 @@ public class UserController {
 
     // MANAGE AUTHORITIES
 
+
+    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/{username}/authorities")
     public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {
-        if(!securityService.isEditor()) {
-            throw new AccessDeniedException("You do not have permission to request authorities.");
-        }
+
         return ResponseEntity.ok().body(userService.getAuthorities(username));
     }
 
-    @PostMapping("/{username}/authority")
-    public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody String authority) {
-        if(!securityService.isEditor()) {
-            throw new AccessDeniedException("You do not have permission to add authorities.");
-        }
+    @PreAuthorize("hasAuthority('EDITOR')")
+    @PostMapping("/{username}/authorities")
+    public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody AuthorityInputDto authorityInputDto) {
+
         try {
+            String authority = authorityInputDto.getAuthority();
             userService.addAuthority(username, authority);
             return ResponseEntity.noContent().build();
         }
@@ -104,11 +96,10 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @DeleteMapping("/{username}/authorities/{authority}")
     public ResponseEntity<Object> deleteUserAuthority(@PathVariable("username") String username, @PathVariable("authority") String authority) {
-        if(!securityService.isEditor()) {
-            throw new AccessDeniedException("You do not have permission to delete authorities.");
-        }
+
         userService.removeAuthority(username, authority);
         return ResponseEntity.noContent().build();
     }

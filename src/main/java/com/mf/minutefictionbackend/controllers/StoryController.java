@@ -32,6 +32,7 @@ public class StoryController {
     }
 
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/submit/{themeId}")
     public ResponseEntity<StoryOutputDto> submitStory(@Valid @PathVariable Long themeId, @RequestParam String username, @RequestBody StoryInputDto storyInputDto) {
         StoryOutputDto storyDto = storyService.submitStory(storyInputDto, themeId, username);
@@ -43,30 +44,25 @@ public class StoryController {
         return ResponseEntity.created(uri).body(storyDto);
     }
 
+    @PreAuthorize("@securityService.isStoryOwner(storyId)")
     @PatchMapping("/submit/{storyId}")
     public ResponseEntity<StoryOutputDto> updateSubmittedStory(@Valid @PathVariable("storyId") Long storyId, @RequestBody StoryInputDto updatedStory) {
-        if(!securityService.isStoryOwner(storyId)) {
-            throw new AccessDeniedException("You do not have permission to create mailings.");
-        }
 
         StoryOutputDto updatedStoryDto = storyService.updateStory(storyId, updatedStory);
         return ResponseEntity.ok().body(updatedStoryDto);
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/submitted")
     public ResponseEntity<List<StoryOutputDto>> getAllSubmittedStories() {
-        if(!securityService.isEditor()) {
-            throw new AccessDeniedException("You do not have permission to create mailings.");
-        }
+
         List<StoryOutputDto> stories = storyService.getStoriesByStatus(StoryStatus.SUBMITTED);
         return ResponseEntity.ok(stories);
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/submitted/{themeId}")
     public ResponseEntity<List<StoryOutputDto>> getSubmittedStoriesByThemeId(@PathVariable("themeId") Long themeId) {
-        if(!securityService.isEditor()) {
-            throw new AccessDeniedException("You do not have permission to create mailings.");
-        }
 
         List<StoryOutputDto> stories = storyService.getStoriesByStatusAndThemeId(StoryStatus.SUBMITTED, themeId);
         return ResponseEntity.ok(stories);

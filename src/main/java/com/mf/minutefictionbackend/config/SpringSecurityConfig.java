@@ -1,13 +1,15 @@
 package com.mf.minutefictionbackend.config;
 
-import com.mf.minutefictionbackend.exceptions.CustomAccessDeniedHandler;
+import com.mf.minutefictionbackend.security.CustomAccessDeniedHandler;
 import com.mf.minutefictionbackend.filter.JwtRequestFilter;
+import com.mf.minutefictionbackend.security.CustomAuthenticationEntryPoint;
 import com.mf.minutefictionbackend.services.CustomUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,20 +20,22 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SpringSecurityConfig {
 
     public final CustomUserDetailService customUserDetailService;
     private final JwtRequestFilter jwtRequestFilter;
     private final PasswordEncoder passwordEncoder;
-
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
 
-    public SpringSecurityConfig(CustomUserDetailService customUserDetailService, JwtRequestFilter jwtRequestFilter, PasswordEncoder passwordEncoder, CustomAccessDeniedHandler customAccessDeniedHandler) {
+    public SpringSecurityConfig(CustomUserDetailService customUserDetailService, JwtRequestFilter jwtRequestFilter, PasswordEncoder passwordEncoder, CustomAccessDeniedHandler customAccessDeniedHandler, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
         this.customUserDetailService = customUserDetailService;
         this.jwtRequestFilter = jwtRequestFilter;
         this.passwordEncoder = passwordEncoder;
         this.customAccessDeniedHandler = customAccessDeniedHandler;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     @Bean
@@ -49,13 +53,13 @@ public class SpringSecurityConfig {
     protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
 
         http
-                .authorizeHttpRequests((authorize) -> authorize
+                .authorizeHttpRequests(auth -> auth
                         //USERS
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("USER")
-                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority("USER")  // only own
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("USER") // only own
+                        .requestMatchers(HttpMethod.GET, "/users/{username}").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("USER")  // only own
+                        .requestMatchers(HttpMethod.DELETE, "/users/{username}").hasAuthority("USER") // only own
 
                         .requestMatchers(HttpMethod.POST, "/users/**").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("EDITOR")
@@ -111,11 +115,12 @@ public class SpringSecurityConfig {
 
                         .requestMatchers("/authenticated").authenticated()
                         .requestMatchers("/authenticate").permitAll()
-
                         .anyRequest().denyAll()
                 )
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.accessDeniedHandler(customAccessDeniedHandler))
+                        exceptionHandling
+                                .accessDeniedHandler(customAccessDeniedHandler)
+                                .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
