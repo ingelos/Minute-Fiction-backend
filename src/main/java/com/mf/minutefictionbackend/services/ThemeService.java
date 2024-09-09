@@ -5,7 +5,6 @@ import com.mf.minutefictionbackend.dtos.mappers.ThemeMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Theme;
-import com.mf.minutefictionbackend.repositories.StoryRepository;
 import com.mf.minutefictionbackend.repositories.ThemeRepository;
 import org.springframework.stereotype.Service;
 

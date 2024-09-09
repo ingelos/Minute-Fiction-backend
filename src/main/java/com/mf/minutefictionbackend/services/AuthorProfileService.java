@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 
@@ -24,6 +25,7 @@ public class AuthorProfileService {
     private final UserRepository userRepository;
     private final PhotoService photoService;
     private final FileUploadRepository fileUploadRepository;
+
 
 
     public AuthorProfileService(AuthorProfileRepository authorProfileRepository, UserRepository userRepository, PhotoService photoService, FileUploadRepository fileUploadRepository) {
@@ -39,7 +41,7 @@ public class AuthorProfileService {
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
         if (user.getAuthorProfile() != null) {
-            throw new AuthorProfileAlreadyExistsException("User already has an author profile.");
+            throw new BadRequestException("Author profile already exists for this user.");
         }
         AuthorProfile authorProfile = AuthorProfileMapper.authorProfileFromInputDtoToModel(authorProfileInputDto);
         authorProfile.setUser(user);
@@ -68,6 +70,16 @@ public class AuthorProfileService {
         AuthorProfile updateProfile = authorProfileRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for username " + username));
 
+//        if (!currentUser.getUsername().equals(username) && !currentUser.getAuthorities().contains(new SimpleGrantedAuthority("EDITOR"))) {
+//            throw new AccessDeniedException("You do not have permission to edit this profile");
+//        };
+
+
+
+        ////        updateProfile.setFirstname(updatedProfile.getFirstname())
+//        updateProfile.setLastname(updatedProfile.getLastname());
+//        updateProfile.setBio(updatedProfile.getBio());
+//        updateProfile.setDob(updatedProfile.getDob());
         if(updatedProfile.getFirstname() != null) {
             updateProfile.setFirstname(updatedProfile.getFirstname());
         }
@@ -93,7 +105,7 @@ public class AuthorProfileService {
         AuthorProfile authorProfile = user.getAuthorProfile();
 
         if (authorProfile != null && !authorProfile.getStories().isEmpty()) {
-            throw new AuthorProfileDeletionException("Cannot delete profile. Author has existing stories.");
+            throw new IllegalArgumentException("Cannot delete profile. Author has existing stories.");
         }
         authorProfileRepository.deleteById(username);
         user.setAuthorProfile(null);

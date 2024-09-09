@@ -2,13 +2,10 @@ package com.mf.minutefictionbackend.services;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.StoryMapper;
-import com.mf.minutefictionbackend.dtos.mappers.ThemeMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
-import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
 import com.mf.minutefictionbackend.enums.StoryStatus;
-import com.mf.minutefictionbackend.exceptions.NotAllowedToUpdatePublishedStoryException;
+import com.mf.minutefictionbackend.exceptions.BadRequestException;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
-import com.mf.minutefictionbackend.exceptions.ThemeClosedException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
 import com.mf.minutefictionbackend.models.Comment;
 import com.mf.minutefictionbackend.models.Story;
@@ -48,17 +45,17 @@ public class StoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Theme not found."));
 
         if (theme.getClosingDate().isBefore(LocalDate.now())) {
-            throw new ThemeClosedException("Theme closing date has already passed.");
+            throw new BadRequestException("Theme closing date has already passed.");
         }
 
         int numberOfSubmissions = storyRepository.countSubmissionsByTheme(theme);
         if(numberOfSubmissions >= 50) {
-            throw new IllegalArgumentException("The maximum number of submissions for this theme has already been reached.");
+            throw new BadRequestException("The maximum number of submissions for this theme has already been reached.");
         }
 
         boolean hasSubmitted = storyRepository.existsByThemeAndAuthorUsername(theme, username);
         if (hasSubmitted) {
-            throw new IllegalArgumentException("You have already submitted a story to this theme.");
+            throw new BadRequestException("You have already submitted a story to this theme.");
         }
 
         Story story = StoryMapper.storyFromInputDtoToModel(storyInputDto);
@@ -142,10 +139,10 @@ public class StoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("No story found."));
 
         if(!story.getStatus().equals(StoryStatus.SUBMITTED)) {
-            throw new NotAllowedToUpdatePublishedStoryException("This story is already published, therefore changes are not allowed.");
+            throw new BadRequestException("This story is already published, therefore changes are not allowed.");
         }
         if(story.getTheme().getClosingDate().isBefore(LocalDate.now())) {
-            throw new ThemeClosedException("Theme closing date has already passed, changes are no longer allowed.");
+            throw new BadRequestException("Theme closing date has already passed, changes are no longer allowed.");
             }
         story.setContent(updatedStory.getContent());
 

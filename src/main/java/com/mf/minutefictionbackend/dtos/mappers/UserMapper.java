@@ -29,7 +29,7 @@ public class UserMapper {
         userDto.setEmail(user.getEmail());
         userDto.setSubscribedToMailing(user.isSubscribedToMailing());
         userDto.setHasAuthorProfile(user.getAuthorProfile() != null);
-        userDto.setAuthorities(user.getAuthorities());
+        userDto.setAuthorities(AuthorityMapper.toAuthorityNames(user.getAuthorities()));
 
         return userDto;
     }

@@ -5,9 +5,12 @@ import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.enums.StoryStatus;
 import com.mf.minutefictionbackend.services.CommentService;
+import com.mf.minutefictionbackend.services.SecurityService;
 import com.mf.minutefictionbackend.services.StoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -20,14 +23,14 @@ public class StoryController {
 
     private final StoryService storyService;
     private final CommentService commentService;
+    private final SecurityService securityService;
 
-    public StoryController(StoryService storyService, CommentService commentService) {
+    public StoryController(StoryService storyService, CommentService commentService, SecurityService securityService) {
         this.storyService = storyService;
         this.commentService = commentService;
+        this.securityService = securityService;
     }
 
-
-    // submitting/submitted
 
     @PostMapping("/submit/{themeId}")
     public ResponseEntity<StoryOutputDto> submitStory(@Valid @PathVariable Long themeId, @RequestParam String username, @RequestBody StoryInputDto storyInputDto) {
@@ -42,18 +45,29 @@ public class StoryController {
 
     @PatchMapping("/submit/{storyId}")
     public ResponseEntity<StoryOutputDto> updateSubmittedStory(@Valid @PathVariable("storyId") Long storyId, @RequestBody StoryInputDto updatedStory) {
+        if(!securityService.isStoryOwner(storyId)) {
+            throw new AccessDeniedException("You do not have permission to create mailings.");
+        }
+
         StoryOutputDto updatedStoryDto = storyService.updateStory(storyId, updatedStory);
         return ResponseEntity.ok().body(updatedStoryDto);
     }
 
     @GetMapping("/submitted")
     public ResponseEntity<List<StoryOutputDto>> getAllSubmittedStories() {
+        if(!securityService.isEditor()) {
+            throw new AccessDeniedException("You do not have permission to create mailings.");
+        }
         List<StoryOutputDto> stories = storyService.getStoriesByStatus(StoryStatus.SUBMITTED);
         return ResponseEntity.ok(stories);
     }
 
     @GetMapping("/submitted/{themeId}")
     public ResponseEntity<List<StoryOutputDto>> getSubmittedStoriesByThemeId(@PathVariable("themeId") Long themeId) {
+        if(!securityService.isEditor()) {
+            throw new AccessDeniedException("You do not have permission to create mailings.");
+        }
+
         List<StoryOutputDto> stories = storyService.getStoriesByStatusAndThemeId(StoryStatus.SUBMITTED, themeId);
         return ResponseEntity.ok(stories);
     }
@@ -63,6 +77,9 @@ public class StoryController {
 
     @PatchMapping("/publish/{storyId}")
     public ResponseEntity<StoryOutputDto> publishStory(@PathVariable Long storyId) {
+        if(!securityService.isEditor()) {
+            throw new AccessDeniedException("You do not have permission to create mailings.");
+        }
         StoryOutputDto story = storyService.publishStory(storyId);
         return ResponseEntity.ok(story);
     }
@@ -87,6 +104,9 @@ public class StoryController {
 
     @DeleteMapping("/{storyId}")
     public ResponseEntity<Void> deleteStory(@PathVariable("storyId") Long storyId) {
+        if(!securityService.isStoryOwnerOrEditor(storyId)) {
+            throw new AccessDeniedException("You do not have permission to create mailings.");
+        }
         storyService.deleteStoryById(storyId);
         return ResponseEntity.noContent().build();
     }

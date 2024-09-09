@@ -5,6 +5,7 @@ import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.services.AuthorProfileService;
 import com.mf.minutefictionbackend.services.PhotoService;
+import com.mf.minutefictionbackend.services.SecurityService;
 import com.mf.minutefictionbackend.services.StoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -12,6 +13,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,16 +33,21 @@ public class AuthorProfileController {
     private final StoryService storyService;
     private final PhotoService photoService;
 
+    private final SecurityService securityService;
 
-    public AuthorProfileController(AuthorProfileService authorProfileService, StoryService storyService, PhotoService photoService) {
+
+    public AuthorProfileController(AuthorProfileService authorProfileService, StoryService storyService, PhotoService photoService, SecurityService securityService) {
         this.authorProfileService = authorProfileService;
         this.storyService = storyService;
         this.photoService = photoService;
+        this.securityService = securityService;
     }
 
     @PostMapping("/{username}")
     public ResponseEntity<AuthorProfileOutputDto> createAuthorProfile(@Valid @PathVariable String username, @RequestBody AuthorProfileInputDto authorProfileInputDto) {
-
+        if(!securityService.isOwner(username)) {
+            throw new AccessDeniedException("You do not have permission to perform this action.");
+        }
         AuthorProfileOutputDto createdProfile = authorProfileService.createAuthorProfile(username, authorProfileInputDto);
 
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -56,9 +64,11 @@ public class AuthorProfileController {
         return ResponseEntity.ok(authorProfiles);
     }
 
-
     @PatchMapping("/{username}")
     public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@Valid @PathVariable("username") String username, @RequestBody AuthorProfileInputDto updatedProfile) {
+        if(!securityService.isOwnerOrEditor(username)) {
+            throw new AccessDeniedException("You do not have permission to edit this profile");
+        }
         AuthorProfileOutputDto authorProfileDto = authorProfileService.updateAuthorProfile(username, updatedProfile);
         return ResponseEntity.ok().body(authorProfileDto);
     }
@@ -72,12 +82,16 @@ public class AuthorProfileController {
 
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteAuthorProfile(@PathVariable("username") String username) {
+        if(!securityService.isOwnerOrEditor(username)) {
+            throw new AccessDeniedException("You do not have permission to perform this action.");
+        }
         authorProfileService.deleteAuthorProfile(username);
         return ResponseEntity.noContent().build();
     }
 
 
     // get published stories by author
+
     @GetMapping("/{username}/stories")
     public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByAuthor(@PathVariable String username) {
         List<StoryOutputDto> stories = storyService.getPublishedStoriesByAuthor(username);
@@ -90,12 +104,15 @@ public class AuthorProfileController {
 
 
 
-    // add and get author photo
+    // MANAGING PHOTOS
 
     @PostMapping("/{username}/photo")
     public ResponseEntity<AuthorProfileOutputDto> addPhotoToAuthorProfile(@Valid @PathVariable("username") String username, @RequestBody MultipartFile file)
         throws IOException {
 
+        if(!securityService.isOwner(username)) {
+            throw new AccessDeniedException("You do not have permission to add a photo to this profile.");
+        }
             String url = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path("/authorprofiles/")
                     .path(Objects.requireNonNull(username))
@@ -127,6 +144,9 @@ public class AuthorProfileController {
 
     @DeleteMapping("/{username}/photo")
     public ResponseEntity<Void> deleteProfilePhoto(@PathVariable("username") String username) {
+        if(!securityService.isOwnerOrEditor(username)) {
+            throw new AccessDeniedException("You do not have permission to delete this photo.");
+        }
         authorProfileService.deletePhotoByUsername(username);
         return ResponseEntity.noContent().build();
     }

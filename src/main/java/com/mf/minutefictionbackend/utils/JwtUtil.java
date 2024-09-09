@@ -20,7 +20,6 @@ public class JwtUtil {
 
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        System.out.println("Using SECRET_KEY: " + SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

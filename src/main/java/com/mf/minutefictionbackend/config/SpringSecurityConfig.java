@@ -1,5 +1,6 @@
 package com.mf.minutefictionbackend.config;
 
+import com.mf.minutefictionbackend.exceptions.CustomAccessDeniedHandler;
 import com.mf.minutefictionbackend.filter.JwtRequestFilter;
 import com.mf.minutefictionbackend.services.CustomUserDetailService;
 import org.springframework.context.annotation.Bean;
@@ -23,11 +24,14 @@ public class SpringSecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
     private final PasswordEncoder passwordEncoder;
 
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-    public SpringSecurityConfig(CustomUserDetailService customUserDetailService, JwtRequestFilter jwtRequestFilter, PasswordEncoder passwordEncoder) {
+
+    public SpringSecurityConfig(CustomUserDetailService customUserDetailService, JwtRequestFilter jwtRequestFilter, PasswordEncoder passwordEncoder, CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.customUserDetailService = customUserDetailService;
         this.jwtRequestFilter = jwtRequestFilter;
         this.passwordEncoder = passwordEncoder;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
     @Bean
@@ -49,9 +53,9 @@ public class SpringSecurityConfig {
                         //USERS
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("USER")
-                        .requestMatchers(HttpMethod.PUT, "/users").hasAuthority("USER")  // only own
-                        .requestMatchers(HttpMethod.DELETE, "/users").hasAuthority("USER") // only own
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority("USER")  // only own
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("USER") // only own
 
                         .requestMatchers(HttpMethod.POST, "/users/**").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("EDITOR")
@@ -100,8 +104,8 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/comments/**").hasAuthority("EDITOR")
 
                         //MAILINGS
-                        .requestMatchers(HttpMethod.GET, "/mailings").hasAuthority("EDITOR")
-                        .requestMatchers(HttpMethod.POST, "/mailings/**").hasAuthority("EDITOR")
+                        .requestMatchers(HttpMethod.GET, "/mailings/**").hasAuthority("EDITOR")
+                        .requestMatchers(HttpMethod.POST, "/mailings").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/mailings/**").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.DELETE, "/mailings/**").hasAuthority("EDITOR")
 
@@ -110,6 +114,8 @@ public class SpringSecurityConfig {
 
                         .anyRequest().denyAll()
                 )
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.accessDeniedHandler(customAccessDeniedHandler))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

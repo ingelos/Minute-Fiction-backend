@@ -111,7 +111,7 @@ public class UserService {
 
 
 
-    public Set<Authority> getAuthorities(String username) {
+    public List<String> getAuthorities(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         UserOutputDto userDto = UserMapper.userFromModelToOutputDto(user);
