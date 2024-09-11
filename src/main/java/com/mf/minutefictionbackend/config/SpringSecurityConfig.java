@@ -56,57 +56,36 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         //USERS
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
-
-                        .requestMatchers(HttpMethod.GET, "/users/{username}").hasAuthority("USER")
-                        .requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("USER")  // only own
-                        .requestMatchers(HttpMethod.DELETE, "/users/{username}").hasAuthority("USER") // only own
-
+                        .requestMatchers(HttpMethod.GET, "/users/*").hasAuthority("READER")
+                        .requestMatchers(HttpMethod.PUT, "/users/*").hasAuthority("READER")
+                        .requestMatchers(HttpMethod.DELETE, "/users/*").hasAuthority("READER")
                         .requestMatchers(HttpMethod.POST, "/users/**").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("EDITOR")
-
                         //AUTHOR PROFILES
                         .requestMatchers(HttpMethod.GET, "/authorprofiles/**").permitAll()
-                        //
-                        .requestMatchers(HttpMethod.POST, "/authorprofiles/**").hasAuthority("USER")
-                        .requestMatchers(HttpMethod.PATCH, "/authorprofiles/**").hasAuthority("USER") // only own
-                        .requestMatchers(HttpMethod.DELETE, "/authorprofiles/**").hasAuthority("USER")  // only own
-                        //
-                        .requestMatchers(HttpMethod.POST, "/authorprofiles").hasAuthority("EDITOR")
-                        .requestMatchers(HttpMethod.GET, "/authorprofiles/**").hasAuthority("EDITOR")
-                        .requestMatchers(HttpMethod.DELETE, "/authorprofiles/**").hasAuthority("EDITOR")
-
+                        .requestMatchers(HttpMethod.POST, "/authorprofiles/**").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/authorprofiles/**").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
+                        .requestMatchers(HttpMethod.DELETE, "/authorprofiles/**").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
                         //THEMES
                         .requestMatchers(HttpMethod.GET, "/themes/**").permitAll()
-
                         .requestMatchers(HttpMethod.POST, "/themes").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/themes/**").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.DELETE, "/themes/**").hasAuthority("EDITOR")
-
                         //STORIES
                         .requestMatchers(HttpMethod.GET, "/stories/published/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stories/{storyId}/comments").permitAll() // DEZE TOCH BIJ COMMENTS??? //
-                        // user authority
-                        .requestMatchers(HttpMethod.POST, "/stories/**").hasAuthority("USER")
-                        // authenticated user
-                        .requestMatchers(HttpMethod.PATCH, "/stories/submit/**").hasAuthority("USER") // only own
-                        .requestMatchers(HttpMethod.DELETE, "/stories/**").hasAuthority("USER") // only own
-                        // editor authority
-                        .requestMatchers(HttpMethod.GET, "/stories/**").hasAuthority("EDITOR")
-                        .requestMatchers(HttpMethod.PATCH, "/stories/**").hasAuthority("EDITOR")
-                        .requestMatchers(HttpMethod.DELETE, "/stories/**").hasAuthority("EDITOR")
-
+                        .requestMatchers(HttpMethod.POST, "/stories/submit/*").hasAnyAuthority("AUTHOR", "EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/stories/submit/**").hasAnyAuthority("AUTHOR", "EDITOR")
+                        .requestMatchers(HttpMethod.GET, "/stories/**").hasAnyAuthority("AUTHOR", "EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/stories/**").hasAnyAuthority("AUTHOR", "EDITOR")
+                        .requestMatchers(HttpMethod.DELETE, "/stories/**").hasAnyAuthority("AUTHOR", "EDITOR")
                         //COMMENTS
                         .requestMatchers(HttpMethod.GET, "/comments/**").permitAll()
-                        // authority user
-                        .requestMatchers(HttpMethod.POST, "/stories/{storyId}/comments").hasAnyAuthority("USER", "EDITOR")
-                        // authenticated user
-                        .requestMatchers(HttpMethod.PATCH, "/comments/**").hasAuthority("USER") // only own
-                        .requestMatchers(HttpMethod.DELETE, "/comments/**").hasAuthority("USER") //only their own
-                        // editor authority
-                        .requestMatchers(HttpMethod.DELETE, "/comments/**").hasAuthority("EDITOR")
-
+                        .requestMatchers(HttpMethod.POST, "/stories/{storyId}/comments").hasAnyAuthority("READER", "EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/comments/**").hasAnyAuthority("READER", "EDITOR")
+                        .requestMatchers(HttpMethod.DELETE, "/comments/**").hasAnyAuthority("READER", "EDITOR")
                         //MAILINGS
                         .requestMatchers(HttpMethod.GET, "/mailings/**").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.POST, "/mailings").hasAuthority("EDITOR")

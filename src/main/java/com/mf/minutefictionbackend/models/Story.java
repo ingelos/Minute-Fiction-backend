@@ -20,7 +20,7 @@ public class Story {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "story_sequence")
-    @SequenceGenerator(name = "story_sequence", sequenceName = "story_sequence", initialValue = 1004, allocationSize = 1)
+    @SequenceGenerator(name = "story_sequence", sequenceName = "story_sequence", initialValue = 1006, allocationSize = 1)
     @Column
     private Long id;
     @Column

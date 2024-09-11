@@ -38,8 +38,7 @@ public class CommentController {
         return ResponseEntity.created(uri).body(savedComment);
     }
 
-
-    @PreAuthorize("@securityService.isCommentOwner(commentId)")
+    @PreAuthorize("@securityService.isCommentOwner(#commentId)")
     @PatchMapping("/comments/{commentId}")
     public ResponseEntity<CommentOutputDto> updateComment(@Valid @PathVariable("commentId") Long commentId, @RequestBody CommentInputDto updatedComment) {
 
@@ -47,7 +46,7 @@ public class CommentController {
         return ResponseEntity.ok().body(updatedCommentDto);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isCommentOwner(commentId)")
+    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isCommentOwner(#commentId)")
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable("commentId") Long commentId) {
 

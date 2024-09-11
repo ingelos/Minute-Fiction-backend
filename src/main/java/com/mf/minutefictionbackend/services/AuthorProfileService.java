@@ -14,7 +14,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 
@@ -25,14 +24,16 @@ public class AuthorProfileService {
     private final UserRepository userRepository;
     private final PhotoService photoService;
     private final FileUploadRepository fileUploadRepository;
+    private final UserService userService;
 
 
 
-    public AuthorProfileService(AuthorProfileRepository authorProfileRepository, UserRepository userRepository, PhotoService photoService, FileUploadRepository fileUploadRepository) {
+    public AuthorProfileService(AuthorProfileRepository authorProfileRepository, UserRepository userRepository, PhotoService photoService, FileUploadRepository fileUploadRepository, UserService userService) {
         this.authorProfileRepository = authorProfileRepository;
         this.userRepository = userRepository;
         this.photoService = photoService;
         this.fileUploadRepository = fileUploadRepository;
+        this.userService = userService;
     }
 
     @Transactional
@@ -49,7 +50,10 @@ public class AuthorProfileService {
         AuthorProfile savedProfile = authorProfileRepository.save(authorProfile);
 
         user.setAuthorProfile(savedProfile);
+        userService.addAuthority(username, "AUTHOR");
+
         userRepository.save(user);
+
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(savedProfile);
     }
 
@@ -57,7 +61,6 @@ public class AuthorProfileService {
         List<AuthorProfile> allAuthorProfiles = authorProfileRepository.findAll();
         return AuthorProfileMapper.authorProfileModelListToOutputList(allAuthorProfiles);
     }
-
 
     public AuthorProfileOutputDto getAuthorProfileByUsername(String username) {
         AuthorProfile authorProfile = authorProfileRepository.findById(username)
@@ -70,16 +73,6 @@ public class AuthorProfileService {
         AuthorProfile updateProfile = authorProfileRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for username " + username));
 
-//        if (!currentUser.getUsername().equals(username) && !currentUser.getAuthorities().contains(new SimpleGrantedAuthority("EDITOR"))) {
-//            throw new AccessDeniedException("You do not have permission to edit this profile");
-//        };
-
-
-
-        ////        updateProfile.setFirstname(updatedProfile.getFirstname())
-//        updateProfile.setLastname(updatedProfile.getLastname());
-//        updateProfile.setBio(updatedProfile.getBio());
-//        updateProfile.setDob(updatedProfile.getDob());
         if(updatedProfile.getFirstname() != null) {
             updateProfile.setFirstname(updatedProfile.getFirstname());
         }
@@ -100,17 +93,25 @@ public class AuthorProfileService {
 
     @Transactional
     public void deleteAuthorProfile(String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new ResourceNotFoundException("user not found"));
-        AuthorProfile authorProfile = user.getAuthorProfile();
+        AuthorProfile authorProfile = authorProfileRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User " + username + " has no author profile."));
 
         if (authorProfile != null && !authorProfile.getStories().isEmpty()) {
             throw new IllegalArgumentException("Cannot delete profile. Author has existing stories.");
         }
         authorProfileRepository.deleteById(username);
+
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
         user.setAuthorProfile(null);
+
+        userService.removeAuthority(username, "AUTHOR");
+
         userRepository.save(user);
     }
+
+    // MANAGE PROFILE PHOTOS
+
 
     @Transactional
     public Resource getPhotoForAuthorProfile(String username) {
@@ -124,7 +125,6 @@ public class AuthorProfileService {
         }
         return photoService.downLoadFile(photo.getFileName());
     }
-
 
     @Transactional
     public AuthorProfileOutputDto assignPhotoToAuthorProfile(String fileName, String username) {
@@ -145,7 +145,7 @@ public class AuthorProfileService {
     @Transactional
     public void deletePhotoByUsername(String username) {
         AuthorProfile authorProfile = authorProfileRepository.findById(username)
-                .orElseThrow(() -> new ResourceNotFoundException("No authorprofile found for " + username));
+                .orElseThrow(() -> new ResourceNotFoundException("No author profile found for " + username));
         ProfilePhoto photo = authorProfile.getProfilePhoto();
         if(photo == null) {
             throw new ResourceNotFoundException("No profile photo found for this author.");

@@ -69,31 +69,64 @@ public class StoryService {
     }
 
     @Transactional
-    public StoryOutputDto publishStory(Long storyId) {
+    public StoryOutputDto updateStory(Long storyId, StoryInputDto updatedStory) {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("No story found."));
+
+        if(!story.getStatus().equals(StoryStatus.SUBMITTED)) {
+            throw new BadRequestException("This story is already published or declined, therefore changes are not allowed.");
+        }
+        if(story.getTheme().getClosingDate().isBefore(LocalDate.now())) {
+            throw new BadRequestException("Theme closing date has already passed, changes are no longer allowed.");
+        }
+        story.setContent(updatedStory.getContent());
+
+        Story returnStory = storyRepository.save(story);
+        return StoryMapper.storyFromModelToOutputDto(returnStory);
+    }
+
+    @Transactional
+    public void publishStory(Long storyId) {
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not found."));
 
-        story.setStatus(StoryStatus.PUBLISHED);
-        story.setPublishDate(LocalDate.now());
-
-        Story publishedStory = storyRepository.save(story);
-        return StoryMapper.storyFromModelToOutputDto(publishedStory);
-    }
-
-
-    public List<StoryOutputDto> getStoriesByStatus(StoryStatus status) {
-        List<Story> stories = storyRepository.findByStatusOrderByPublishDateDesc(status);
-        if (stories.isEmpty()) {
-            throw new ResourceNotFoundException("No stories found with status " + status);
+        if (story.getStatus() == StoryStatus.ACCEPTED) {
+            story.setStatus(StoryStatus.PUBLISHED);
+            story.setPublishDate(LocalDate.now());
+            storyRepository.save(story);
+        } else {
+            throw new IllegalArgumentException("Story must be accepted before being published.");
         }
-        return StoryMapper.storyModelListToOutputList(stories);
     }
 
-
-    public StoryOutputDto getStoryById(Long storyId) {
+    @Transactional
+    public void acceptStory(Long storyId) {
         Story story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new ResourceNotFoundException("No story found with id " + storyId));
-        return StoryMapper.storyFromModelToOutputDto(story);
+                .orElseThrow(() -> new ResourceNotFoundException("Story not found."));
+        story.setStatus(StoryStatus.ACCEPTED);
+
+        storyRepository.save(story);
+    }
+
+    @Transactional
+    public void publishAllStoriesByStatusAndTheme(Long themeId) {
+        Theme theme = themeRepository.findById(themeId)
+                .orElseThrow(() -> new ResourceNotFoundException("No theme found."));
+        List<Story> storiesToPublish = storyRepository.findByStatusAndTheme(StoryStatus.ACCEPTED, theme);
+        storiesToPublish.forEach(story -> {
+            story.setStatus(StoryStatus.PUBLISHED);
+            story.setPublishDate(LocalDate.now());
+        });
+        storyRepository.saveAll(storiesToPublish);
+    }
+
+    @Transactional
+    public void declineStory(Long storyId) {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Story not found."));
+        story.setStatus(StoryStatus.DECLINED);
+
+        storyRepository.save(story);
     }
 
     @Transactional
@@ -105,9 +138,22 @@ public class StoryService {
         if(comments != null && !comments.isEmpty()) {
             commentRepository.deleteAll(comments);
         }
-            storyRepository.delete(story);
-        }
+        storyRepository.delete(story);
+    }
 
+    public List<StoryOutputDto> getStoriesByStatus(StoryStatus status) {
+        List<Story> stories = storyRepository.findByStatusOrderByPublishDateDesc(status);
+        if (stories.isEmpty()) {
+            throw new ResourceNotFoundException("No stories found with status " + status);
+        }
+        return StoryMapper.storyModelListToOutputList(stories);
+    }
+
+    public StoryOutputDto getSubmittedStoryById(Long storyId) {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("No story found with id " + storyId));
+        return StoryMapper.storyFromModelToOutputDto(story);
+    }
 
     public List<StoryOutputDto> getStoriesByStatusAndThemeId(StoryStatus status, Long themeId) {
         Theme theme = themeRepository.findById(themeId)
@@ -126,28 +172,24 @@ public class StoryService {
         return StoryMapper.storyModelListToOutputList(stories);
     }
 
-
-    public List<StoryOutputDto> getPublishedStoriesByAuthor(String username) {
-        List<Story> stories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.PUBLISHED);
-        return StoryMapper.storyModelListToOutputList(stories);
+    public List<StoryOutputDto> getAllStoriesByAuthor(String username) {
+        List<Story> allStories = storyRepository.findByAuthor_Username(username);
+        return StoryMapper.storyModelListToOutputList(allStories);
     }
 
+    public List<StoryOutputDto> getPublishedStoriesByAuthor(String username) {
+        List<Story> publishedStories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.PUBLISHED);
+        return StoryMapper.storyModelListToOutputList(publishedStories);
+    }
 
-    @Transactional
-    public StoryOutputDto updateStory(Long storyId, StoryInputDto updatedStory) {
-        Story story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new ResourceNotFoundException("No story found."));
+    public List<StoryOutputDto> getDeclinedStoriesByUsername(String username) {
+        List<Story> declinedStories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.DECLINED);
+        return StoryMapper.storyModelListToOutputList(declinedStories);
+    }
 
-        if(!story.getStatus().equals(StoryStatus.SUBMITTED)) {
-            throw new BadRequestException("This story is already published, therefore changes are not allowed.");
-        }
-        if(story.getTheme().getClosingDate().isBefore(LocalDate.now())) {
-            throw new BadRequestException("Theme closing date has already passed, changes are no longer allowed.");
-            }
-        story.setContent(updatedStory.getContent());
-
-        Story returnStory = storyRepository.save(story);
-        return StoryMapper.storyFromModelToOutputDto(returnStory);
+    public List<StoryOutputDto> getSubmittedStoriesByUsername(String username) {
+        List<Story> declinedStories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.SUBMITTED);
+        return StoryMapper.storyModelListToOutputList(declinedStories);
     }
 
     public StoryOutputDto getStoryByStatusAndStoryId(StoryStatus storyStatus, Long storyId) {
@@ -155,4 +197,7 @@ public class StoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Story not found"));
         return StoryMapper.storyFromModelToOutputDto(story);
     }
+
+
+
 }

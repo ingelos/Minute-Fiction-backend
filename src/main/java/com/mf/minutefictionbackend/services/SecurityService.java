@@ -27,28 +27,12 @@ public class SecurityService {
         return username.equals(currentUsername);
     }
 
-    public boolean isEditor() {
-        return hasAuthority("EDITOR");
-    }
-
-    public boolean isOwnerOrEditor(String username) {
-        String currentUsername = getCurrentUsername();
-        return username.equals(currentUsername) || hasAuthority("EDITOR");
-    }
-
-    public boolean isStoryOwner(Long storyId) {
+    public boolean isAuthor(Long storyId) {
         String currentUsername = getCurrentUsername();
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not found."));
         return story.getAuthor().getUsername().equals(currentUsername);
     }
-
-//    public boolean isStoryOwnerOrEditor(Long storyId) {
-//        String currentUsername = getCurrentUsername();
-//        Story story = storyRepository.findById(storyId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Story not found."));
-//        return story.getAuthor().getUsername().equals(currentUsername) || hasAuthority("EDITOR");
-//    }
 
     public boolean isCommentOwner(Long commentId) {
         String currentUsername = getCurrentUsername();
@@ -57,23 +41,11 @@ public class SecurityService {
         return comment.getUser().getUsername().equals(currentUsername);
     }
 
-//    public boolean isCommentOwnerOrEditor(Long commentId) {
-//        String currentUsername = getCurrentUsername();
-//        Comment comment = commentRepository.findById(commentId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Comment not found."));
-//        return comment.getUser().getUsername().equals(currentUsername) || hasAuthority("EDITOR");
-//    }
-
-
     private String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication != null ? authentication.getName() : null;
     }
 
-    private boolean hasAuthority(String authority) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(authority));
-    }
+
 
 }

@@ -3,10 +3,8 @@ package com.mf.minutefictionbackend.controllers;
 import com.mf.minutefictionbackend.dtos.inputDtos.MailingInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.MailingOutputDto;
 import com.mf.minutefictionbackend.services.MailingService;
-import com.mf.minutefictionbackend.services.SecurityService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -19,11 +17,9 @@ import java.util.List;
 public class MailingController {
 
     private final MailingService mailingService;
-    private final SecurityService securityService;
 
-    public MailingController(MailingService mailingService, SecurityService securityService) {
+    public MailingController(MailingService mailingService) {
         this.mailingService = mailingService;
-        this.securityService = securityService;
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")

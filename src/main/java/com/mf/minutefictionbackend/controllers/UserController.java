@@ -6,11 +6,9 @@ import com.mf.minutefictionbackend.dtos.mappers.UserMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.BadRequestException;
 import com.mf.minutefictionbackend.models.User;
-import com.mf.minutefictionbackend.services.SecurityService;
 import com.mf.minutefictionbackend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -50,7 +48,7 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
-    @PreAuthorize("hasAuthority('EDITOR') or #username == authentication.principal.username")
+    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
     @GetMapping("/{username}")
     public ResponseEntity<UserOutputDto> getUserByUsername(@PathVariable("username") String username) {
         UserOutputDto optionalUser = userService.getUserByUsername(username);
@@ -64,7 +62,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAuthority('EDITOR') or #username == authentication.principal.username")
+    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
     @PutMapping("/{username}")
     public ResponseEntity<UserOutputDto> updateUser(@Valid @PathVariable("username") String username, @RequestBody UserInputDto userDto) {
         UserOutputDto updatedUser = userService.updateUser(username, userDto);
@@ -74,18 +72,15 @@ public class UserController {
 
     // MANAGE AUTHORITIES
 
-
     @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/{username}/authorities")
     public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {
-
         return ResponseEntity.ok().body(userService.getAuthorities(username));
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
     @PostMapping("/{username}/authorities")
     public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody AuthorityInputDto authorityInputDto) {
-
         try {
             String authority = authorityInputDto.getAuthority();
             userService.addAuthority(username, authority);
@@ -99,7 +94,6 @@ public class UserController {
     @PreAuthorize("hasAuthority('EDITOR')")
     @DeleteMapping("/{username}/authorities/{authority}")
     public ResponseEntity<Object> deleteUserAuthority(@PathVariable("username") String username, @PathVariable("authority") String authority) {
-
         userService.removeAuthority(username, authority);
         return ResponseEntity.noContent().build();
     }
