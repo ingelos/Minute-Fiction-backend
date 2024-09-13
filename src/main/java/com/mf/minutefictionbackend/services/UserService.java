@@ -39,12 +39,12 @@ public class UserService {
         }
 
         String encodedPassword = passwordEncoder.encode(userInputDto.getPassword());
-
         User user = UserMapper.userFromInputDtoToModel(userInputDto, encodedPassword);
-        user.getAuthorities().add(new Authority("USER"));
+
+        Authority defaultAuthority = new Authority("READER");
+        user.getAuthorities().add(defaultAuthority);
 
         userRepository.save(user);
-
         return user;
     }
 
@@ -69,6 +69,8 @@ public class UserService {
         if (user.getAuthorProfile() != null) {
             authorProfileRepository.delete(user.getAuthorProfile());
         }
+        user.getAuthorities().clear();
+        userRepository.save(user);
         userRepository.delete(user);
     }
 
@@ -111,7 +113,7 @@ public class UserService {
 
 
 
-    public Set<Authority> getAuthorities(String username) {
+    public List<String> getAuthorities(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         UserOutputDto userDto = UserMapper.userFromModelToOutputDto(user);

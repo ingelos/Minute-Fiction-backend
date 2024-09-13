@@ -14,13 +14,11 @@ public class AuthorProfileMapper {
         if(authorProfileInputDto == null) {
             return null;
         }
-
         AuthorProfile authorProfile = new AuthorProfile();
         authorProfile.setFirstname(authorProfileInputDto.getFirstname());
         authorProfile.setLastname(authorProfileInputDto.getLastname());
         authorProfile.setBio(authorProfileInputDto.getBio());
         authorProfile.setDob(authorProfileInputDto.getDob());
-
         return authorProfile;
     }
 
@@ -29,7 +27,6 @@ public class AuthorProfileMapper {
         if (authorProfile == null) {
             return null;
         }
-
         AuthorProfileOutputDto dto = new AuthorProfileOutputDto();
         dto.setUsername(authorProfile.getUsername());
         dto.setFirstname(authorProfile.getFirstname());
@@ -40,7 +37,6 @@ public class AuthorProfileMapper {
         if (authorProfile.getProfilePhoto() != null) {
             dto.setProfilePhoto(ProfilePhotoMapper.profilePhotoFromModelToOutputDto(authorProfile.getProfilePhoto()));
         }
-
         return dto;
     }
 

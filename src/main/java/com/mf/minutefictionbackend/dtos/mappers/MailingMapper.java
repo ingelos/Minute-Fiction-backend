@@ -15,7 +15,6 @@ public class MailingMapper {
         mailing.setSubject(mailingInputDto.getSubject());
         mailing.setBody(mailingInputDto.getBody());
         mailing.setDate(mailingInputDto.getDate());
-
         return mailing;
     }
 
@@ -25,7 +24,6 @@ public class MailingMapper {
         mailingOutputDto.setSubject(mailing.getSubject());
         mailingOutputDto.setBody(mailing.getBody());
         mailingOutputDto.setDate(mailing.getDate());
-
         return mailingOutputDto;
     }
 
@@ -37,6 +35,5 @@ public class MailingMapper {
         mailings.forEach((mailing) -> mailingOutputDtoList.add(mailingFromModelToOutputDto(mailing)));
         return mailingOutputDtoList;
     }
-
 
 }

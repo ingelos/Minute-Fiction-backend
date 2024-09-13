@@ -6,7 +6,6 @@ import lombok.*;
 import java.util.Set;
 
 @Entity
-//@IdClass(AuthorityKey.class)
 @Table(name = "authorities")
 @Getter
 @Setter
@@ -14,14 +13,9 @@ import java.util.Set;
 @AllArgsConstructor
 public class Authority {
 
-//    @Id
-//    @Column(nullable = false)
-//    private String username;
-
     @Id
     @Column(nullable = false)
     private String authority;
-
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -31,23 +25,6 @@ public class Authority {
     public Authority(String authority) {
         this.authority = authority;
     }
-
-//    public Authority(String username, String authority) {
-//        this.username = username;
-//        this.authority = authority;
-//    }
-
-
-    //    public Authority(String authority, String username) {
-//        this.authority = authority;
-//        this.username = username;
-//    }
-
-//    public Authority(String authority) {
-//        this.authority = authority;
-//    }
-
-
 
 
 }

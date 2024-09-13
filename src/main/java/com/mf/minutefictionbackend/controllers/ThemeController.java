@@ -7,6 +7,7 @@ import com.mf.minutefictionbackend.models.Theme;
 import com.mf.minutefictionbackend.services.ThemeService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -18,19 +19,20 @@ import java.util.List;
 public class ThemeController {
 
     private final ThemeService themeService;
+
+
     public ThemeController(ThemeService themeService) {
         this.themeService = themeService;
+
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @PostMapping
     public ResponseEntity<ThemeOutputDto> createTheme(@Valid @RequestBody ThemeInputDto themeInputDto) {
         ThemeOutputDto theme = themeService.createTheme(themeInputDto);
-        // authority editor
-
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + theme.getName()).toUriString());
-
         return ResponseEntity.created(uri).body(theme);
     }
 
@@ -52,12 +54,14 @@ public class ThemeController {
         return ResponseEntity.ok().body(themeDto);
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @PatchMapping("/{id}")
     public ResponseEntity<ThemeOutputDto> updateTheme(@Valid @PathVariable("id") Long id, @RequestBody ThemeInputDto updatedThemeInputDto) {
         ThemeOutputDto updatedTheme = themeService.updateTheme(id, updatedThemeInputDto);
         return ResponseEntity.ok().body(updatedTheme);
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteThemeById(@PathVariable("id") Long id) {
         themeService.deleteThemeById(id);
