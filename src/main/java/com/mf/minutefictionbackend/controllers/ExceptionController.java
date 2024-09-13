@@ -63,7 +63,6 @@ public class ExceptionController {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-
     @ExceptionHandler(IOException.class)
     public ResponseEntity<String> handleIOException(IOException ex){
         return new ResponseEntity<>("An error occurred while processing the file: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

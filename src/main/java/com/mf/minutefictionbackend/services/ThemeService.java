@@ -72,7 +72,6 @@ public class ThemeService {
 
     public List<Theme> findOpenThemes() {
         LocalDate now = LocalDate.now();
-
         return themeRepository.findByClosingDateAfter(now);
     }
 }

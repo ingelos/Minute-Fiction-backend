@@ -32,13 +32,11 @@ public class UserController {
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestBody UserInputDto userInputDto) {
         User createdUser = userService.createUser(userInputDto);
         UserOutputDto userOutputDto = UserMapper.userFromModelToOutputDto(createdUser);
-
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
 
                 .path("/" + userOutputDto.getUsername())
                 .toUriString());
-
         return ResponseEntity.created(uri).body(userOutputDto);
     }
 

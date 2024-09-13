@@ -64,7 +64,6 @@ public class MailingService {
         if(updatedMailing.getDate() != null) {
             updateMailing.setDate(updatedMailing.getDate());
         }
-
         Mailing returnMailing = mailingRepository.save(updateMailing);
         return MailingMapper.mailingFromModelToOutputDto(returnMailing);
     }
@@ -80,7 +79,6 @@ public class MailingService {
     public void sendMailing(Long mailingId) {
         Mailing mailing = mailingRepository.findById(mailingId)
                 .orElseThrow(() -> new ResourceNotFoundException("No mailing found with id " + mailingId));
-
         List<User> subscribers = userRepository.findBySubscribedToMailingTrue();
         if(subscribers.isEmpty()) {
             throw new RuntimeException("No subscribers to the mailing at this time.");

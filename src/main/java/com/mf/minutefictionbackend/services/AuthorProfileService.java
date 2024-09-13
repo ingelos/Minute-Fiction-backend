@@ -48,12 +48,9 @@ public class AuthorProfileService {
         authorProfile.setUser(user);
 
         AuthorProfile savedProfile = authorProfileRepository.save(authorProfile);
-
         user.setAuthorProfile(savedProfile);
         userService.addAuthority(username, "AUTHOR");
-
         userRepository.save(user);
-
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(savedProfile);
     }
 
@@ -85,7 +82,6 @@ public class AuthorProfileService {
         if(updatedProfile.getDob() != null) {
             updateProfile.setDob(updatedProfile.getDob());
         }
-
         AuthorProfile returnAuthorProfile = authorProfileRepository.save(updateProfile);
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(returnAuthorProfile);
     }
@@ -104,9 +100,7 @@ public class AuthorProfileService {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
         user.setAuthorProfile(null);
-
         userService.removeAuthority(username, "AUTHOR");
-
         userRepository.save(user);
     }
 
@@ -152,7 +146,6 @@ public class AuthorProfileService {
         }
         authorProfile.setProfilePhoto(null);
         authorProfileRepository.save(authorProfile);
-
         fileUploadRepository.delete(photo);
         photoService.deleteFile(photo.getFileName());
     }

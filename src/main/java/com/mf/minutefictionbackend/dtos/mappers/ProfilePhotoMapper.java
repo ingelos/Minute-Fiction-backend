@@ -9,7 +9,6 @@ public class ProfilePhotoMapper {
     public static ProfilePhoto photoFromInputDtoToModel(ProfilePhotoInputDto profilePhotoInputDto) {
         ProfilePhoto profilePhoto = new ProfilePhoto();
         profilePhoto.setFileName(profilePhotoInputDto.getFileName());
-
         return profilePhoto;
     }
 
@@ -17,7 +16,6 @@ public class ProfilePhotoMapper {
         if (profilePhoto == null) {
             return null;
         }
-
         ProfilePhotoOutputDto photoDto = new ProfilePhotoOutputDto();
         photoDto.setFileName(profilePhoto.getFileName());
         return photoDto;

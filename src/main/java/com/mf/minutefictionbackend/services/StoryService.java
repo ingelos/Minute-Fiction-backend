@@ -104,7 +104,6 @@ public class StoryService {
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not found."));
         story.setStatus(StoryStatus.ACCEPTED);
-
         storyRepository.save(story);
     }
 
@@ -125,7 +124,6 @@ public class StoryService {
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not found."));
         story.setStatus(StoryStatus.DECLINED);
-
         storyRepository.save(story);
     }
 
@@ -133,7 +131,6 @@ public class StoryService {
     public void deleteStoryById(Long storyId) {
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("No story found with id " + storyId));
-
         List<Comment> comments = story.getComments();
         if(comments != null && !comments.isEmpty()) {
             commentRepository.deleteAll(comments);
@@ -158,7 +155,6 @@ public class StoryService {
     public List<StoryOutputDto> getStoriesByStatusAndThemeId(StoryStatus status, Long themeId) {
         Theme theme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + themeId));
-
         List<Story> stories = storyRepository.findByStatusAndTheme(status, theme);
         return StoryMapper.storyModelListToOutputList(stories);
     }
@@ -167,7 +163,6 @@ public class StoryService {
     public List<StoryOutputDto> getStoriesByStatusAndThemeName(StoryStatus status, String themeName) {
         Theme theme = themeRepository.findByNameIgnoreCase(themeName)
                 .orElseThrow(() -> new IllegalArgumentException("No theme found with name " + themeName));
-
         List<Story> stories = storyRepository.findByStatusAndTheme(status, theme);
         return StoryMapper.storyModelListToOutputList(stories);
     }

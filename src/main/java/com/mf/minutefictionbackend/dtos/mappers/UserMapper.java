@@ -12,8 +12,7 @@ import java.util.Set;
 public class UserMapper {
 
     public static User userFromInputDtoToModel(UserInputDto userInputDto, String encodedPassword) {
-        Set<Authority> authorities = AuthorityMapper.fromDtos(userInputDto.getAuthorities());
-
+        Set<Authority> authorities = AuthorityMapper.fromDtoToSet(userInputDto.getAuthorities());
         return new User(
                 userInputDto.getUsername(),
                 encodedPassword,
@@ -30,7 +29,6 @@ public class UserMapper {
         userDto.setSubscribedToMailing(user.isSubscribedToMailing());
         userDto.setHasAuthorProfile(user.getAuthorProfile() != null);
         userDto.setAuthorities(user.getAuthorities());
-
         return userDto;
     }
 

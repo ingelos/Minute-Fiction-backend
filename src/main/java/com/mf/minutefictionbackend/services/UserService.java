@@ -39,14 +39,12 @@ public class UserService {
         }
 
         String encodedPassword = passwordEncoder.encode(userInputDto.getPassword());
-
         User user = UserMapper.userFromInputDtoToModel(userInputDto, encodedPassword);
-//        user.getAuthorities().add(new Authority("USER"));
+
         Authority defaultAuthority = new Authority("READER");
         user.getAuthorities().add(defaultAuthority);
 
         userRepository.save(user);
-
         return user;
     }
 
@@ -73,7 +71,6 @@ public class UserService {
         }
         user.getAuthorities().clear();
         userRepository.save(user);
-
         userRepository.delete(user);
     }
 

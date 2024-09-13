@@ -1,7 +1,5 @@
 package com.mf.minutefictionbackend.dtos.outputDtos;
 
-
-import com.mf.minutefictionbackend.dtos.mappers.AuthorityMapper;
 import com.mf.minutefictionbackend.models.Authority;
 import lombok.Data;
 

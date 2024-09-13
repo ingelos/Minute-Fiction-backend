@@ -1,12 +1,16 @@
 package com.mf.minutefictionbackend.controllers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorProfileInputDto;
+import com.mf.minutefictionbackend.dtos.mappers.StoryMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.AuthorProfileOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
+import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.services.AuthorProfileService;
+import com.mf.minutefictionbackend.services.PdfGeneratorService;
 import com.mf.minutefictionbackend.services.PhotoService;
 import com.mf.minutefictionbackend.services.StoryService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -30,19 +34,20 @@ public class AuthorProfileController {
     private final AuthorProfileService authorProfileService;
     private final StoryService storyService;
     private final PhotoService photoService;
+    private final PdfGeneratorService pdfGeneratorService;
 
 
-    public AuthorProfileController(AuthorProfileService authorProfileService, StoryService storyService, PhotoService photoService) {
+    public AuthorProfileController(AuthorProfileService authorProfileService, StoryService storyService, PhotoService photoService, PdfGeneratorService pdfGeneratorService) {
         this.authorProfileService = authorProfileService;
         this.storyService = storyService;
         this.photoService = photoService;
+        this.pdfGeneratorService = pdfGeneratorService;
     }
 
     @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
     @PostMapping("/{username}")
     public ResponseEntity<AuthorProfileOutputDto> createAuthorProfile(@Valid @PathVariable String username, @RequestBody AuthorProfileInputDto authorProfileInputDto) {
         AuthorProfileOutputDto createdProfile = authorProfileService.createAuthorProfile(username, authorProfileInputDto);
-
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + createdProfile.getUsername())
@@ -76,6 +81,7 @@ public class AuthorProfileController {
         return ResponseEntity.noContent().build();
     }
 
+
     // MANAGE STORIES BY AUTHOR
 
     @GetMapping("/{username}/published")
@@ -106,11 +112,15 @@ public class AuthorProfileController {
     }
 
 
-    // download function for downloading own published stories??
+    // MANAGE DOWNLOADING OF STORIES
 
-
-
-
+    @PreAuthorize("@securityService.isOwner(#username)")
+    @GetMapping("/{username}/stories/download")
+    public void downloadStoriesAsPDF(@PathVariable("username") String username, HttpServletResponse response) throws Exception {
+        List<StoryOutputDto> storyDtos = storyService.getAllStoriesByAuthor(username);
+        List<Story> stories = StoryMapper.storyOutputListToModelList(storyDtos);
+        pdfGeneratorService.exportStoriesToPdf(stories, response);
+    }
 
 
 
@@ -120,16 +130,13 @@ public class AuthorProfileController {
     @PostMapping("/{username}/photo")
     public ResponseEntity<AuthorProfileOutputDto> addPhotoToAuthorProfile(@Valid @PathVariable("username") String username, @RequestBody MultipartFile file)
         throws IOException {
-
             String url = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path("/authorprofiles/")
                     .path(Objects.requireNonNull(username))
                     .path("/photo")
                     .toUriString();
-
         String fileName = photoService.storeFile(file);
         AuthorProfileOutputDto authorProfile = authorProfileService.assignPhotoToAuthorProfile(fileName, username);
-
         return ResponseEntity.created(URI.create(url)).body(authorProfile);
     }
 
@@ -137,13 +144,11 @@ public class AuthorProfileController {
     public ResponseEntity<Resource> getAuthorProfilePhoto(@PathVariable("username") String username, HttpServletRequest request) {
         Resource resource = authorProfileService.getPhotoForAuthorProfile(username);
         String mimeType;
-
         try {
             mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
         } catch (IOException e) {
             mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
-
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(mimeType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + resource.getFilename())
@@ -153,11 +158,9 @@ public class AuthorProfileController {
     @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
     @DeleteMapping("/{username}/photo")
     public ResponseEntity<Void> deleteProfilePhoto(@PathVariable("username") String username) {
-
         authorProfileService.deletePhotoByUsername(username);
         return ResponseEntity.noContent().build();
     }
-
 
 
 }

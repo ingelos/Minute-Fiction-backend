@@ -20,7 +20,7 @@ public class Story {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "story_sequence")
-    @SequenceGenerator(name = "story_sequence", sequenceName = "story_sequence", initialValue = 1006, allocationSize = 1)
+    @SequenceGenerator(name = "story_sequence", sequenceName = "story_sequence", initialValue = 1008, allocationSize = 1)
     @Column
     private Long id;
     @Column
@@ -48,7 +48,6 @@ public class Story {
     @OneToMany(mappedBy = "story")
     @JsonIgnore
     private List<Comment> comments;
-
 
 
 }

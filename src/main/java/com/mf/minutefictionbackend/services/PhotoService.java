@@ -56,7 +56,6 @@ public class PhotoService {
             throw new RuntimeException("Issue in reading the file", e);
         }
         return resource;
-
     }
 
     public void deleteFile(String fileName) {

@@ -13,7 +13,6 @@ public class StoryOutputDto {
     private String content;
     private StoryStatus status;
     private LocalDate publishDate;
-
     private String username;
     private String authorFirstname;
     private String authorLastname;

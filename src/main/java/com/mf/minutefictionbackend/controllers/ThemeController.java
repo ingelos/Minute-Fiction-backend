@@ -30,11 +30,9 @@ public class ThemeController {
     @PostMapping
     public ResponseEntity<ThemeOutputDto> createTheme(@Valid @RequestBody ThemeInputDto themeInputDto) {
         ThemeOutputDto theme = themeService.createTheme(themeInputDto);
-
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + theme.getName()).toUriString());
-
         return ResponseEntity.created(uri).body(theme);
     }
 

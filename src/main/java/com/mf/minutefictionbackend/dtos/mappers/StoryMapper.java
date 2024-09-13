@@ -15,7 +15,6 @@ public class StoryMapper {
         Story story = new Story();
         story.setTitle(storyInputDto.getTitle());
         story.setContent(storyInputDto.getContent());
-
         return story;
     }
 
@@ -26,12 +25,10 @@ public class StoryMapper {
         storyDto.setContent(story.getContent());
         storyDto.setStatus(story.getStatus());
         storyDto.setPublishDate(story.getPublishDate());
-
         storyDto.setUsername(story.getAuthor().getUsername());
         storyDto.setAuthorFirstname(story.getAuthor().getFirstname());
         storyDto.setAuthorLastname(story.getAuthor().getLastname());
         storyDto.setThemeName(story.getTheme().getName());
-
         return storyDto;
     }
 
@@ -39,10 +36,26 @@ public class StoryMapper {
         if(stories.isEmpty()) {
             throw new ResourceNotFoundException("No stories found.");
         }
-
         List<StoryOutputDto> storyOutputDtoList = new ArrayList<>();
         stories.forEach((story) -> storyOutputDtoList.add(storyFromModelToOutputDto(story)));
         return storyOutputDtoList;
+    }
+
+    public static Story storyOutputDtoToModel(StoryOutputDto outputDto) {
+        Story story = new Story();
+        story.setTitle(outputDto.getTitle());
+        story.setContent(outputDto.getContent());
+        return story;
+    }
+
+
+    public static List<Story> storyOutputListToModelList(List<StoryOutputDto> storyOutputDtos) {
+        if(storyOutputDtos.isEmpty()) {
+            throw new ResourceNotFoundException("No stories found.");
+        }
+        List<Story> storyList = new ArrayList<>();
+        storyOutputDtos.forEach((dto) -> storyList.add(storyOutputDtoToModel(dto)));
+        return storyList;
     }
 
 }
