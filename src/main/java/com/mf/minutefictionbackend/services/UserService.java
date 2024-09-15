@@ -14,9 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Service
@@ -33,8 +31,8 @@ public class UserService {
     }
 
 
-    public User createUser(UserInputDto userInputDto) {
-        if(userRepository.existsById(userInputDto.getUsername())) {
+    public UserOutputDto createUser(UserInputDto userInputDto) {
+        if(userRepository.existsByUsername(userInputDto.getUsername())) {
             throw new UsernameAlreadyExistsException("Username is already taken, try another.");
         }
 
@@ -44,14 +42,14 @@ public class UserService {
         Authority defaultAuthority = new Authority("READER");
         user.getAuthorities().add(defaultAuthority);
 
-        userRepository.save(user);
-        return user;
+        User savedUser = userRepository.save(user);
+        return UserMapper.userFromModelToOutputDto(savedUser);
     }
 
 
-    public Set<UserOutputDto> getAllUsers() {
+    public List<UserOutputDto> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
-        return UserMapper.userModelSetToOutputSet(new HashSet<>(allUsers));
+        return UserMapper.userModelListToOutputList(allUsers);
     }
 
     public UserOutputDto getUserByUsername(String username) {
@@ -64,13 +62,12 @@ public class UserService {
 
     @Transactional
     public void deleteUser(String username) {
-        User user = userRepository.findById(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         if (user.getAuthorProfile() != null) {
             authorProfileRepository.delete(user.getAuthorProfile());
         }
         user.getAuthorities().clear();
-        userRepository.save(user);
         userRepository.delete(user);
     }
 
@@ -84,19 +81,20 @@ public class UserService {
             throw new IllegalArgumentException("Username cannot be changed.");
         }
 
-        updateUser.setPassword(updatedUser.getPassword());
+        updateUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         updateUser.setEmail(updatedUser.getEmail());
         updateUser.setSubscribedToMailing(updatedUser.isSubscribedToMailing());
 
-        User returnUser = userRepository.save(updateUser);
-        return UserMapper.userFromModelToOutputDto(returnUser);
+        User savedUser = userRepository.save(updateUser);
+
+        return UserMapper.userFromModelToOutputDto(savedUser);
     }
 
 
     // internal method for authentication
 
     public User getUser(String username) {
-        return userRepository.findById(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
@@ -105,7 +103,7 @@ public class UserService {
 
 
     public void addAuthority(String username, String authority) {
-        User user = userRepository.findById(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         user.addAuthority(new Authority(authority));
         userRepository.save(user);
@@ -114,7 +112,7 @@ public class UserService {
 
 
     public List<String> getAuthorities(String username) {
-        User user = userRepository.findById(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         UserOutputDto userDto = UserMapper.userFromModelToOutputDto(user);
         return userDto.getAuthorities();
@@ -122,7 +120,7 @@ public class UserService {
 
 
     public void removeAuthority(String username, String authority) {
-        User user = userRepository.findById(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         Authority authorityToRemove = user.getAuthorities().stream()
                 .filter((a) -> a.getAuthority().equalsIgnoreCase(authority))

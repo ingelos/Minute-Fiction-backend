@@ -6,7 +6,9 @@ import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Authority;
 import com.mf.minutefictionbackend.models.User;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class UserMapper {
@@ -32,13 +34,13 @@ public class UserMapper {
         return userDto;
     }
 
-    public static Set<UserOutputDto> userModelSetToOutputSet(Set<User> users) {
+    public static List<UserOutputDto> userModelListToOutputList(List<User> users) {
         if(users.isEmpty()) {
             throw new ResourceNotFoundException("No users found.");
         }
-        Set<UserOutputDto> userOutputDtoSet = new HashSet<>();
-        users.forEach((user) -> userOutputDtoSet.add(userFromModelToOutputDto(user)));
-        return userOutputDtoSet;
+        List<UserOutputDto> userOutputDtoList = new ArrayList<>();
+        users.forEach((user) -> userOutputDtoList.add(userFromModelToOutputDto(user)));
+        return userOutputDtoList;
     }
 
 
