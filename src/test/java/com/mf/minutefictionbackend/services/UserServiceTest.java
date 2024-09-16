@@ -33,6 +33,7 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    @Mock
     private User user;
 
     @BeforeEach
@@ -172,7 +173,6 @@ class UserServiceTest {
         assertTrue(updatedUserDto.isSubscribedToMailing());
 
         Mockito.verify(passwordEncoder, Mockito.times(1)).encode("password1234");
-
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
     }
 

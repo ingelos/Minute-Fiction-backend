@@ -81,8 +81,8 @@ public class StoryService {
         }
         story.setContent(updatedStory.getContent());
 
-        Story returnStory = storyRepository.save(story);
-        return StoryMapper.storyFromModelToOutputDto(returnStory);
+        Story savedStory = storyRepository.save(story);
+        return StoryMapper.storyFromModelToOutputDto(savedStory);
     }
 
     @Transactional
@@ -167,25 +167,19 @@ public class StoryService {
         return StoryMapper.storyModelListToOutputList(stories);
     }
 
+
     public List<StoryOutputDto> getAllStoriesByAuthor(String username) {
         List<Story> allStories = storyRepository.findByAuthor_Username(username);
         return StoryMapper.storyModelListToOutputList(allStories);
     }
+
 
     public List<StoryOutputDto> getPublishedStoriesByAuthor(String username) {
         List<Story> publishedStories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.PUBLISHED);
         return StoryMapper.storyModelListToOutputList(publishedStories);
     }
 
-    public List<StoryOutputDto> getDeclinedStoriesByUsername(String username) {
-        List<Story> declinedStories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.DECLINED);
-        return StoryMapper.storyModelListToOutputList(declinedStories);
-    }
 
-    public List<StoryOutputDto> getSubmittedStoriesByUsername(String username) {
-        List<Story> declinedStories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.SUBMITTED);
-        return StoryMapper.storyModelListToOutputList(declinedStories);
-    }
 
     public StoryOutputDto getStoryByStatusAndStoryId(StoryStatus storyStatus, Long storyId) {
         Story story = storyRepository.findByStatusAndId(storyStatus, storyId)

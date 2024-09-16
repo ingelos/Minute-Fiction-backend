@@ -1,19 +1,18 @@
 package com.mf.minutefictionbackend.models;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Builder
 @Entity
 @Table(name = "themes")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Theme {
 
     @Setter(AccessLevel.NONE)
