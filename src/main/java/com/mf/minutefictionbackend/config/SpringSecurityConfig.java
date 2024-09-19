@@ -76,7 +76,8 @@ public class SpringSecurityConfig {
                         //STORIES
                         .requestMatchers(HttpMethod.GET, "/stories/published/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stories/{storyId}/comments").permitAll() // DEZE TOCH BIJ COMMENTS??? //
-                        .requestMatchers(HttpMethod.POST, "/stories/submit/*").hasAnyAuthority("AUTHOR", "EDITOR")
+
+                        .requestMatchers(HttpMethod.POST, "/stories/submit/**").hasAnyAuthority("AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/stories/submit/**").hasAnyAuthority("AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.GET, "/stories/**").hasAnyAuthority("AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/stories/**").hasAnyAuthority("AUTHOR", "EDITOR")

@@ -2,10 +2,8 @@ package com.mf.minutefictionbackend.controllers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorityInputDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
-import com.mf.minutefictionbackend.dtos.mappers.UserMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.BadRequestException;
-import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -30,19 +28,21 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestBody UserInputDto userInputDto) {
-        User createdUser = userService.createUser(userInputDto);
-        UserOutputDto userOutputDto = UserMapper.userFromModelToOutputDto(createdUser);
+        UserOutputDto createdUser = userService.createUser(userInputDto);
+
+//        userService.addAuthority(String.valueOf(createdUser), "READER");
+
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
-
-                .path("/" + userOutputDto.getUsername())
+                .path("/" + createdUser.getUsername())
                 .toUriString());
-        return ResponseEntity.created(uri).body(userOutputDto);
+
+        return ResponseEntity.created(uri).body(createdUser);
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping
-    public ResponseEntity<Set<UserOutputDto>> getAllUsers() {
+    public ResponseEntity<List<UserOutputDto>> getAllUsers() {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 

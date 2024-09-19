@@ -16,7 +16,6 @@ public class AuthorProfileInputDto {
     @NotBlank(message = "Last name is required.")
     @Size(min=3, max=64)
     private String lastname;
-    @NotNull
     private String bio;
     private LocalDate dob;
 

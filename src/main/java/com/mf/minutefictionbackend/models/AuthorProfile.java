@@ -2,20 +2,19 @@ package com.mf.minutefictionbackend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Entity
 @Table(name = "profiles")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class AuthorProfile {
 
     @Setter(AccessLevel.NONE)

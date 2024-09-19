@@ -3,18 +3,19 @@ package com.mf.minutefictionbackend.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mf.minutefictionbackend.enums.StoryStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 
+@Builder
 @Entity
 @Table(name = "stories")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Story {
 
     @Setter(AccessLevel.NONE)

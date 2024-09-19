@@ -74,15 +74,15 @@ public class StoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("No story found."));
 
         if(!story.getStatus().equals(StoryStatus.SUBMITTED)) {
-            throw new BadRequestException("This story is already published or declined, therefore changes are not allowed.");
+            throw new BadRequestException("This story is already accepted, declined or published, therefore changes are not allowed.");
         }
         if(story.getTheme().getClosingDate().isBefore(LocalDate.now())) {
             throw new BadRequestException("Theme closing date has already passed, changes are no longer allowed.");
         }
         story.setContent(updatedStory.getContent());
 
-        Story returnStory = storyRepository.save(story);
-        return StoryMapper.storyFromModelToOutputDto(returnStory);
+        Story savedStory = storyRepository.save(story);
+        return StoryMapper.storyFromModelToOutputDto(savedStory);
     }
 
     @Transactional
@@ -167,25 +167,19 @@ public class StoryService {
         return StoryMapper.storyModelListToOutputList(stories);
     }
 
+
     public List<StoryOutputDto> getAllStoriesByAuthor(String username) {
         List<Story> allStories = storyRepository.findByAuthor_Username(username);
         return StoryMapper.storyModelListToOutputList(allStories);
     }
+
 
     public List<StoryOutputDto> getPublishedStoriesByAuthor(String username) {
         List<Story> publishedStories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.PUBLISHED);
         return StoryMapper.storyModelListToOutputList(publishedStories);
     }
 
-    public List<StoryOutputDto> getDeclinedStoriesByUsername(String username) {
-        List<Story> declinedStories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.DECLINED);
-        return StoryMapper.storyModelListToOutputList(declinedStories);
-    }
 
-    public List<StoryOutputDto> getSubmittedStoriesByUsername(String username) {
-        List<Story> declinedStories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.SUBMITTED);
-        return StoryMapper.storyModelListToOutputList(declinedStories);
-    }
 
     public StoryOutputDto getStoryByStatusAndStoryId(StoryStatus storyStatus, Long storyId) {
         Story story = storyRepository.findByStatusAndId(storyStatus, storyId)

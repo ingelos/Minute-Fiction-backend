@@ -15,7 +15,6 @@ public class UserOutputDto {
     private boolean subscribedToMailing;
     private boolean hasAuthorProfile;
     private List<String> authorities;
-
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = new ArrayList<>();
         authorities.forEach(authority -> this.authorities.add(authority.getAuthority()));

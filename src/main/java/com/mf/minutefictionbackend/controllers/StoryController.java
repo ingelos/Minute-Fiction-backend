@@ -34,9 +34,11 @@ public class StoryController {
     @PostMapping("/submit/{themeId}")
     public ResponseEntity<StoryOutputDto> submitStory(@Valid @PathVariable Long themeId, @RequestParam String username, @RequestBody StoryInputDto storyInputDto) {
         StoryOutputDto storyDto = storyService.submitStory(storyInputDto, themeId, username);
+
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + storyDto.getId()).toUriString());
+
         return ResponseEntity.created(uri).body(storyDto);
     }
 

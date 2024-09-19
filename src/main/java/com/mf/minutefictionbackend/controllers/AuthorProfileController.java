@@ -97,19 +97,7 @@ public class AuthorProfileController {
         return ResponseEntity.ok(stories);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
-    @GetMapping("/{username}/declined")
-    public ResponseEntity<List<StoryOutputDto>> getDeclinedStoriesByAuthor(@PathVariable String username) {
-        List<StoryOutputDto> declinedStories = storyService.getDeclinedStoriesByUsername(username);
-        return ResponseEntity.ok(declinedStories);
-    }
 
-    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
-    @GetMapping("/{username}/submitted")
-    public ResponseEntity<List<StoryOutputDto>> getSubmittedStoriesByAuthor(@PathVariable String username) {
-        List<StoryOutputDto> declinedStories = storyService.getSubmittedStoriesByUsername(username);
-        return ResponseEntity.ok(declinedStories);
-    }
 
 
     // MANAGE DOWNLOADING OF STORIES

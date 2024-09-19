@@ -29,7 +29,19 @@ INSERT INTO comments (id, content, created, story_id, user_id) VALUES (1001, 'Lo
                                                                       (1002, 'Great to read!', '2024-07-18 13:20:33', 1001, 'author2'),
                                                                         (1003, 'Absolutely wonderful!', '2024-08-29 12:03:22', 1003, 'reader');
 
+-- INSERT INTO authorities (username, authority) VALUES ('author', 'READER');
+-- INSERT INTO authorities (username, authority) VALUES ('author', 'AUTHOR');
+-- INSERT INTO authorities (username, authority) VALUES ('author2', 'READER');
+-- INSERT INTO authorities (username, authority) VALUES ('author2', 'AUTHOR');
+-- INSERT INTO authorities (username, authority) VALUES ('editor', 'READER');
+-- INSERT INTO authorities (username, authority) VALUES ('editor', 'EDITOR');
+-- INSERT INTO authorities (username, authority) VALUES ('reader', 'READER');
+-- INSERT INTO authorities (username, authority) VALUES ('author3', 'READER');
+-- INSERT INTO authorities (username, authority) VALUES ('author3', 'AUTHOR');
+
+
 INSERT INTO authorities (authority) VALUES ('READER'), ('AUTHOR'), ('EDITOR');
+
 INSERT INTO users_authorities (username, authority) VALUES ('author', 'READER');
 INSERT INTO users_authorities (username, authority) VALUES ('author', 'AUTHOR');
 INSERT INTO users_authorities (username, authority) VALUES ('author2', 'READER');
@@ -37,6 +49,9 @@ INSERT INTO users_authorities (username, authority) VALUES ('author2', 'AUTHOR')
 INSERT INTO users_authorities (username, authority) VALUES ('editor', 'READER');
 INSERT INTO users_authorities (username, authority) VALUES ('editor', 'EDITOR');
 INSERT INTO users_authorities (username, authority) VALUES ('reader', 'READER');
+INSERT INTO users_authorities (username, authority) VALUES ('author3', 'EDITOR');
+INSERT INTO users_authorities (username, authority) VALUES ('author3', 'READER');
+
 
 
 

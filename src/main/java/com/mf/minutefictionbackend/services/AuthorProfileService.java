@@ -51,6 +51,7 @@ public class AuthorProfileService {
         user.setAuthorProfile(savedProfile);
         userService.addAuthority(username, "AUTHOR");
         userRepository.save(user);
+
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(savedProfile);
     }
 
