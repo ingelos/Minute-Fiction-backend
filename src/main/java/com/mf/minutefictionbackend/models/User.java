@@ -29,7 +29,7 @@ public class User {
     private boolean subscribedToMailing;
 
     @Setter(AccessLevel.NONE)
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany( fetch = FetchType.EAGER)
     @JoinTable(name = "users_authorities",
             joinColumns = @JoinColumn(name = "username", referencedColumnName = "username"),
             inverseJoinColumns = @JoinColumn(name = "authority", referencedColumnName = "authority"))
@@ -61,4 +61,7 @@ public class User {
         this.authorities.remove(authority);
     }
 
+
 }
+
+

@@ -74,7 +74,7 @@ public class StoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("No story found."));
 
         if(!story.getStatus().equals(StoryStatus.SUBMITTED)) {
-            throw new BadRequestException("This story is already published or declined, therefore changes are not allowed.");
+            throw new BadRequestException("This story is already accepted, declined or published, therefore changes are not allowed.");
         }
         if(story.getTheme().getClosingDate().isBefore(LocalDate.now())) {
             throw new BadRequestException("Theme closing date has already passed, changes are no longer allowed.");

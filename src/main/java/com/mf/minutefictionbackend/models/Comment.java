@@ -2,18 +2,17 @@ package com.mf.minutefictionbackend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Entity
 @Table(name = "comments")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Comment {
 
     @Setter(AccessLevel.NONE)

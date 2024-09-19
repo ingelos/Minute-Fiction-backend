@@ -30,6 +30,8 @@ public class UserController {
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestBody UserInputDto userInputDto) {
         UserOutputDto createdUser = userService.createUser(userInputDto);
 
+//        userService.addAuthority(String.valueOf(createdUser), "READER");
+
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + createdUser.getUsername())

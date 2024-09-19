@@ -3,10 +3,13 @@ package com.mf.minutefictionbackend.services;
 import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.enums.StoryStatus;
+import com.mf.minutefictionbackend.exceptions.BadRequestException;
 import com.mf.minutefictionbackend.models.AuthorProfile;
+import com.mf.minutefictionbackend.models.Comment;
 import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
 import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
+import com.mf.minutefictionbackend.repositories.CommentRepository;
 import com.mf.minutefictionbackend.repositories.StoryRepository;
 import com.mf.minutefictionbackend.repositories.ThemeRepository;
 
@@ -22,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +39,8 @@ class StoryServiceTest {
     private StoryRepository storyRepository;
     @Mock
     private ThemeRepository themeRepository;
+    @Mock
+    private CommentRepository commentRepository;
     @Mock
     private AuthorProfileRepository authorProfileRepository;
 
@@ -50,23 +56,23 @@ class StoryServiceTest {
     private Theme theme;
     private Theme theme2;
     private Theme themeClosed;
+    private Comment comment1;
+    private Comment comment2;
 
 
     @BeforeEach
     public void setUp() {
 
 
-        theme = Theme.builder().id(2L).name("Theme 2")
-                .closingDate(LocalDate.of(2024, 8, 30))
+        theme = Theme.builder().id(1L).name("Theme 1")
+                .closingDate(LocalDate.now().plusDays(10))
                 .build();
 
-        theme2 = Theme.builder().id(1L).name("Theme 1")
+        theme2 = Theme.builder().id(2L).name("Theme 2")
                 .closingDate(LocalDate.of(2024, 12, 30))
                 .build();
 
-        themeClosed = Theme.builder()
-                .id(3L)
-                .name("Theme Old")
+        themeClosed = Theme.builder().id(3L).name("Theme Old")
                 .closingDate(LocalDate.of(2024, 2, 28))
                 .build();
 
@@ -76,8 +82,7 @@ class StoryServiceTest {
                 .content("Content story one...")
                 .status(SUBMITTED)
                 .publishDate(null)
-                .author(AuthorProfile.builder().username("user1").firstname("firstname")
-                        .lastname("lastname").build())
+                .author(AuthorProfile.builder().username("user1").build())
                 .theme(theme2)
                 .build();
 
@@ -87,8 +92,7 @@ class StoryServiceTest {
                 .content("Content story two...")
                 .status(ACCEPTED)
                 .publishDate(null)
-                .author(AuthorProfile.builder().username("user1").firstname("firstname")
-                        .lastname("lastname").build())
+                .author(AuthorProfile.builder().username("user1").build())
                 .theme(theme)
                 .build();
 
@@ -98,8 +102,7 @@ class StoryServiceTest {
                 .content("Content story three...")
                 .status(SUBMITTED)
                 .publishDate(null)
-                .author(AuthorProfile.builder().username("user2").firstname("secondfirst")
-                        .lastname("secondlast").build())
+                .author(AuthorProfile.builder().username("user2").build())
                 .theme(theme2)
                 .build();
 
@@ -111,10 +114,13 @@ class StoryServiceTest {
                 .content("Content story four...")
                 .status(PUBLISHED)
                 .publishDate(publishDate)
-                .author(AuthorProfile.builder().username("user3").firstname("thirdfirst")
-                        .lastname("thirdlast").build())
+                .author(AuthorProfile.builder().username("user3").build())
                 .theme(themeClosed)
                 .build();
+
+        comment1 = Comment.builder().id(1L).content("Comment 1").created(LocalDateTime.now()).build();
+        comment2 = Comment.builder().id(2L).content("Comment 2").created(LocalDateTime.now()).build();
+        List<Comment> comments = List.of(comment1, comment2);
 
         story5 = Story.builder()
                 .id(5L)
@@ -122,9 +128,9 @@ class StoryServiceTest {
                 .content("Content story five...")
                 .status(PUBLISHED)
                 .publishDate(publishDate)
-                .author(AuthorProfile.builder().username("user1").firstname("firstname")
-                        .lastname("lastname").build())
+                .author(AuthorProfile.builder().username("user1").build())
                 .theme(themeClosed)
+                .comments(comments)
                 .build();
 
         story6 = Story.builder()
@@ -133,13 +139,9 @@ class StoryServiceTest {
                 .content("Content story six...")
                 .status(ACCEPTED)
                 .publishDate(publishDate)
-                .author(AuthorProfile.builder().username("user4").firstname("fourthname")
-                        .lastname("fourthname").build())
+                .author(AuthorProfile.builder().username("user4").build())
                 .theme(theme)
                 .build();
-
-
-
     }
 
     @AfterEach
@@ -154,14 +156,15 @@ class StoryServiceTest {
         theme = null;
         theme2 = null;
         themeClosed = null;
-
+        comment1 = null;
+        comment2 = null;
     }
+
 
     @Test
     @DisplayName("Should save correct story")
     void submitStoryTest() {
 
-        Long themeId = 1L;
         String username = "user0";
 
         StoryInputDto storyInputDto = new StoryInputDto();
@@ -169,21 +172,40 @@ class StoryServiceTest {
         storyInputDto.setContent("Content submit story...");
 
         AuthorProfile authorProfile = AuthorProfile.builder().username(username).build();
-
-        Theme theme = Theme.builder().id(themeId).name("How to submit")
-                .closingDate(LocalDate.now().plusDays(10)).build();
-
+        
         Mockito.when(authorProfileRepository.findById(username)).thenReturn(Optional.of(authorProfile));
-        Mockito.when(themeRepository.findById(themeId)).thenReturn(Optional.of(theme));
+        Mockito.when(themeRepository.findById(theme.getId())).thenReturn(Optional.of(theme));
         Mockito.when(storyRepository.countSubmissionsByTheme(theme)).thenReturn(0);
         Mockito.when(storyRepository.existsByThemeAndAuthorUsername(theme, username)).thenReturn(false);
         Mockito.when(storyRepository.save(Mockito.any(Story.class))).thenAnswer(invocation -> invocation.<Story>getArgument(0));
 
-        StoryOutputDto createdStory = storyService.submitStory(storyInputDto, themeId, username);
+        StoryOutputDto createdStory = storyService.submitStory(storyInputDto, theme.getId(), username);
 
         assertEquals("Submit story", createdStory.getTitle());
         assertEquals("Content submit story...", createdStory.getContent());
         assertEquals("user0", createdStory.getUsername());
+
+    }
+
+    @Test
+    @DisplayName("Should throw bad request when user tries to submit a second story to a theme")
+    void submitStoryShouldThrowBadRequestWhenAlreadySubmittedToThemeTest() {
+
+        String username = "user1";
+
+        StoryInputDto storyInputDto = new StoryInputDto();
+        storyInputDto.setTitle("Submit a second story");
+        storyInputDto.setContent("Content second submitted story...");
+
+        AuthorProfile authorProfile = AuthorProfile.builder().username(username).build();
+
+        Mockito.when(authorProfileRepository.findById(username)).thenReturn(Optional.of(authorProfile));
+        Mockito.when(themeRepository.findById(theme2.getId())).thenReturn(Optional.of(theme2));
+        Mockito.when(storyRepository.countSubmissionsByTheme(theme2)).thenReturn(1);
+
+        Mockito.when(storyRepository.existsByThemeAndAuthorUsername(theme2, username)).thenReturn(true);
+
+        assertThrows(BadRequestException.class, () -> storyService.submitStory(storyInputDto, theme2.getId() ,"user1"));
 
     }
 
@@ -202,11 +224,23 @@ class StoryServiceTest {
         StoryOutputDto updatedStory = storyService.updateStory(story.getId(), storyInputDto);
 
         assertEquals(1L, story.getId());
-        assertEquals("Content updated...", updatedStory.getContent());
+        assertEquals(story.getContent(), updatedStory.getContent());
         Mockito.verify(storyRepository, Mockito.times(1)).save(story);
-
-
     }
+
+    @Test
+    @DisplayName("Should throw bad request when story no longer has status SUBMITTED")
+    void updateStoryThrowsBadRequestTest() {
+
+        Mockito.when(storyRepository.findById(story2.getId())).thenReturn(Optional.of(story2));
+
+        StoryInputDto storyInputDto = new StoryInputDto();
+        storyInputDto.setContent("Content update...");
+
+        assertThrows(BadRequestException.class, () -> storyService.updateStory(story2.getId(), storyInputDto));
+    }
+
+
 
     @Test
     @DisplayName("Should publish the correct story")
@@ -218,6 +252,7 @@ class StoryServiceTest {
 
         assertEquals(2L, story2.getId());
         assertEquals(PUBLISHED, story2.getStatus());
+
         Mockito.verify(storyRepository, Mockito.times(1)).save(story2);
 
     }
@@ -230,8 +265,9 @@ class StoryServiceTest {
 
         storyService.acceptStory(story.getId());
 
-        assertEquals(2L, story2.getId());
+        assertEquals(1L, story.getId());
         assertEquals(StoryStatus.ACCEPTED, story.getStatus());
+
         Mockito.verify(storyRepository, Mockito.times(1)).save(story);
 
     }
@@ -267,9 +303,11 @@ class StoryServiceTest {
 
         assertEquals("Story 1", story.getTitle());
         assertEquals(DECLINED, story.getStatus());
+
         Mockito.verify(storyRepository, Mockito.times(1)).save(story);
 
     }
+
 
     @Test
     @DisplayName("Should delete the correct story")
@@ -279,10 +317,26 @@ class StoryServiceTest {
 
         storyService.deleteStoryById(story.getId());
 
-        assertEquals(StoryStatus.DECLINED, story.getStatus());
-        Mockito.verify(storyRepository, Mockito.times(1)).save(story);
+        Mockito.verify(commentRepository, Mockito.never()).deleteAll(Mockito.anyList());
+        Mockito.verify(storyRepository).delete(story);
 
     }
+
+    @Test
+    @DisplayName("Should delete the correct story")
+    void deleteStoryWithCommentsByIdTest() {
+
+        Mockito.when(storyRepository.findById(story5.getId())).thenReturn(Optional.of(story5));
+
+        List<Comment> comments = story5.getComments();
+
+        storyService.deleteStoryById(story5.getId());
+
+        Mockito.verify(commentRepository).deleteAll(comments);
+        Mockito.verify(storyRepository).delete(story5);
+
+    }
+
 
     @Test
     @DisplayName("Should return only stories with submitted status")
@@ -322,15 +376,15 @@ class StoryServiceTest {
 
         StoryOutputDto storyDto = storyService.getSubmittedStoryById(story.getId());
 
-        assertEquals("user1", storyDto.getUsername());
-        assertEquals("Theme 1", storyDto.getThemeName());
-        assertEquals("Story 1", storyDto.getTitle());
-        assertEquals("Content story one...", storyDto.getContent());
+        assertEquals(story.getAuthor().getUsername(), storyDto.getUsername());
+        assertEquals(story.getTheme().getName(), storyDto.getThemeName());
+        assertEquals(story.getTitle(), storyDto.getTitle());
+        assertEquals(story.getContent(), storyDto.getContent());
     }
 
     @Test
     @DisplayName("Should return stories with correct status and themeId")
-    void getStoriesByStatusAndThemeId() {
+    void getStoriesByStatusAndThemeIdTest() {
 
         List<Story> mockStoryList = List.of(story4, story5);
 
@@ -348,7 +402,7 @@ class StoryServiceTest {
 
     @Test
     @DisplayName("Should return stories by correct status and theme name")
-    void getStoriesByStatusAndThemeName() {
+    void getStoriesByStatusAndThemeNameTest() {
 
         List<Story> mockStoryList = List.of(story4, story5);
 

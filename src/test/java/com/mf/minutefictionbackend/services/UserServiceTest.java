@@ -33,8 +33,9 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    @Mock
     private User user;
+    private User user2;
+    private User user3;
 
     @BeforeEach
     public void setUp() {
@@ -42,15 +43,33 @@ class UserServiceTest {
         user = User.builder()
                 .username("testuser")
                 .password("encodedpassword123")
-                .email("testuseremail@email.com")
+                .email("testuser@email.com")
                 .subscribedToMailing(false)
                 .authorities(new HashSet<>(Set.of(new Authority("READER"))))
+                .build();
+
+        user2 = User.builder()
+                .username("justken")
+                .password("encodedpassword456")
+                .email("kensemail@email.com")
+                .subscribedToMailing(false)
+                .authorities(new HashSet<>(Set.of(new Authority("READER"))))
+                .build();
+
+        user3 = User.builder()
+                .username("barbiereads")
+                .password("encodedpassword789")
+                .email("barbie@email.com")
+                .subscribedToMailing(false)
+                .authorities(new HashSet<>(Set.of(new Authority("EDITOR"))))
                 .build();
     }
 
     @AfterEach
     void tearDown() {
         user = null;
+        user2 = null;
+        user3 = null;
     }
 
     @Test
@@ -59,25 +78,25 @@ class UserServiceTest {
 
         UserInputDto userInputDto = new UserInputDto();
         userInputDto.setUsername("newuser");
-        userInputDto.setPassword("password456");
-        userInputDto.setEmail("newuseremail@email.com");
+        userInputDto.setPassword("password111");
+        userInputDto.setEmail("newuser@email.com");
         userInputDto.setSubscribedToMailing(false);
 
         AuthorityInputDto authorityInputDto = new AuthorityInputDto();
         authorityInputDto.setAuthority("READER");
         userInputDto.setAuthorities(Set.of(authorityInputDto));
 
-        Mockito.when(passwordEncoder.encode(userInputDto.getPassword())).thenReturn("encodedPassword456");
+        Mockito.when(passwordEncoder.encode(userInputDto.getPassword())).thenReturn("encodedPassword111");
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenAnswer(invocation -> invocation.<User>getArgument(0));
 
         UserOutputDto createdUserDto = userService.createUser(userInputDto);
 
         assertEquals("newuser", createdUserDto.getUsername());
-        assertEquals("newuseremail@email.com", createdUserDto.getEmail());
+        assertEquals("newuser@email.com", createdUserDto.getEmail());
         assertFalse(createdUserDto.isSubscribedToMailing());
         assertTrue(createdUserDto.getAuthorities().contains("READER"));
 
-        Mockito.verify(passwordEncoder, Mockito.times(1)).encode("password456");
+        Mockito.verify(passwordEncoder, Mockito.times(1)).encode("password111");
 
     }
 
@@ -95,17 +114,10 @@ class UserServiceTest {
 
 
     @Test
+    @DisplayName("Should return correct list of users")
     void getAllUsersTest() {
 
-        User user2 = User.builder()
-                .username("justken")
-                .password("encodedpassword456")
-                .email("kensemail@email.com")
-                .subscribedToMailing(false)
-                .authorities(Set.of(new Authority("READER")))
-                .build();
-
-        List<User> mockUserList = List.of(user, user2);
+        List<User> mockUserList = List.of(user, user2, user3);
         Mockito.when(userRepository.findAll()).thenReturn(mockUserList);
 
         List<UserOutputDto> userList = userService.getAllUsers();
@@ -113,6 +125,8 @@ class UserServiceTest {
         assertEquals(userList.size(), mockUserList.size());
         assertEquals("testuser", mockUserList.get(0).getUsername());
         assertEquals("justken", mockUserList.get(1).getUsername());
+        assertEquals("barbiereads", mockUserList.get(2).getUsername());
+        assertEquals("testuser@email.com", mockUserList.get(0).getEmail());
         assertEquals("kensemail@email.com", mockUserList.get(1).getEmail());
 
     }
@@ -126,7 +140,7 @@ class UserServiceTest {
         UserOutputDto userDto = userService.getUserByUsername("testuser");
 
         assertEquals("testuser", userDto.getUsername());
-        assertEquals("testuseremail@email.com", userDto.getEmail());
+        assertEquals("testuser@email.com", userDto.getEmail());
         assertFalse(userDto.isSubscribedToMailing());
         assertFalse(userDto.isHasAuthorProfile());
         assertTrue(userDto.getAuthorities().contains("READER"));
@@ -135,11 +149,11 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should remove correct user from database")
-    void deleteUser() {
+    void deleteUserTest() {
 
         String username = "testuser";
 
-        Mockito.when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user));
         if(user.getAuthorProfile() != null) {
             Mockito.doNothing().when(authorProfileRepository).delete(user.getAuthorProfile());
         }
@@ -147,7 +161,6 @@ class UserServiceTest {
         userService.deleteUser(username);
 
         assertTrue(user.getAuthorities().isEmpty());
-
         Mockito.verify(userRepository, Mockito.times(1)).delete(user);
 
     }
@@ -193,13 +206,11 @@ class UserServiceTest {
     void addAuthorityTest() {
 
         String authority = "EDITOR";
-
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
 
         userService.addAuthority(user.getUsername(), authority);
 
         assertTrue(user.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("EDITOR")));
-
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
 
     }
@@ -208,7 +219,7 @@ class UserServiceTest {
     @DisplayName("Should get correct authorities")
     void getAuthoritiesTest() {
 
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
 
         List<String> authorityList = userService.getAuthorities(user.getUsername());
         List<String> expectedAuthorities = user.getAuthorities().stream().map(Authority::getAuthority).collect(Collectors.toList());
@@ -221,20 +232,11 @@ class UserServiceTest {
     @DisplayName("Should remove correct authority")
     void removeAuthorityTest() {
 
-        User user3 = User.builder()
-                .username("barbiereads")
-                .password("encodedpassword789")
-                .email("barbie@email.com")
-                .subscribedToMailing(false)
-                .authorities(new HashSet<>(Set.of(new Authority("READER"), new Authority("EDITOR"))))
-                .build();
-
-        Mockito.when(userRepository.findByUsername(user3.getUsername())).thenReturn(Optional.of(user3));
+        Mockito.when(userRepository.findById(user3.getUsername())).thenReturn(Optional.of(user3));
 
         userService.removeAuthority("barbiereads", "EDITOR");
 
         assertFalse(user.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("EDITOR")));
-
         Mockito.verify(userRepository, Mockito.times(1)).save(user3);
 
     }

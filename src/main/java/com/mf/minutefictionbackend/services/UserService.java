@@ -14,7 +14,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -62,7 +64,7 @@ public class UserService {
 
     @Transactional
     public void deleteUser(String username) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         if (user.getAuthorProfile() != null) {
             authorProfileRepository.delete(user.getAuthorProfile());
@@ -102,25 +104,26 @@ public class UserService {
     // MANAGING AUTHORITIES
 
 
+
+
+
+    public List<String> getAuthorities(String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        UserOutputDto userDto = UserMapper.userFromModelToOutputDto(user);
+        return userDto.getAuthorities();
+    }
+
     public void addAuthority(String username, String authority) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         user.addAuthority(new Authority(authority));
         userRepository.save(user);
     }
 
 
-
-    public List<String> getAuthorities(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-        UserOutputDto userDto = UserMapper.userFromModelToOutputDto(user);
-        return userDto.getAuthorities();
-    }
-
-
     public void removeAuthority(String username, String authority) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         Authority authorityToRemove = user.getAuthorities().stream()
                 .filter((a) -> a.getAuthority().equalsIgnoreCase(authority))
