@@ -3,7 +3,10 @@ package com.mf.minutefictionbackend.services;
 import com.mf.minutefictionbackend.dtos.inputDtos.ThemeInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.ThemeMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
+import com.mf.minutefictionbackend.exceptions.BadRequestException;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
+import com.mf.minutefictionbackend.models.Comment;
+import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
 import com.mf.minutefictionbackend.repositories.ThemeRepository;
 import org.springframework.stereotype.Service;
@@ -45,6 +48,10 @@ public class ThemeService {
     public void deleteThemeById(Long themeId) {
         Theme theme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + themeId));
+        List<Story> stories = theme.getStories();
+        if(stories != null && !stories.isEmpty()) {
+            throw new BadRequestException("Theme has stories added to it. Delete these first.");
+        }
         themeRepository.delete(theme);
     }
 

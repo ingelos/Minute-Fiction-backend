@@ -180,7 +180,6 @@ public class StoryService {
     }
 
 
-
     public StoryOutputDto getStoryByStatusAndStoryId(StoryStatus storyStatus, Long storyId) {
         Story story = storyRepository.findByStatusAndId(storyStatus, storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not found"));
@@ -188,5 +187,15 @@ public class StoryService {
     }
 
 
+    public StoryOutputDto getStoryById(Long storyId) {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Story not found"));
+        return StoryMapper.storyFromModelToOutputDto(story);
+    }
 
+
+    public List<StoryOutputDto> getStoriesByTheme(Long themeId) {
+        List<Story> relatedStories = storyRepository.findByThemeId(themeId);
+        return StoryMapper.storyModelListToOutputList(relatedStories);
+    }
 }

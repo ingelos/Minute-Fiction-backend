@@ -96,6 +96,14 @@ public class AuthorProfileService {
         if (authorProfile != null && !authorProfile.getStories().isEmpty()) {
             throw new IllegalArgumentException("Cannot delete profile. Author has existing stories.");
         }
+
+        if (authorProfile != null && authorProfile.getProfilePhoto() != null) {
+            ProfilePhoto photo = authorProfile.getProfilePhoto();
+            authorProfile.setProfilePhoto(null);
+            fileUploadRepository.delete(photo);
+            photoService.deleteFile(photo.getFileName());
+        }
+
         authorProfileRepository.deleteById(username);
 
         User user = userRepository.findById(username)

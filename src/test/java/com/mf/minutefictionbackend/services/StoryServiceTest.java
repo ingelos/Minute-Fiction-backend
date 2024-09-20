@@ -53,6 +53,7 @@ class StoryServiceTest {
     private Story story4;
     private Story story5;
     private Story story6;
+    private Story story7;
     private Theme theme;
     private Theme theme2;
     private Theme themeClosed;
@@ -138,8 +139,18 @@ class StoryServiceTest {
                 .title("Story 6")
                 .content("Content story six...")
                 .status(ACCEPTED)
-                .publishDate(publishDate)
+                .publishDate(null)
                 .author(AuthorProfile.builder().username("user4").build())
+                .theme(theme)
+                .build();
+
+        story7 = Story.builder()
+                .id(7L)
+                .title("Story 7")
+                .content("Content story seven...")
+                .status(SUBMITTED)
+                .publishDate(null)
+                .author(AuthorProfile.builder().username("user5").build())
                 .theme(theme)
                 .build();
     }
@@ -153,6 +164,7 @@ class StoryServiceTest {
         story4 = null;
         story5 = null;
         story6 = null;
+        story7 = null;
         theme = null;
         theme2 = null;
         themeClosed = null;
@@ -383,6 +395,20 @@ class StoryServiceTest {
     }
 
     @Test
+    @DisplayName("Should get correct story by id")
+    void getStoryByIdTest() {
+        Mockito.when(storyRepository.findById(story5.getId())).thenReturn(Optional.of(story5));
+
+        StoryOutputDto storyDto = storyService.getSubmittedStoryById(story5.getId());
+
+        assertEquals(story5.getAuthor().getUsername(), storyDto.getUsername());
+        assertEquals(story5.getTheme().getName(), storyDto.getThemeName());
+        assertEquals(story5.getTitle(), storyDto.getTitle());
+        assertEquals(story5.getContent(), storyDto.getContent());
+    }
+
+
+    @Test
     @DisplayName("Should return stories with correct status and themeId")
     void getStoriesByStatusAndThemeIdTest() {
 
@@ -418,6 +444,26 @@ class StoryServiceTest {
         assertEquals(story5.getTheme().getName(), storyList.get(1).getThemeName());
 
     }
+
+    @Test
+    @DisplayName("Should return all stories related to theme, no matter what status")
+    void getStoriesByThemeTest() {
+
+        List<Story> mockStoryList = List.of(story2, story6, story7);
+
+        Mockito.when(storyRepository.findByThemeId(theme.getId())).thenReturn(List.of(story2, story6, story7));
+
+        List<StoryOutputDto> relatedStoryList = storyService.getStoriesByTheme(theme.getId());
+
+        assertEquals(relatedStoryList.size(), mockStoryList.size());
+        assertEquals(story2.getTitle(), relatedStoryList.get(0).getTitle());
+        assertEquals(story6.getTitle(), relatedStoryList.get(1).getTitle());
+        assertEquals(story6.getTheme().getName(), relatedStoryList.get(1).getThemeName());
+        assertEquals(story7.getTheme().getName(), relatedStoryList.get(2).getThemeName());
+
+    }
+
+
 
     @Test
     @DisplayName("Should return all stories of the correct author")

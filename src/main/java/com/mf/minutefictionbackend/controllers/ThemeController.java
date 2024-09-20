@@ -2,7 +2,10 @@ package com.mf.minutefictionbackend.controllers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.ThemeInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.ThemeMapper;
+import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
+import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
+import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
 import com.mf.minutefictionbackend.services.ThemeService;
 import jakarta.validation.Valid;

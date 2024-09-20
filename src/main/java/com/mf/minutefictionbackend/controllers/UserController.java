@@ -30,8 +30,6 @@ public class UserController {
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestBody UserInputDto userInputDto) {
         UserOutputDto createdUser = userService.createUser(userInputDto);
 
-//        userService.addAuthority(String.valueOf(createdUser), "READER");
-
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + createdUser.getUsername())
@@ -53,14 +51,14 @@ public class UserController {
         return ResponseEntity.ok().body(optionalUser);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
+    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
+    @PreAuthorize("@securityService.isOwner(#username)")
     @PutMapping("/{username}")
     public ResponseEntity<UserOutputDto> updateUser(@Valid @PathVariable("username") String username, @RequestBody UserInputDto userDto) {
         UserOutputDto updatedUser = userService.updateUser(username, userDto);
