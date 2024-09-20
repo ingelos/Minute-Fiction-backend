@@ -105,7 +105,7 @@ public class AuthorProfileController {
     @PreAuthorize("@securityService.isOwner(#username)")
     @GetMapping("/{username}/stories/download")
     public void downloadStoriesAsPDF(@PathVariable("username") String username, HttpServletResponse response) throws Exception {
-        List<StoryOutputDto> storyDtos = storyService.getAllStoriesByAuthor(username);
+        List<StoryOutputDto> storyDtos = storyService.getPublishedStoriesByAuthor(username);
         List<Story> stories = StoryMapper.storyOutputListToModelList(storyDtos);
         pdfGeneratorService.exportStoriesToPdf(stories, response);
     }
