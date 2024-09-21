@@ -13,6 +13,7 @@ import com.mf.minutefictionbackend.repositories.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class MailingService {
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
 
+    @Value("${app.mail.sending.enabled}")
+    private boolean isMailSendingEnabled;
+
 
     public MailingService(MailingRepository mailingRepository, UserRepository userRepository, JavaMailSender mailSender) {
         this.mailingRepository = mailingRepository;
@@ -35,6 +39,7 @@ public class MailingService {
     }
 
 
+    @Transactional
     public MailingOutputDto createMailing(MailingInputDto mailingInputDto) {
         Mailing mailing = mailingRepository.save(MailingMapper.mailingFromInputDtoToModel(mailingInputDto));
         return MailingMapper.mailingFromModelToOutputDto(mailing);
@@ -51,6 +56,7 @@ public class MailingService {
         return MailingMapper.mailingFromModelListToOutputList(allMailings);
     }
 
+    @Transactional
     public MailingOutputDto updateMailing(Long mailingId, MailingInputDto updatedMailing) {
         Mailing updateMailing = mailingRepository.findById(mailingId)
                 .orElseThrow(() -> new ResourceNotFoundException("No mailing found"));
@@ -83,10 +89,18 @@ public class MailingService {
         if(subscribers.isEmpty()) {
             throw new RuntimeException("No subscribers to the mailing at this time.");
         }
-        subscribers.forEach(user -> sendMailing(user.getEmail(), mailing.getSubject(), mailing.getBody()));
+
+        subscribers.forEach(user -> {
+            if (isMailSendingEnabled) {
+                sendRealMailing(user.getEmail(), mailing.getSubject(), mailing.getBody());
+            } else {
+                System.out.println("Simulated email to:" + user.getEmail() +
+                        ", Subject: " + mailing.getSubject() + ", Body: " + mailing.getBody());
+            }
+        });
     }
 
-    private void sendMailing(String to, String subject, String body) {
+    private void sendRealMailing(String to, String subject, String body) {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true,"UTF-8");

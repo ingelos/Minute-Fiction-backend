@@ -2,7 +2,10 @@ package com.mf.minutefictionbackend.controllers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.ThemeInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.ThemeMapper;
+import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
+import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
+import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
 import com.mf.minutefictionbackend.services.ThemeService;
 import jakarta.validation.Valid;
@@ -48,23 +51,23 @@ public class ThemeController {
         return ResponseEntity.ok().body(openThemeDtoList);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ThemeOutputDto> getThemeById(@PathVariable("id") Long id) {
-        ThemeOutputDto themeDto = themeService.getThemeById(id);
+    @GetMapping("/{themeId}")
+    public ResponseEntity<ThemeOutputDto> getThemeById(@PathVariable("themeId") Long themeId) {
+        ThemeOutputDto themeDto = themeService.getThemeById(themeId);
         return ResponseEntity.ok().body(themeDto);
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
-    @PatchMapping("/{id}")
-    public ResponseEntity<ThemeOutputDto> updateTheme(@Valid @PathVariable("id") Long id, @RequestBody ThemeInputDto updatedThemeInputDto) {
-        ThemeOutputDto updatedTheme = themeService.updateTheme(id, updatedThemeInputDto);
+    @PatchMapping("/{themeId}")
+    public ResponseEntity<ThemeOutputDto> updateTheme(@Valid @PathVariable("themeId") Long themeId, @RequestBody ThemeInputDto updatedThemeInputDto) {
+        ThemeOutputDto updatedTheme = themeService.updateTheme(themeId, updatedThemeInputDto);
         return ResponseEntity.ok().body(updatedTheme);
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteThemeById(@PathVariable("id") Long id) {
-        themeService.deleteThemeById(id);
+    @DeleteMapping("/{themeId}")
+    public ResponseEntity<Void> deleteThemeById(@PathVariable("themeId") Long themeId) {
+        themeService.deleteThemeById(themeId);
         return ResponseEntity.noContent().build();
     }
 

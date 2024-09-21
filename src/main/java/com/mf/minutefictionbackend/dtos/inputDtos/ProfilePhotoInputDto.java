@@ -2,7 +2,6 @@ package com.mf.minutefictionbackend.dtos.inputDtos;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.Setter;
 
 @Data
 public class ProfilePhotoInputDto {

@@ -96,6 +96,14 @@ public class AuthorProfileService {
         if (authorProfile != null && !authorProfile.getStories().isEmpty()) {
             throw new IllegalArgumentException("Cannot delete profile. Author has existing stories.");
         }
+
+        if (authorProfile != null && authorProfile.getProfilePhoto() != null) {
+            ProfilePhoto photo = authorProfile.getProfilePhoto();
+            authorProfile.setProfilePhoto(null);
+            fileUploadRepository.delete(photo);
+            photoService.deleteFile(photo.getFileName());
+        }
+
         authorProfileRepository.deleteById(username);
 
         User user = userRepository.findById(username)
@@ -123,9 +131,7 @@ public class AuthorProfileService {
 
     @Transactional
     public AuthorProfileOutputDto assignPhotoToAuthorProfile(String fileName, String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-        AuthorProfile authorProfile = authorProfileRepository.findByUser(user)
+        AuthorProfile authorProfile = authorProfileRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for user with username " + username));
         ProfilePhoto photo = fileUploadRepository.findByFileName(fileName)
                 .orElseThrow(() -> new ResourceNotFoundException("No author photo found."));
