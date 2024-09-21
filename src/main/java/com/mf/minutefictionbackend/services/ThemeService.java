@@ -9,6 +9,7 @@ import com.mf.minutefictionbackend.models.Comment;
 import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
 import com.mf.minutefictionbackend.repositories.ThemeRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ public class ThemeService {
     }
 
 
+    @Transactional
     public ThemeOutputDto createTheme(ThemeInputDto themeInputDto) {
         Theme theme = themeRepository.save(themeFromInputDtoToModel(themeInputDto));
         return ThemeMapper.themeFromModelToOutputDto(theme);
@@ -44,7 +46,7 @@ public class ThemeService {
         return ThemeMapper.themeFromModelToOutputDto(theme);
     }
 
-
+    @Transactional
     public void deleteThemeById(Long themeId) {
         Theme theme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + themeId));
@@ -55,6 +57,7 @@ public class ThemeService {
         themeRepository.delete(theme);
     }
 
+    @Transactional
     public ThemeOutputDto updateTheme(Long themeId, ThemeInputDto updatedThemeInputDto) {
         Theme updateTheme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ResourceNotFoundException("No theme found"));

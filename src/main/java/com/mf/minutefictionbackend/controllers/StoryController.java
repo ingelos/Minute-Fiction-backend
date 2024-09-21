@@ -4,7 +4,6 @@ import com.mf.minutefictionbackend.dtos.inputDtos.StoryInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.enums.StoryStatus;
-import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.services.CommentService;
 import com.mf.minutefictionbackend.services.StoryService;
 import jakarta.validation.Valid;
@@ -44,8 +43,8 @@ public class StoryController {
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
-    @PatchMapping("/submitted/{storyId}")
-    public ResponseEntity<StoryOutputDto> updateSubmittedStory(@Valid @PathVariable("storyId") Long storyId, @RequestBody StoryInputDto updatedStory) {
+    @PatchMapping("/update/{storyId}")
+    public ResponseEntity<StoryOutputDto> updateStory(@Valid @PathVariable("storyId") Long storyId, @RequestBody StoryInputDto updatedStory) {
         StoryOutputDto updatedStoryDto = storyService.updateStory(storyId, updatedStory);
         return ResponseEntity.ok().body(updatedStoryDto);
     }
@@ -58,17 +57,18 @@ public class StoryController {
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
-    @GetMapping("/submitted/{storyId}")
-    public ResponseEntity<StoryOutputDto> getSubmittedStoryById(@PathVariable("storyId") Long storyId) {
-        StoryOutputDto storyDto = storyService.getSubmittedStoryById(storyId);
-        return ResponseEntity.ok().body(storyDto);
-    }
-
-    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/submitted-theme/{themeId}")
     public ResponseEntity<List<StoryOutputDto>> getSubmittedStoriesByThemeId(@PathVariable("themeId") Long themeId) {
         List<StoryOutputDto> stories = storyService.getStoriesByStatusAndThemeId(StoryStatus.SUBMITTED, themeId);
         return ResponseEntity.ok(stories);
+    }
+
+
+    @PreAuthorize("hasAuthority('EDITOR')")
+    @GetMapping("/{storyId}")
+    public ResponseEntity<StoryOutputDto> getStoryById(@PathVariable("storyId") Long storyId) {
+        StoryOutputDto storyDto = storyService.getStoryById(storyId);
+        return ResponseEntity.ok(storyDto);
     }
 
     @PreAuthorize("hasAuthority('EDITOR') or @securityService.isAuthor(storyId)")
@@ -78,14 +78,9 @@ public class StoryController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
-    @GetMapping("/{storyId}")
-    public ResponseEntity<StoryOutputDto> getStoryById(@PathVariable("storyId") Long storyId) {
-        StoryOutputDto storyDto = storyService.getStoryById(storyId);
-        return ResponseEntity.ok(storyDto);
-    }
 
-    // MANAGE ACCEPTED STORIES
+
+    // MANAGE ACCEPTING AND DECLINING STORIES
 
     @PreAuthorize("hasAuthority('EDITOR')")
     @PatchMapping("/accept/{storyId}")
@@ -95,38 +90,14 @@ public class StoryController {
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
-    @GetMapping("/accepted")
-    public ResponseEntity<List<StoryOutputDto>> getAllAcceptedStories() {
-        List<StoryOutputDto> acceptedStories= storyService.getStoriesByStatus(StoryStatus.ACCEPTED);
-        return ResponseEntity.ok(acceptedStories);
-    }
-
-
-    // MANAGE DECLINED STORIES
-
-    @PreAuthorize("hasAuthority('EDITOR')")
     @PatchMapping("/decline/{storyId}")
     public ResponseEntity<Void> declineStory(@PathVariable("storyId") Long storyId) {
         storyService.declineStory(storyId);
         return ResponseEntity.noContent().build();
     }
-
-    @PreAuthorize("hasAuthority('EDITOR')")
-    @GetMapping("/declined")
-    public ResponseEntity<List<StoryOutputDto>> getAllDeclinedStories() {
-        List<StoryOutputDto> declinedStories = storyService.getStoriesByStatus(StoryStatus.DECLINED);
-        return ResponseEntity.ok(declinedStories);
-    }
-
+    
 
     // MANAGE PUBLISHING/PUBLISHED STORIES
-
-    @PreAuthorize("hasAuthority('EDITOR')")
-    @PatchMapping("/themes/{themeId}/publish")
-    public ResponseEntity<Void> publishAllStoriesByStatusAndTheme(@PathVariable("themeId") Long themeId) {
-        storyService.publishAllStoriesByStatusAndTheme(themeId);
-        return ResponseEntity.noContent().build();
-    }
 
     @PreAuthorize("hasAuthority('EDITOR')")
     @PatchMapping("/publish/{storyId}")
@@ -135,9 +106,17 @@ public class StoryController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAuthority('EDITOR')")
+    @PatchMapping("/themes/{themeId}/publish")
+    public ResponseEntity<Void> publishAllAcceptedStoriesByTheme(@PathVariable("themeId") Long themeId) {
+        storyService.publishAllAcceptedStoriesByTheme(themeId);
+        return ResponseEntity.noContent().build();
+    }
+
+
     @GetMapping("/published")
     public ResponseEntity<List<StoryOutputDto>> getAllPublishedStories() {
-        List<StoryOutputDto> stories = storyService.getStoriesByStatus(StoryStatus.PUBLISHED);
+        List<StoryOutputDto> stories = storyService.getAllPublishedStoriesByDateDesc(StoryStatus.PUBLISHED);
         return ResponseEntity.ok(stories);
     }
 
@@ -149,27 +128,20 @@ public class StoryController {
 
 
 
-    // MANAGE PUBLISHED STORIES BY THEME
+    // MANAGE STORIES BY THEME
 
-    @GetMapping("/published/theme/{themeId}")
+    @GetMapping("/published/themes/{themeId}")
     public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByThemeId(@PathVariable("themeId") Long themeId) {
         List<StoryOutputDto> stories = storyService.getStoriesByStatusAndThemeId(StoryStatus.PUBLISHED, themeId);
         return ResponseEntity.ok(stories);
     }
 
-    @GetMapping("/published/themes/{themeName}")
-    public ResponseEntity<List<StoryOutputDto>> getPublishedStoriesByThemeName(@PathVariable("themeName") String themeName) {
-        List<StoryOutputDto> stories = storyService.getStoriesByStatusAndThemeName(StoryStatus.PUBLISHED, themeName);
-        return ResponseEntity.ok(stories);
-    }
-
     @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/{themeId}/related-stories")
-    public ResponseEntity<List<StoryOutputDto>> getStoriesByTheme(@PathVariable("themeId") Long themeId) {
+    public ResponseEntity<List<StoryOutputDto>> getStoriesByThemeOfAllStatus(@PathVariable("themeId") Long themeId) {
         List<StoryOutputDto> relatedStories = storyService.getStoriesByTheme(themeId);
         return ResponseEntity.ok(relatedStories);
     }
-
 
 
     // COMMENTS ON STORY

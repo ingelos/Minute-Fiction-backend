@@ -131,9 +131,7 @@ public class AuthorProfileService {
 
     @Transactional
     public AuthorProfileOutputDto assignPhotoToAuthorProfile(String fileName, String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-        AuthorProfile authorProfile = authorProfileRepository.findByUser(user)
+        AuthorProfile authorProfile = authorProfileRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for user with username " + username));
         ProfilePhoto photo = fileUploadRepository.findByFileName(fileName)
                 .orElseThrow(() -> new ResourceNotFoundException("No author photo found."));

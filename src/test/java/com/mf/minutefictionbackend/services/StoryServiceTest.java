@@ -107,14 +107,14 @@ class StoryServiceTest {
                 .theme(theme2)
                 .build();
 
-        LocalDate publishDate = LocalDate.of(2024, 3, 1);
+        LocalDate publishDate1 = LocalDate.of(2024, 2, 1);
 
         story4 = Story.builder()
                 .id(4L)
                 .title("Story 4")
                 .content("Content story four...")
                 .status(PUBLISHED)
-                .publishDate(publishDate)
+                .publishDate(publishDate1)
                 .author(AuthorProfile.builder().username("user3").build())
                 .theme(themeClosed)
                 .build();
@@ -123,12 +123,14 @@ class StoryServiceTest {
         comment2 = Comment.builder().id(2L).content("Comment 2").created(LocalDateTime.now()).build();
         List<Comment> comments = List.of(comment1, comment2);
 
+        LocalDate publishDate2 = LocalDate.of(2024, 3, 1);
+
         story5 = Story.builder()
                 .id(5L)
                 .title("Story 5")
                 .content("Content story five...")
                 .status(PUBLISHED)
-                .publishDate(publishDate)
+                .publishDate(publishDate2)
                 .author(AuthorProfile.builder().username("user1").build())
                 .theme(themeClosed)
                 .comments(comments)
@@ -226,63 +228,146 @@ class StoryServiceTest {
     @DisplayName("Should return correct updated story")
     void updateStoryTest() {
 
-        Mockito.when(storyRepository.findById(story.getId())).thenReturn(Optional.of(story));
+        Long storyId = 1L;
 
         StoryInputDto storyInputDto = new StoryInputDto();
         storyInputDto.setContent("Content updated...");
 
+        Mockito.when(storyRepository.findById(storyId)).thenReturn(Optional.of(story));
         Mockito.when(storyRepository.save(Mockito.any(Story.class))).thenReturn(story);
 
-        StoryOutputDto updatedStory = storyService.updateStory(story.getId(), storyInputDto);
+        StoryOutputDto updatedStory = storyService.updateStory(storyId, storyInputDto);
 
-        assertEquals(1L, story.getId());
+        assertEquals(storyId, updatedStory.getId());
         assertEquals(story.getContent(), updatedStory.getContent());
         Mockito.verify(storyRepository, Mockito.times(1)).save(story);
     }
 
+
     @Test
-    @DisplayName("Should throw bad request when story no longer has status SUBMITTED")
-    void updateStoryThrowsBadRequestTest() {
+    @DisplayName("Should return stories with correct status and themeId")
+    void getStoriesByStatusAndThemeIdTest() {
 
-        Mockito.when(storyRepository.findById(story2.getId())).thenReturn(Optional.of(story2));
+        Long themeId = 3L;
+        String titleStory4 = "Story 4";
+        String titleStory5 = "Story 5";
+        String themeName = "Theme Old";
+        List<Story> mockStoryList = List.of(story4, story5);
 
-        StoryInputDto storyInputDto = new StoryInputDto();
-        storyInputDto.setContent("Content update...");
+        Mockito.when(themeRepository.findById(themeId)).thenReturn(Optional.of(themeClosed));
+        Mockito.when(storyRepository.findByStatusAndTheme(PUBLISHED, themeClosed)).thenReturn(List.of(story4, story5));
 
-        assertThrows(BadRequestException.class, () -> storyService.updateStory(story2.getId(), storyInputDto));
+        List<StoryOutputDto> storyList = storyService.getStoriesByStatusAndThemeId(PUBLISHED, themeId);
+
+        assertEquals(storyList.size(), mockStoryList.size());
+        assertEquals(titleStory4, storyList.get(0).getTitle());
+        assertEquals(titleStory5, storyList.get(1).getTitle());
+        assertEquals(themeName, storyList.get(0).getThemeName());
+        assertEquals(themeName, storyList.get(1).getThemeName());
     }
 
 
 
     @Test
-    @DisplayName("Should publish the correct story")
-    void publishStoryTest() {
+    @DisplayName("Should get correct story by id")
+    void getStoryByIdTest() {
 
-        Mockito.when(storyRepository.findById(story2.getId())).thenReturn(Optional.of(story2));
+        Long storyId = 5L;
+        String username = "user1";
+        String theme = "Theme Old";
+        String storyTitle = "Story 5";
+        String storyContent = "Content story five...";
+        Mockito.when(storyRepository.findById(storyId)).thenReturn(Optional.of(story5));
 
-        storyService.publishStory(story2.getId());
+        StoryOutputDto storyDto = storyService.getStoryById(storyId);
 
-        assertEquals(2L, story2.getId());
-        assertEquals(PUBLISHED, story2.getStatus());
+        assertEquals(username, storyDto.getUsername());
+        assertEquals(theme, storyDto.getThemeName());
+        assertEquals(storyTitle, storyDto.getTitle());
+        assertEquals(storyContent, storyDto.getContent());
+    }
 
-        Mockito.verify(storyRepository, Mockito.times(1)).save(story2);
+
+    @Test
+    @DisplayName("Should delete the correct story")
+    void deleteStoryWithoutCommentsByIdTest() {
+
+        Long storyId = 1L;
+        Mockito.when(storyRepository.findById(storyId)).thenReturn(Optional.of(story));
+
+        storyService.deleteStoryById(storyId);
+
+        Mockito.verify(commentRepository, Mockito.never()).deleteAll(Mockito.anyList());
+        Mockito.verify(storyRepository).delete(story);
 
     }
+
+    @Test
+    @DisplayName("Should delete the correct story and associated comments")
+    void deleteStoryWithCommentsByIdTest() {
+
+        Long storyId = 5L;
+        Mockito.when(storyRepository.findById(storyId)).thenReturn(Optional.of(story5));
+
+        List<Comment> comments = story5.getComments();
+
+        storyService.deleteStoryById(storyId);
+
+        Mockito.verify(commentRepository).deleteAll(comments);
+        Mockito.verify(storyRepository).delete(story5);
+        Mockito.verify(storyRepository, Mockito.times(1)).delete(story5);
+
+    }
+
+
+
 
     @Test
     @DisplayName("Should change the status of the correct story from submitted to accepted")
     void acceptStoryTest() {
 
-        Mockito.when(storyRepository.findById(story.getId())).thenReturn(Optional.of(story));
+        Long storyId = 1L;
+        Mockito.when(storyRepository.findById(storyId)).thenReturn(Optional.of(story));
 
-        storyService.acceptStory(story.getId());
+        storyService.acceptStory(storyId);
 
-        assertEquals(1L, story.getId());
-        assertEquals(StoryStatus.ACCEPTED, story.getStatus());
-
+        assertEquals(storyId, story.getId());
+        assertEquals(ACCEPTED, story.getStatus());
         Mockito.verify(storyRepository, Mockito.times(1)).save(story);
 
     }
+
+
+    @Test
+    @DisplayName("Should change the status of the correct story from submitted to declined")
+    void declineStoryTest() {
+
+        Long storyId = 1L;
+        Mockito.when(storyRepository.findById(storyId)).thenReturn(Optional.of(story));
+
+        storyService.declineStory(storyId);
+
+        assertEquals(DECLINED, story.getStatus());
+        Mockito.verify(storyRepository, Mockito.times(1)).save(story);
+
+    }
+
+    @Test
+    @DisplayName("Should publish the correct story and set status to published")
+    void publishStoryTest() {
+
+        Long storyId = 2L;
+        Mockito.when(storyRepository.findById(storyId)).thenReturn(Optional.of(story2));
+
+        storyService.publishStory(storyId);
+
+        assertEquals(storyId, story2.getId());
+        assertEquals(PUBLISHED, story2.getStatus());
+        Mockito.verify(storyRepository, Mockito.times(1)).save(story2);
+
+    }
+
+
 
     @Test
     @DisplayName("Should publish only accepted stories by the correct theme")
@@ -294,206 +379,36 @@ class StoryServiceTest {
         Mockito.when(themeRepository.findById(themeId)).thenReturn(Optional.of(theme));
         Mockito.when(storyRepository.findByStatusAndTheme(StoryStatus.ACCEPTED, theme)).thenReturn(mockStoriesToPublish);
 
-        storyService.publishAllStoriesByStatusAndTheme(2L);
+        storyService.publishAllAcceptedStoriesByTheme(themeId);
 
         assertEquals(PUBLISHED, story2.getStatus());
         assertEquals(LocalDate.now(), story2.getPublishDate());
         assertEquals(PUBLISHED, story6.getStatus());
         assertEquals(LocalDate.now(), story6.getPublishDate());
-
         Mockito.verify(storyRepository, Mockito.times(1)).saveAll(mockStoriesToPublish);
-
-    }
-
-    @Test
-    @DisplayName("Should change the status of the correct story from submitted to declined")
-    void declineStoryTest() {
-
-        Mockito.when(storyRepository.findById(story.getId())).thenReturn(Optional.of(story));
-
-        storyService.declineStory(story.getId());
-
-        assertEquals("Story 1", story.getTitle());
-        assertEquals(DECLINED, story.getStatus());
-
-        Mockito.verify(storyRepository, Mockito.times(1)).save(story);
-
     }
 
 
     @Test
-    @DisplayName("Should delete the correct story")
-    void deleteStoryByIdTest() {
+    @DisplayName("Should return correct stories in order of publish date")
+    void getAllPublishedStoriesByPublishDateDescTest() {
 
-        Mockito.when(storyRepository.findById(story.getId())).thenReturn(Optional.of(story));
+        String titleStory4 = "Story 4";
+        String titleStory5 = "Story 5";
 
-        storyService.deleteStoryById(story.getId());
-
-        Mockito.verify(commentRepository, Mockito.never()).deleteAll(Mockito.anyList());
-        Mockito.verify(storyRepository).delete(story);
-
-    }
-
-    @Test
-    @DisplayName("Should delete the correct story")
-    void deleteStoryWithCommentsByIdTest() {
-
-        Mockito.when(storyRepository.findById(story5.getId())).thenReturn(Optional.of(story5));
-
-        List<Comment> comments = story5.getComments();
-
-        storyService.deleteStoryById(story5.getId());
-
-        Mockito.verify(commentRepository).deleteAll(comments);
-        Mockito.verify(storyRepository).delete(story5);
-
-    }
-
-
-    @Test
-    @DisplayName("Should return only stories with submitted status")
-    void getStoriesBySubmittedStatusTest() {
-
-        List<Story> mockStoryList = List.of(story, story3);
-        Mockito.when(storyRepository.findByStatusOrderByPublishDateDesc(SUBMITTED)).thenReturn(List.of(story, story3));
-
-        List<StoryOutputDto> storyList = storyService.getStoriesByStatus(SUBMITTED);
-
-        assertEquals(storyList.size(), mockStoryList.size());
-        assertEquals(story.getTitle(), storyList.get(0).getTitle());
-        assertEquals(story3.getTitle(), storyList.get(1).getTitle());
-
-    }
-
-    @Test
-    @DisplayName("Should return only stories with published status")
-    void getStoriesByPublishedStatusTest() {
+        LocalDate publishDateStory4 = LocalDate.of(2024, 2, 1);
+        LocalDate publishDateStory5 = LocalDate.of(2024, 3, 1);
 
         List<Story> mockStoryList = List.of(story4, story5);
-        Mockito.when(storyRepository.findByStatusOrderByPublishDateDesc(PUBLISHED)).thenReturn(List.of(story4, story5));
+        Mockito.when(storyRepository.findByStatusOrderByPublishDateDesc(PUBLISHED)).thenReturn(List.of(story5, story4));
 
-        List<StoryOutputDto> storyList = storyService.getStoriesByStatus(PUBLISHED);
-
-        assertEquals(storyList.size(), mockStoryList.size());
-        assertEquals(story4.getTitle(), storyList.get(0).getTitle());
-        assertEquals(story5.getTitle(), storyList.get(1).getTitle());
-    }
-
-
-    @Test
-    @DisplayName("Should return correct submitted story")
-    void getSubmittedStoryById() {
-
-        Mockito.when(storyRepository.findById(story.getId())).thenReturn(Optional.of(story));
-
-        StoryOutputDto storyDto = storyService.getSubmittedStoryById(story.getId());
-
-        assertEquals(story.getAuthor().getUsername(), storyDto.getUsername());
-        assertEquals(story.getTheme().getName(), storyDto.getThemeName());
-        assertEquals(story.getTitle(), storyDto.getTitle());
-        assertEquals(story.getContent(), storyDto.getContent());
-    }
-
-    @Test
-    @DisplayName("Should get correct story by id")
-    void getStoryByIdTest() {
-        Mockito.when(storyRepository.findById(story5.getId())).thenReturn(Optional.of(story5));
-
-        StoryOutputDto storyDto = storyService.getSubmittedStoryById(story5.getId());
-
-        assertEquals(story5.getAuthor().getUsername(), storyDto.getUsername());
-        assertEquals(story5.getTheme().getName(), storyDto.getThemeName());
-        assertEquals(story5.getTitle(), storyDto.getTitle());
-        assertEquals(story5.getContent(), storyDto.getContent());
-    }
-
-
-    @Test
-    @DisplayName("Should return stories with correct status and themeId")
-    void getStoriesByStatusAndThemeIdTest() {
-
-        List<Story> mockStoryList = List.of(story4, story5);
-
-        Mockito.when(themeRepository.findById(themeClosed.getId())).thenReturn(Optional.of(themeClosed));
-        Mockito.when(storyRepository.findByStatusAndTheme(PUBLISHED, themeClosed)).thenReturn(List.of(story4, story5));
-
-        List<StoryOutputDto> storyList = storyService.getStoriesByStatusAndThemeId(PUBLISHED, themeClosed.getId());
+        List<StoryOutputDto> storyList = storyService.getAllPublishedStoriesByDateDesc(PUBLISHED);
 
         assertEquals(storyList.size(), mockStoryList.size());
-        assertEquals(story4.getTitle(), storyList.get(0).getTitle());
-        assertEquals(story5.getTitle(), storyList.get(1).getTitle());
-        assertEquals(story4.getTheme().getName(), storyList.get(0).getThemeName());
-        assertEquals(story5.getTheme().getName(), storyList.get(1).getThemeName());
-    }
-
-    @Test
-    @DisplayName("Should return stories by correct status and theme name")
-    void getStoriesByStatusAndThemeNameTest() {
-
-        List<Story> mockStoryList = List.of(story4, story5);
-
-        Mockito.when(themeRepository.findByNameIgnoreCase(themeClosed.getName())).thenReturn(Optional.of(themeClosed));
-        Mockito.when(storyRepository.findByStatusAndTheme(PUBLISHED, themeClosed)).thenReturn(List.of(story4, story5));
-
-        List<StoryOutputDto> storyList = storyService.getStoriesByStatusAndThemeName(PUBLISHED, themeClosed.getName());
-
-        assertEquals(storyList.size(), mockStoryList.size());
-        assertEquals(story4.getTitle(), storyList.get(0).getTitle());
-        assertEquals(story5.getTitle(), storyList.get(1).getTitle());
-        assertEquals(story4.getTheme().getName(), storyList.get(0).getThemeName());
-        assertEquals(story5.getTheme().getName(), storyList.get(1).getThemeName());
-
-    }
-
-    @Test
-    @DisplayName("Should return all stories related to theme, no matter what status")
-    void getStoriesByThemeTest() {
-
-        List<Story> mockStoryList = List.of(story2, story6, story7);
-
-        Mockito.when(storyRepository.findByThemeId(theme.getId())).thenReturn(List.of(story2, story6, story7));
-
-        List<StoryOutputDto> relatedStoryList = storyService.getStoriesByTheme(theme.getId());
-
-        assertEquals(relatedStoryList.size(), mockStoryList.size());
-        assertEquals(story2.getTitle(), relatedStoryList.get(0).getTitle());
-        assertEquals(story6.getTitle(), relatedStoryList.get(1).getTitle());
-        assertEquals(story6.getTheme().getName(), relatedStoryList.get(1).getThemeName());
-        assertEquals(story7.getTheme().getName(), relatedStoryList.get(2).getThemeName());
-
-    }
-
-
-
-    @Test
-    @DisplayName("Should return all stories of the correct author")
-    void getAllStoriesByAuthorTest() {
-
-        List<Story> mockStoryList = List.of(story, story2, story5);
-        Mockito.when(storyRepository.findByAuthor_Username(story.getAuthor().getUsername())).thenReturn(List.of(story, story2, story5));
-
-        List<StoryOutputDto> storyList = storyService.getAllStoriesByAuthor("user1");
-
-        assertEquals(storyList.size(), mockStoryList.size());
-        assertEquals(story.getAuthor().getUsername(), mockStoryList.get(0).getAuthor().getUsername());
-        assertEquals(story.getTitle(), storyList.get(0).getTitle());
-        assertEquals(story5.getTitle(), storyList.get(2).getTitle());
-
-    }
-
-    @Test
-    @DisplayName("Should return only published stories of the correct author")
-    void getPublishedStoriesByAuthorTest() {
-
-        List<Story> mockStoryList = List.of(story5);
-        Mockito.when(storyRepository.findByAuthor_UsernameAndStatus(story5.getAuthor().getUsername(), PUBLISHED)).thenReturn(List.of(story5));
-
-        List<StoryOutputDto> storyList = storyService.getPublishedStoriesByAuthor(story5.getAuthor().getUsername());
-
-        assertEquals(storyList.size(), mockStoryList.size());
-        assertEquals(story5.getAuthor().getUsername(), storyList.get(0).getUsername());
-        assertEquals(story5.getTitle(), storyList.get(0).getTitle());
-
+        assertEquals(titleStory4, storyList.get(1).getTitle());
+        assertEquals(titleStory5, storyList.get(0).getTitle());
+        assertEquals(publishDateStory4, storyList.get(1).getPublishDate());
+        assertEquals(publishDateStory5, storyList.get(0).getPublishDate());
     }
 
 
@@ -501,13 +416,113 @@ class StoryServiceTest {
     @DisplayName("Should return correct story")
     void getStoryByStatusAndStoryIdTest() {
 
-        Mockito.when(storyRepository.findByStatusAndId(PUBLISHED, story5.getId())).thenReturn(Optional.of(story5));
+        Long storyId = 5L;
+        String username = "user1";
 
-        StoryOutputDto storyDto = storyService.getStoryByStatusAndStoryId(story5.getStatus(), story5.getId());
+        Mockito.when(storyRepository.findByStatusAndId(PUBLISHED, storyId)).thenReturn(Optional.of(story5));
 
-        assertEquals(story5.getId(), storyDto.getId());
-        assertEquals(story5.getStatus(), storyDto.getStatus());
-        assertEquals(story5.getAuthor().getUsername(), storyDto.getUsername());
+        StoryOutputDto storyDto = storyService.getStoryByStatusAndStoryId(PUBLISHED, storyId);
+
+        assertEquals(storyId, storyDto.getId());
+        assertEquals(PUBLISHED, storyDto.getStatus());
+        assertEquals(username, storyDto.getUsername());
+    }
+
+
+    @Test
+    @DisplayName("Should return all stories related to theme, no matter what status")
+    void getStoriesByThemeTest() {
+
+        Long themeId = 1L;
+        String titleStory2 = "Story 2";
+        String titleStory6 = "Story 6";
+        String themeStory6 = "Theme 1";
+        String themeStory7 = "Theme 1";
+        List<Story> mockStoryList = List.of(story2, story6, story7);
+
+        Mockito.when(storyRepository.findByThemeId(themeId)).thenReturn(List.of(story2, story6, story7));
+
+        List<StoryOutputDto> relatedStoryList = storyService.getStoriesByTheme(themeId);
+
+        assertEquals(relatedStoryList.size(), mockStoryList.size());
+        assertEquals(titleStory2, relatedStoryList.get(0).getTitle());
+        assertEquals(titleStory6, relatedStoryList.get(1).getTitle());
+        assertEquals(themeStory6, relatedStoryList.get(1).getThemeName());
+        assertEquals(themeStory7, relatedStoryList.get(2).getThemeName());
 
     }
+
+    @Test
+    @DisplayName("Should return only stories with submitted status")
+    void getStoriesBySubmittedStatusTest() {
+
+        String titleStory = "Story 1";
+        String titleStory3 = "Story 3";
+        List<Story> mockStoryList = List.of(story, story3);
+        Mockito.when(storyRepository.findByStatus(SUBMITTED)).thenReturn(List.of(story, story3));
+
+        List<StoryOutputDto> storyList = storyService.getStoriesByStatus(SUBMITTED);
+
+        assertEquals(storyList.size(), mockStoryList.size());
+        assertEquals(titleStory, storyList.get(0).getTitle());
+        assertEquals(titleStory3, storyList.get(1).getTitle());
+        assertEquals(SUBMITTED, storyList.get(0).getStatus());
+        assertEquals(SUBMITTED, storyList.get(1).getStatus());
+
+    }
+
+    @Test
+    @DisplayName("Should return only stories with published status")
+    void getStoriesByPublishedStatusTest() {
+
+        String titleStory4 = "Story 4";
+        String titleStory5 = "Story 5";
+        List<Story> mockStoryList = List.of(story4, story5);
+        Mockito.when(storyRepository.findByStatus(PUBLISHED)).thenReturn(List.of(story4, story5));
+
+        List<StoryOutputDto> storyList = storyService.getStoriesByStatus(PUBLISHED);
+
+        assertEquals(storyList.size(), mockStoryList.size());
+        assertEquals(titleStory4, storyList.get(0).getTitle());
+        assertEquals(titleStory5, storyList.get(1).getTitle());
+    }
+
+
+    @Test
+    @DisplayName("Should return all stories of the correct author")
+    void getAllStoriesByAuthorTest() {
+
+        String username = "user1";
+        String titleStory = "Story 1";
+        String titleStory5 = "Story 5";
+        List<Story> mockStoryList = List.of(story, story2, story5);
+        Mockito.when(storyRepository.findByAuthor_Username(username)).thenReturn(List.of(story, story2, story5));
+
+        List<StoryOutputDto> storyList = storyService.getAllStoriesByAuthor(username);
+
+        assertEquals(storyList.size(), mockStoryList.size());
+        assertEquals(username, storyList.get(0).getUsername());
+        assertEquals(titleStory, storyList.get(0).getTitle());
+        assertEquals(titleStory5, storyList.get(2).getTitle());
+    }
+
+    @Test
+    @DisplayName("Should return only published stories of the correct author")
+    void getPublishedStoriesByAuthorTest() {
+
+        String username = "user1";
+        String storyTitle = "Story 5";
+        List<Story> mockStoryList = List.of(story5);
+        Mockito.when(storyRepository.findByAuthor_UsernameAndStatus(username, PUBLISHED)).thenReturn(List.of(story5));
+
+        List<StoryOutputDto> storyList = storyService.getPublishedStoriesByAuthor(username);
+
+        assertEquals(storyList.size(), mockStoryList.size());
+        assertEquals(username, storyList.get(0).getUsername());
+        assertEquals(storyTitle, storyList.get(0).getTitle());
+
+    }
+
+
+
 }

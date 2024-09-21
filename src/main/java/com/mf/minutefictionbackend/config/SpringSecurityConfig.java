@@ -68,7 +68,6 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/authorprofiles/**").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/authorprofiles/**").hasAnyAuthority("AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.DELETE, "/authorprofiles/**").hasAnyAuthority("AUTHOR", "EDITOR")
-
                         //THEMES
                         .requestMatchers(HttpMethod.GET, "/themes/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/themes").hasAuthority("EDITOR")
@@ -77,14 +76,10 @@ public class SpringSecurityConfig {
                         //STORIES
                         .requestMatchers(HttpMethod.GET, "/stories/published/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stories/{storyId}/comments").permitAll()
-
                         .requestMatchers(HttpMethod.POST, "/stories/submit/*").hasAuthority("AUTHOR")
-//                        .requestMatchers(HttpMethod.PATCH, "/stories/**").hasAuthority( "EDITOR")
-//                        .requestMatchers(HttpMethod.GET, "/stories/declined").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/stories/**").hasAuthority( "EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/stories/**").hasAuthority( "EDITOR")
                         .requestMatchers(HttpMethod.DELETE, "/stories/**").hasAnyAuthority("AUTHOR", "EDITOR")
-
                         //COMMENTS
                         .requestMatchers(HttpMethod.GET, "/comments/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/stories/{storyId}/comments").hasAnyAuthority("READER", "EDITOR")

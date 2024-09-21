@@ -14,9 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Service
@@ -33,6 +31,7 @@ public class UserService {
     }
 
 
+    @Transactional
     public UserOutputDto createUser(UserInputDto userInputDto) {
         if(userRepository.existsByUsername(userInputDto.getUsername())) {
             throw new UsernameAlreadyExistsException("Username is already taken, try another.");
@@ -61,7 +60,6 @@ public class UserService {
     }
 
 
-
     @Transactional
     public void deleteUser(String username) {
         User user = userRepository.findById(username)
@@ -72,7 +70,6 @@ public class UserService {
         user.getAuthorities().clear();
         userRepository.delete(user);
     }
-
 
     @Transactional
     public UserOutputDto updateUser(String username, UserInputDto updatedUser) {
@@ -93,18 +90,8 @@ public class UserService {
     }
 
 
-    // internal method for authentication
-
-    public User getUser(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-    }
-
 
     // MANAGING AUTHORITIES
-
-
-
 
 
     public List<String> getAuthorities(String username) {
@@ -121,7 +108,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-
     public void removeAuthority(String username, String authority) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
@@ -129,8 +115,18 @@ public class UserService {
                 .filter((a) -> a.getAuthority().equalsIgnoreCase(authority))
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("Authority " + authority + " not found for this user."));
+
         user.removeAuthority(authorityToRemove);
         userRepository.save(user);
+    }
+
+
+
+    // internal method for authentication
+
+    public User getUser(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
 

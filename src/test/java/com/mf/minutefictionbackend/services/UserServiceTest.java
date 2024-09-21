@@ -104,8 +104,9 @@ class UserServiceTest {
     @DisplayName("Should throw exception when username already exists")
     void createUserWithExistingUsernameTest() {
 
+        String username = "testuser";
         UserInputDto userInputDto = new UserInputDto();
-        userInputDto.setUsername("testuser");
+        userInputDto.setUsername(username);
 
         Mockito.when(userRepository.existsByUsername(userInputDto.getUsername())).thenReturn(true);
 
@@ -117,17 +118,23 @@ class UserServiceTest {
     @DisplayName("Should return correct list of users")
     void getAllUsersTest() {
 
+        String usernameUser1 = "testuser";
+        String usernameUser2 = "justken";
+        String usernameUser3 = "barbiereads";
+        String emailUser1 = "testuser@email.com";
+        String emailUser2 = "kensemail@email.com";
+
         List<User> mockUserList = List.of(user, user2, user3);
         Mockito.when(userRepository.findAll()).thenReturn(mockUserList);
 
         List<UserOutputDto> userList = userService.getAllUsers();
 
         assertEquals(userList.size(), mockUserList.size());
-        assertEquals("testuser", mockUserList.get(0).getUsername());
-        assertEquals("justken", mockUserList.get(1).getUsername());
-        assertEquals("barbiereads", mockUserList.get(2).getUsername());
-        assertEquals("testuser@email.com", mockUserList.get(0).getEmail());
-        assertEquals("kensemail@email.com", mockUserList.get(1).getEmail());
+        assertEquals(usernameUser1, mockUserList.get(0).getUsername());
+        assertEquals(usernameUser2, mockUserList.get(1).getUsername());
+        assertEquals(usernameUser3, mockUserList.get(2).getUsername());
+        assertEquals(emailUser1, mockUserList.get(0).getEmail());
+        assertEquals(emailUser2, mockUserList.get(1).getEmail());
 
     }
 
@@ -135,12 +142,14 @@ class UserServiceTest {
     @DisplayName("Should return correct user")
     public void getUserByUsernameTest() {
 
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        String username = "testuser";
+        String email = "testuser@email.com";
+        Mockito.when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
-        UserOutputDto userDto = userService.getUserByUsername("testuser");
+        UserOutputDto userDto = userService.getUserByUsername(username);
 
-        assertEquals("testuser", userDto.getUsername());
-        assertEquals("testuser@email.com", userDto.getEmail());
+        assertEquals(username, userDto.getUsername());
+        assertEquals(email, userDto.getEmail());
         assertFalse(userDto.isSubscribedToMailing());
         assertFalse(userDto.isHasAuthorProfile());
         assertTrue(userDto.getAuthorities().contains("READER"));
@@ -152,8 +161,8 @@ class UserServiceTest {
     void deleteUserTest() {
 
         String username = "testuser";
-
         Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user));
+
         if(user.getAuthorProfile() != null) {
             Mockito.doNothing().when(authorProfileRepository).delete(user.getAuthorProfile());
         }
@@ -169,19 +178,20 @@ class UserServiceTest {
     @DisplayName("Should update correct fields for correct user")
     void updateUserTest() {
 
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        String username = "testuser";
 
         UserInputDto userInputDto = new UserInputDto();
         userInputDto.setPassword("password1234");
         userInputDto.setEmail("newemail@email.com");
         userInputDto.setSubscribedToMailing(true);
 
+        Mockito.when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
         Mockito.when(passwordEncoder.encode(userInputDto.getPassword())).thenReturn("encodedPassword1234");
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
 
-        UserOutputDto updatedUserDto = userService.updateUser(user.getUsername(), userInputDto);
+        UserOutputDto updatedUserDto = userService.updateUser(username, userInputDto);
 
-        assertEquals("testuser", updatedUserDto.getUsername());
+        assertEquals(username, updatedUserDto.getUsername());
         assertEquals("newemail@email.com", updatedUserDto.getEmail());
         assertTrue(updatedUserDto.isSubscribedToMailing());
 
@@ -193,11 +203,12 @@ class UserServiceTest {
     @DisplayName("Should return correct user")
     void getUserTest() {
 
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        String username = "testuser";
+        Mockito.when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
-        userService.getUser(user.getUsername());
+        User result = userService.getUser(username);
 
-        assertEquals("testuser", user.getUsername());
+        assertEquals(username, result.getUsername());
 
     }
 
@@ -205,10 +216,11 @@ class UserServiceTest {
     @DisplayName("Should add correct authority to user")
     void addAuthorityTest() {
 
+        String username = "testuser";
         String authority = "EDITOR";
-        Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user));
 
-        userService.addAuthority(user.getUsername(), authority);
+        userService.addAuthority(username, authority);
 
         assertTrue(user.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("EDITOR")));
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
@@ -219,9 +231,10 @@ class UserServiceTest {
     @DisplayName("Should get correct authorities")
     void getAuthoritiesTest() {
 
-        Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
+        String username = "testuser";
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user));
 
-        List<String> authorityList = userService.getAuthorities(user.getUsername());
+        List<String> authorityList = userService.getAuthorities(username);
         List<String> expectedAuthorities = user.getAuthorities().stream().map(Authority::getAuthority).collect(Collectors.toList());
 
         assertEquals(expectedAuthorities, authorityList);
@@ -232,9 +245,11 @@ class UserServiceTest {
     @DisplayName("Should remove correct authority")
     void removeAuthorityTest() {
 
-        Mockito.when(userRepository.findById(user3.getUsername())).thenReturn(Optional.of(user3));
+        String username = "barbiereads";
+        String authority = "EDITOR";
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user3));
 
-        userService.removeAuthority("barbiereads", "EDITOR");
+        userService.removeAuthority(username, authority);
 
         assertFalse(user.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("EDITOR")));
         Mockito.verify(userRepository, Mockito.times(1)).save(user3);

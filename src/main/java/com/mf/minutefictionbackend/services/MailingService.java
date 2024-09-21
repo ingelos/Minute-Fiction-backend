@@ -39,6 +39,7 @@ public class MailingService {
     }
 
 
+    @Transactional
     public MailingOutputDto createMailing(MailingInputDto mailingInputDto) {
         Mailing mailing = mailingRepository.save(MailingMapper.mailingFromInputDtoToModel(mailingInputDto));
         return MailingMapper.mailingFromModelToOutputDto(mailing);
@@ -55,6 +56,7 @@ public class MailingService {
         return MailingMapper.mailingFromModelListToOutputList(allMailings);
     }
 
+    @Transactional
     public MailingOutputDto updateMailing(Long mailingId, MailingInputDto updatedMailing) {
         Mailing updateMailing = mailingRepository.findById(mailingId)
                 .orElseThrow(() -> new ResourceNotFoundException("No mailing found"));
