@@ -57,12 +57,11 @@ public class StoryController {
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
-    @GetMapping("/submitted-theme/{themeId}")
+    @GetMapping("/submitted/theme/{themeId}")
     public ResponseEntity<List<StoryOutputDto>> getSubmittedStoriesByThemeId(@PathVariable("themeId") Long themeId) {
         List<StoryOutputDto> stories = storyService.getStoriesByStatusAndThemeId(StoryStatus.SUBMITTED, themeId);
         return ResponseEntity.ok(stories);
     }
-
 
     @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/{storyId}")

@@ -40,7 +40,7 @@ INSERT INTO users_authorities (username, authority) VALUES ('author2', 'AUTHOR')
 INSERT INTO users_authorities (username, authority) VALUES ('editor', 'READER');
 INSERT INTO users_authorities (username, authority) VALUES ('editor', 'EDITOR');
 INSERT INTO users_authorities (username, authority) VALUES ('reader', 'READER');
-INSERT INTO users_authorities (username, authority) VALUES ('author3', 'EDITOR');
+INSERT INTO users_authorities (username, authority) VALUES ('author3', 'AUTHOR');
 INSERT INTO users_authorities (username, authority) VALUES ('author3', 'READER');
 
 

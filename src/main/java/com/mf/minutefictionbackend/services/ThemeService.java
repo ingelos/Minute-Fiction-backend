@@ -5,7 +5,6 @@ import com.mf.minutefictionbackend.dtos.mappers.ThemeMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
 import com.mf.minutefictionbackend.exceptions.BadRequestException;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
-import com.mf.minutefictionbackend.models.Comment;
 import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
 import com.mf.minutefictionbackend.repositories.ThemeRepository;
@@ -40,9 +39,9 @@ public class ThemeService {
         return ThemeMapper.themeModelListToOutputList(allThemes);
     }
 
-    public ThemeOutputDto getThemeById(Long id) {
-        Theme theme = themeRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + id));
+    public ThemeOutputDto getThemeById(Long themeId) {
+        Theme theme = themeRepository.findById(themeId)
+                        .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + themeId));
         return ThemeMapper.themeFromModelToOutputDto(theme);
     }
 
