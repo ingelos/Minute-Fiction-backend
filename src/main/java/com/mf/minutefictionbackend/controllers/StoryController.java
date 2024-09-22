@@ -70,7 +70,7 @@ public class StoryController {
         return ResponseEntity.ok(storyDto);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isAuthor(storyId)")
+    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isAuthor(#storyId)")
     @DeleteMapping("/{storyId}")
     public ResponseEntity<Void> deleteStory(@PathVariable("storyId") Long storyId) {
         storyService.deleteStoryById(storyId);

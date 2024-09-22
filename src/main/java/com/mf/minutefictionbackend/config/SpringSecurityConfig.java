@@ -53,6 +53,10 @@ public class SpringSecurityConfig {
     protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
 
         http
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .accessDeniedHandler(customAccessDeniedHandler)
+                                .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
                         //USERS
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
@@ -95,10 +99,7 @@ public class SpringSecurityConfig {
                         .requestMatchers("/authenticate").permitAll()
                         .anyRequest().denyAll()
                 )
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling
-                                .accessDeniedHandler(customAccessDeniedHandler)
-                                .authenticationEntryPoint(customAuthenticationEntryPoint))
+
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

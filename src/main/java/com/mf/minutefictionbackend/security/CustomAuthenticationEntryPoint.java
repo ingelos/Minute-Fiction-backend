@@ -13,8 +13,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
     throws IOException {
+        response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("You are not authorized to access this resource.");
+        response.getWriter().write("{\"error\": \"Invalid username or password. Please try to log in again.\"}");
     }
 
 }
