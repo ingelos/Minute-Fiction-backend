@@ -5,7 +5,6 @@ import com.mf.minutefictionbackend.payload.AuthenticationResponse;
 import com.mf.minutefictionbackend.services.CustomUserDetailService;
 import com.mf.minutefictionbackend.utils.JwtUtil;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,7 +30,6 @@ public class AuthenticationController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/authenticated")
     public ResponseEntity<Object> authenticated(Authentication authentication, Principal principal) {
         return ResponseEntity.ok().body(principal);
