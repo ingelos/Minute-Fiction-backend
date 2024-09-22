@@ -3,12 +3,12 @@ package com.mf.minutefictionbackend.services;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.UserMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
+import com.mf.minutefictionbackend.exceptions.BadRequestException;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.exceptions.UsernameAlreadyExistsException;
 import com.mf.minutefictionbackend.exceptions.UsernameNotFoundException;
 import com.mf.minutefictionbackend.models.Authority;
 import com.mf.minutefictionbackend.models.User;
-import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,12 +21,10 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final AuthorProfileRepository authorProfileRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, AuthorProfileRepository authorProfileRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.authorProfileRepository = authorProfileRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -65,7 +63,7 @@ public class UserService {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         if (user.getAuthorProfile() != null) {
-            authorProfileRepository.delete(user.getAuthorProfile());
+            throw new BadRequestException("Please delete the author profile before deleting this account.");
         }
         user.getAuthorities().clear();
         userRepository.delete(user);
