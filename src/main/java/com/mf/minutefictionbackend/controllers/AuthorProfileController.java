@@ -62,7 +62,7 @@ public class AuthorProfileController {
     }
 
     @PreAuthorize("@securityService.isOwner(#username)")
-    @PatchMapping("/{username}")
+    @PutMapping("/{username}")
     public ResponseEntity<AuthorProfileOutputDto> updateAuthorProfile(@Valid @PathVariable("username") String username, @RequestBody AuthorProfileInputDto updatedProfile) {
         AuthorProfileOutputDto authorProfileDto = authorProfileService.updateAuthorProfile(username, updatedProfile);
         return ResponseEntity.ok().body(authorProfileDto);

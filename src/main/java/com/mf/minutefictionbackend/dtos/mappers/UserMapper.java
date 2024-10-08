@@ -1,10 +1,13 @@
 package com.mf.minutefictionbackend.dtos.mappers;
 
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordInputDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdateUserInputDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
 import com.mf.minutefictionbackend.models.Authority;
 import com.mf.minutefictionbackend.models.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,21 @@ public class UserMapper {
                 userInputDto.isSubscribedToMailing(),
                 authorities
         );
+    }
+
+    public static User updateUserFromInputDtoToModel(User existingUser, UpdateUserInputDto userInputDto) {
+        existingUser.setEmail(userInputDto.getEmail());
+        existingUser.setSubscribedToMailing(userInputDto.isSubscribedToMailing());
+
+        return existingUser;
+    }
+
+    public static void updatePasswordFromInputDtoToModel(User existingUser, UpdatePasswordInputDto updatePasswordDto, PasswordEncoder passwordEncoder) {
+        if (!updatePasswordDto.getNewPassword().equals(updatePasswordDto.getConfirmPassword())) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+        String encodedPassword = passwordEncoder.encode(updatePasswordDto.getNewPassword());
+        existingUser.setPassword(encodedPassword);
     }
 
     public static UserOutputDto userFromModelToOutputDto(User user) {

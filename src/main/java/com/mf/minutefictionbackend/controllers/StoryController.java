@@ -43,7 +43,7 @@ public class StoryController {
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
-    @PatchMapping("/update/{storyId}")
+    @PutMapping("/update/{storyId}")
     public ResponseEntity<StoryOutputDto> updateStory(@Valid @PathVariable("storyId") Long storyId, @RequestBody StoryInputDto updatedStory) {
         StoryOutputDto updatedStoryDto = storyService.updateStory(storyId, updatedStory);
         return ResponseEntity.ok().body(updatedStoryDto);

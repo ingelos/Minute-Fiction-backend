@@ -72,9 +72,9 @@ public class StoryService {
     public StoryOutputDto updateStory(Long storyId, StoryInputDto updatedStory) {
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("No story found."));
-        if (updatedStory.getContent() != null) {
-            story.setContent(updatedStory.getContent());
-        }
+
+        story.setTitle(updatedStory.getTitle());
+        story.setContent(updatedStory.getContent());
 
         Story savedStory = storyRepository.save(story);
         return StoryMapper.storyFromModelToOutputDto(savedStory);

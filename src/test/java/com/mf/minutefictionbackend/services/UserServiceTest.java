@@ -1,6 +1,8 @@
 package com.mf.minutefictionbackend.services;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorityInputDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordInputDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdateUserInputDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.UsernameAlreadyExistsException;
@@ -10,6 +12,7 @@ import com.mf.minutefictionbackend.repositories.AuthorProfileRepository;
 import com.mf.minutefictionbackend.repositories.UserRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -65,12 +68,7 @@ class UserServiceTest {
                 .build();
     }
 
-    @AfterEach
-    void tearDown() {
-        user = null;
-        user2 = null;
-        user3 = null;
-    }
+
 
     @Test
     @DisplayName("Should create correct user")
@@ -180,24 +178,48 @@ class UserServiceTest {
 
         String username = "testuser";
 
-        UserInputDto userInputDto = new UserInputDto();
-        userInputDto.setPassword("password1234");
-        userInputDto.setEmail("newemail@email.com");
-        userInputDto.setSubscribedToMailing(true);
+        UpdateUserInputDto updateUserInputDto = new UpdateUserInputDto();
+        updateUserInputDto.setEmail("newemail@email.com");
+        updateUserInputDto.setSubscribedToMailing(true);
 
-        Mockito.when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
-        Mockito.when(passwordEncoder.encode(userInputDto.getPassword())).thenReturn("encodedPassword1234");
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user));
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
 
-        UserOutputDto updatedUserDto = userService.updateUser(username, userInputDto);
+        UserOutputDto updatedUserDto = userService.updateUser(username, updateUserInputDto);
 
         assertEquals(username, updatedUserDto.getUsername());
         assertEquals("newemail@email.com", updatedUserDto.getEmail());
         assertTrue(updatedUserDto.isSubscribedToMailing());
 
-        Mockito.verify(passwordEncoder, Mockito.times(1)).encode("password1234");
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
     }
+
+    @Test
+    @DisplayName("Should return correct password")
+    void updatePasswordTest() {
+
+        String username = "testuser";
+
+        UpdatePasswordInputDto updatePasswordInputDto = new UpdatePasswordInputDto();
+        updatePasswordInputDto.setNewPassword("newPassword123");
+        updatePasswordInputDto.setConfirmPassword("newPassword123");
+
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user));
+        Mockito.when(passwordEncoder.encode(updatePasswordInputDto.getNewPassword())).thenReturn("encodedNewPassword");
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+        userService.updatePassword(username, updatePasswordInputDto);
+
+        Mockito.verify(userRepository).save(userCaptor.capture());
+
+        User savedUser = userCaptor.getValue();
+        assertEquals("encodedNewPassword", savedUser.getPassword());
+
+
+    }
+
+
 
     @Test
     @DisplayName("Should return correct user")

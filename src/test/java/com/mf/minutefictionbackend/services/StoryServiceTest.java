@@ -157,22 +157,7 @@ class StoryServiceTest {
                 .build();
     }
 
-    @AfterEach
-    void tearDown() {
 
-        story = null;
-        story2 = null;
-        story3 = null;
-        story4 = null;
-        story5 = null;
-        story6 = null;
-        story7 = null;
-        theme = null;
-        theme2 = null;
-        themeClosed = null;
-        comment1 = null;
-        comment2 = null;
-    }
 
 
     @Test
@@ -231,6 +216,7 @@ class StoryServiceTest {
         Long storyId = 1L;
 
         StoryInputDto storyInputDto = new StoryInputDto();
+        storyInputDto.setTitle("Story 1");
         storyInputDto.setContent("Content updated...");
 
         Mockito.when(storyRepository.findById(storyId)).thenReturn(Optional.of(story));
@@ -239,6 +225,7 @@ class StoryServiceTest {
         StoryOutputDto updatedStory = storyService.updateStory(storyId, storyInputDto);
 
         assertEquals(storyId, updatedStory.getId());
+        assertEquals(story.getTitle(), updatedStory.getTitle());
         assertEquals(story.getContent(), updatedStory.getContent());
         Mockito.verify(storyRepository, Mockito.times(1)).save(story);
     }

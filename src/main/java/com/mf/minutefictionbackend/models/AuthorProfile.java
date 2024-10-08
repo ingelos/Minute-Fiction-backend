@@ -19,7 +19,6 @@ public class AuthorProfile {
 
     @Setter(AccessLevel.NONE)
     @Id
-    @Column
     private String username;
     @Column
     private String firstname;

@@ -1,5 +1,7 @@
 package com.mf.minutefictionbackend.services;
 
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordInputDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdateUserInputDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.UserMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
@@ -11,6 +13,7 @@ import com.mf.minutefictionbackend.models.Authority;
 import com.mf.minutefictionbackend.models.User;
 import com.mf.minutefictionbackend.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.sql.Update;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -70,23 +73,24 @@ public class UserService {
     }
 
     @Transactional
-    public UserOutputDto updateUser(String username, UserInputDto updatedUser) {
-        User updateUser = userRepository.findByUsername(username)
+    public UserOutputDto updateUser(String username, UpdateUserInputDto updateUserInputDto) {
+        User existingUser = userRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No user found with username " + username));
 
-        if(updatedUser.getUsername() != null) {
-            throw new IllegalArgumentException("Username cannot be changed.");
-        }
+        User updatedUser = UserMapper.updateUserFromInputDtoToModel(existingUser, updateUserInputDto);
 
-        updateUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-        updateUser.setEmail(updatedUser.getEmail());
-        updateUser.setSubscribedToMailing(updatedUser.isSubscribedToMailing());
-
-        User savedUser = userRepository.save(updateUser);
-
+        User savedUser = userRepository.save(updatedUser);
         return UserMapper.userFromModelToOutputDto(savedUser);
     }
 
+
+    @Transactional
+    public void updatePassword(String username, UpdatePasswordInputDto updatePasswordInputDto) {
+        User existingUser = userRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No user found."));
+        UserMapper.updatePasswordFromInputDtoToModel(existingUser, updatePasswordInputDto, passwordEncoder);
+        userRepository.save(existingUser);
+    }
 
 
     // MANAGING AUTHORITIES

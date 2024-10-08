@@ -19,7 +19,6 @@ public class User {
 
     @Setter(AccessLevel.NONE)
     @Id
-    @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false, length = 255)
     private String password;

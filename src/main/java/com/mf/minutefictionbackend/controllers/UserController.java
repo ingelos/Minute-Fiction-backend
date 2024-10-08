@@ -1,6 +1,8 @@
 package com.mf.minutefictionbackend.controllers;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorityInputDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordInputDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdateUserInputDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.BadRequestException;
@@ -60,11 +62,17 @@ public class UserController {
 
     @PreAuthorize("@securityService.isOwner(#username)")
     @PutMapping("/{username}")
-    public ResponseEntity<UserOutputDto> updateUser(@Valid @PathVariable("username") String username, @RequestBody UserInputDto userDto) {
-        UserOutputDto updatedUser = userService.updateUser(username, userDto);
+    public ResponseEntity<UserOutputDto> updateUser(@Valid @PathVariable("username") String username, @RequestBody UpdateUserInputDto updateUserInputDto) {
+        UserOutputDto updatedUser = userService.updateUser(username, updateUserInputDto);
         return ResponseEntity.ok().body(updatedUser);
     }
 
+    @PreAuthorize("@securityService.isOwner(#username)")
+    @PutMapping("/{username}/update-password")
+    public ResponseEntity<Void> updatePassword(@Valid @PathVariable("username") String username, @RequestBody UpdatePasswordInputDto updatePasswordInputDto) {
+        userService.updatePassword(username, updatePasswordInputDto);
+        return ResponseEntity.noContent().build();
+    }
 
     // MANAGE AUTHORITIES
 

@@ -16,7 +16,6 @@ import java.util.Set;
 public class Authority {
 
     @Id
-    @Column(nullable = false)
     private String authority;
 
     @Getter(AccessLevel.NONE)

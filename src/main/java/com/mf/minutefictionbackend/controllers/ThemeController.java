@@ -58,7 +58,7 @@ public class ThemeController {
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
-    @PatchMapping("/{themeId}")
+    @PutMapping("/{themeId}")
     public ResponseEntity<ThemeOutputDto> updateTheme(@Valid @PathVariable("themeId") Long themeId, @RequestBody ThemeInputDto updatedThemeInputDto) {
         ThemeOutputDto updatedTheme = themeService.updateTheme(themeId, updatedThemeInputDto);
         return ResponseEntity.ok().body(updatedTheme);

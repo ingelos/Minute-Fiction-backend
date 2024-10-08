@@ -71,18 +71,11 @@ public class AuthorProfileService {
         AuthorProfile updateProfile = authorProfileRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for username " + username));
 
-        if(updatedProfile.getFirstname() != null) {
-            updateProfile.setFirstname(updatedProfile.getFirstname());
-        }
-        if(updatedProfile.getLastname() != null) {
-            updateProfile.setLastname(updatedProfile.getLastname());
-        }
-        if(updatedProfile.getBio() != null) {
-            updateProfile.setBio(updatedProfile.getBio());
-        }
-        if(updatedProfile.getDob() != null) {
-            updateProfile.setDob(updatedProfile.getDob());
-        }
+        updateProfile.setFirstname(updatedProfile.getFirstname());
+        updateProfile.setLastname(updatedProfile.getLastname());
+        updateProfile.setBio(updatedProfile.getBio());
+        updateProfile.setDob(updatedProfile.getDob());
+
         AuthorProfile returnAuthorProfile = authorProfileRepository.save(updateProfile);
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(returnAuthorProfile);
     }

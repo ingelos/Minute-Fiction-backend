@@ -35,7 +35,7 @@ public class CommentController {
     }
 
     @PreAuthorize("hasAuthority('EDITOR') or @securityService.isCommentOwner(#commentId)")
-    @PatchMapping("/comments/{commentId}")
+    @PutMapping("/comments/{commentId}")
     public ResponseEntity<CommentOutputDto> updateComment(@Valid @PathVariable("commentId") Long commentId, @RequestBody CommentInputDto updatedComment) {
         CommentOutputDto updatedCommentDto = commentService.updateComment(commentId, updatedComment);
         return ResponseEntity.ok().body(updatedCommentDto);

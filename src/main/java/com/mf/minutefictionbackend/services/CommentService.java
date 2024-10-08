@@ -53,6 +53,7 @@ public class CommentService {
                 .orElseThrow(() -> new ResourceNotFoundException("No comment found."));
 
         comment.setContent(updatedComment.getContent());
+
         Comment returnComment = commentRepository.save(comment);
         return CommentMapper.commentFromModelToOutputDto(returnComment);
     }
