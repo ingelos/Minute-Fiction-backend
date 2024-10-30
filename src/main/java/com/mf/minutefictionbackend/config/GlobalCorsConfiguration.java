@@ -15,7 +15,7 @@ public class GlobalCorsConfiguration {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
+                        .allowedOrigins("*") // change to my frontend url!
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS");
             }
         };

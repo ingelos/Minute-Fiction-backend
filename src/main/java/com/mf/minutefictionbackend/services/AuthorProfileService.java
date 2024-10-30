@@ -56,7 +56,7 @@ public class AuthorProfileService {
     }
 
     public List<AuthorProfileOutputDto> getAllAuthorProfiles() {
-        List<AuthorProfile> allAuthorProfiles = authorProfileRepository.findAll();
+        List<AuthorProfile> allAuthorProfiles = authorProfileRepository.findAllByOrderByLastnameAsc();
         return AuthorProfileMapper.authorProfileModelListToOutputList(allAuthorProfiles);
     }
 

@@ -44,6 +44,19 @@ public class ThemeController {
         return ResponseEntity.ok().body(themeService.getAllThemes());
     }
 
+    @GetMapping("/{themeId}")
+    public ResponseEntity<ThemeOutputDto> getThemeById(@PathVariable("themeId") Long themeId) {
+        ThemeOutputDto themeDto = themeService.getThemeById(themeId);
+        return ResponseEntity.ok().body(themeDto);
+    }
+
+    @GetMapping("/closed")
+    public ResponseEntity<List<ThemeOutputDto>> getClosedThemes() {
+        List<Theme> closedThemes = themeService.findClosedThemes();
+        List<ThemeOutputDto> closedThemeDtoList = ThemeMapper.themeModelListToOutputList(closedThemes);
+        return ResponseEntity.ok().body(closedThemeDtoList);
+    }
+
     @GetMapping("/open")
     public ResponseEntity<List<ThemeOutputDto>> getOpenThemes() {
         List<Theme> openThemes = themeService.findOpenThemes();
@@ -51,11 +64,7 @@ public class ThemeController {
         return ResponseEntity.ok().body(openThemeDtoList);
     }
 
-    @GetMapping("/{themeId}")
-    public ResponseEntity<ThemeOutputDto> getThemeById(@PathVariable("themeId") Long themeId) {
-        ThemeOutputDto themeDto = themeService.getThemeById(themeId);
-        return ResponseEntity.ok().body(themeDto);
-    }
+    // MANAGE THEMES
 
     @PreAuthorize("hasAuthority('EDITOR')")
     @PutMapping("/{themeId}")

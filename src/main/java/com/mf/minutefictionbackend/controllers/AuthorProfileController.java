@@ -126,6 +126,7 @@ public class AuthorProfileController {
                     .toUriString();
         String fileName = photoService.storeFile(file);
         AuthorProfileOutputDto authorProfile = authorProfileService.assignPhotoToAuthorProfile(fileName, username);
+
         return ResponseEntity.created(URI.create(url)).body(authorProfile);
     }
 

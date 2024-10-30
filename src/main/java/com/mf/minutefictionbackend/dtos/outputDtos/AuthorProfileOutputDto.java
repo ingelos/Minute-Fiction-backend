@@ -15,5 +15,4 @@ public class AuthorProfileOutputDto {
     private LocalDate dob;
     private ProfilePhotoOutputDto profilePhoto;
 
-
 }

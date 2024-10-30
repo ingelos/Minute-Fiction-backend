@@ -1,7 +1,8 @@
 package com.mf.minutefictionbackend.dtos.mappers;
 
-import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordInputDto;
-import com.mf.minutefictionbackend.dtos.inputDtos.UpdateUserInputDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdateEmailDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdateSubscriptionDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.ResourceNotFoundException;
@@ -26,14 +27,13 @@ public class UserMapper {
         );
     }
 
-    public static User updateUserFromInputDtoToModel(User existingUser, UpdateUserInputDto userInputDto) {
-        existingUser.setEmail(userInputDto.getEmail());
-        existingUser.setSubscribedToMailing(userInputDto.isSubscribedToMailing());
+    public static User updateEmailFromDtoToModel(User existingUser, UpdateEmailDto emailInputDto) {
+        existingUser.setEmail(emailInputDto.getEmail());
 
         return existingUser;
     }
 
-    public static void updatePasswordFromInputDtoToModel(User existingUser, UpdatePasswordInputDto updatePasswordDto, PasswordEncoder passwordEncoder) {
+    public static void updatePasswordFromDtoToModel(User existingUser, UpdatePasswordDto updatePasswordDto, PasswordEncoder passwordEncoder) {
         if (!updatePasswordDto.getNewPassword().equals(updatePasswordDto.getConfirmPassword())) {
             throw new IllegalArgumentException("Passwords do not match");
         }
@@ -61,4 +61,7 @@ public class UserMapper {
     }
 
 
+    public static void updateSubscriptionFromDtoToModel(User existingUser, UpdateSubscriptionDto updateSubscriptionDto) {
+        existingUser.setSubscribedToMailing(updateSubscriptionDto.isSubscribedToMailing());
+    }
 }

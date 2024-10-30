@@ -1,7 +1,7 @@
 package com.mf.minutefictionbackend.services;
 
 import com.mf.minutefictionbackend.dtos.inputDtos.AuthorityInputDto;
-import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordInputDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UpdateUserInputDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
@@ -200,16 +200,16 @@ class UserServiceTest {
 
         String username = "testuser";
 
-        UpdatePasswordInputDto updatePasswordInputDto = new UpdatePasswordInputDto();
-        updatePasswordInputDto.setNewPassword("newPassword123");
-        updatePasswordInputDto.setConfirmPassword("newPassword123");
+        UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto();
+        updatePasswordDto.setNewPassword("newPassword123");
+        updatePasswordDto.setConfirmPassword("newPassword123");
 
         Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user));
-        Mockito.when(passwordEncoder.encode(updatePasswordInputDto.getNewPassword())).thenReturn("encodedNewPassword");
+        Mockito.when(passwordEncoder.encode(updatePasswordDto.getNewPassword())).thenReturn("encodedNewPassword");
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
-        userService.updatePassword(username, updatePasswordInputDto);
+        userService.updatePassword(username, updatePasswordDto);
 
         Mockito.verify(userRepository).save(userCaptor.capture());
 

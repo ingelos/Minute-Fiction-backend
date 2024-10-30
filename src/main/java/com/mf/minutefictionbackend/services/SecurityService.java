@@ -16,6 +16,7 @@ public class SecurityService {
     private final StoryRepository storyRepository;
     private final CommentRepository commentRepository;
 
+
     public SecurityService(StoryRepository storyRepository, CommentRepository commentRepository) {
         this.storyRepository = storyRepository;
         this.commentRepository = commentRepository;

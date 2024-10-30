@@ -5,9 +5,10 @@ INSERT INTO users (username, password, email, subscribed_to_mailing) VALUES ('au
                                                                             ('author2', '$2a$12$SLgZ/.pM2/3jdgiu8iWAU.40aQdbXTx.STtJVfCc7wlcqtyQau08u', 'author2@email.com', true),
                                                                             ('author3', '$2a$12$D7Vj6SKMCOJqX1TezeasauaQFOpnS9k8w1EWKsOp3a.2fCxQEwoC6', 'author3@email.com', false);
 
-INSERT INTO themes (id, name, description, open_date, closing_date) VALUES (1001, 'Sci-fi', '(CLOSED) Science Fiction stories', '2023-05-01', '2023-05-30'),
-                                                                           (1002, 'Fantasy', '(CLOSED) Fantasy stories', '2024-06-01', '2024-06-30'),
-                                                                           (1003, 'Humor', '(OPEN) Humor stories', '2024-07-01', '2024-12-30');
+INSERT INTO themes (id, name, description, open_date, closing_date) VALUES (1001, 'Sci-fi', 'Science Fiction, stories about a galaxy far far away, or on this planet.', '2023-05-01', '2023-05-30'),
+                                                                           (1002, 'Fantasy', 'We all love ourselves a bit of fantasy.' , '2024-06-01', '2024-06-30'),
+                                                                           (1003, 'Humor', 'As funny as you can make it!', '2024-07-01', '2024-12-30'),
+                                                                            (1004, 'Fall', 'The leaves are falling...', '2024-10-01', '2024-12-30');
 
 INSERT INTO mailings (id, subject, body, date) VALUES (1001, 'Fantastic fantasy!', 'Hi everyone! Last month the theme to write about was Fantasy...', '2024-06-05'),
                                                       (1002, 'Summer vacation!', 'Hi everyone, this month we have the summer holidays...', '2024-07-01');
@@ -16,10 +17,28 @@ INSERT INTO profiles (username, firstname, lastname, bio, dob) VALUES ('author',
                                                                       ('author2', 'Jane', 'Smith', 'Loves writing', '1982-06-05'),
                                                                         ('author3', 'Michael', 'Smith', 'Love writing since I could write', '1999-03-12');
 
-INSERT INTO stories (id, title, content, status, publish_date, author_id, theme_id) VALUES (1001, 'Sci-fi-fun', 'When the air runs out...', 'PUBLISHED', '2024-06-01', 'author', 1001),
+INSERT INTO stories (id, title, content, status, publish_date, author_id, theme_id) VALUES (1001, 'Sci-fi-fun', 'When the air runs out... Lorem ipsum odor amet, consectetuer adipiscing elit. ' ||
+                                                                                                                'Himenaeos tristique mattis et ac quam pretium lectus at. Quis lobortis quis urna donec cras. ' ||
+                                                                                                                'Habitasse lacus neque ultrices sagittis mollis eget, erat parturient turpis. Fermentum justo enim ' ||
+                                                                                                                'netus placerat leo vestibulum, quis in. Eget tortor porta maecenas tellus taciti dis. Fusce gravida ' ||
+                                                                                                                'sit fringilla curabitur facilisi natoque aliquam ridiculus. Primis cursus metus conubia libero aptent et ' ||
+                                                                                                                'himenaeos euismod platea. Libero nunc cursus aliquet sollicitudin curae mus; maximus posuere.',
+                                                                                                            'PUBLISHED', '2024-06-01', 'author', 1001),
                                                                                            (1002, 'What was there?', 'Before the stars were there...', 'DECLINED', NULL, 'author2', 1001),
-                                                                                           (1003, 'A Fantasy adventure', 'There once was...', 'PUBLISHED', '2024-07-21', 'author', 1002),
-                                                                                           (1004, 'Fantastic fantasy!', 'A dog and a cat...', 'PUBLISHED', '2024-07-21', 'author3', 1002),
+                                                                                           (1003, 'A Fantasy adventure', 'There once was... Lorem ipsum odor amet, consectetuer adipiscing elit. ' ||
+                                                                                                                'Himenaeos tristique mattis et ac quam pretium lectus at. Quis lobortis quis urna donec cras. ' ||
+                                                                                                                'Habitasse lacus neque ultrices sagittis mollis eget, erat parturient turpis. Fermentum justo enim  '||
+                                                                                                                'netus placerat leo vestibulum, quis in. Eget tortor porta maecenas tellus taciti dis. Fusce gravida ' ||
+                                                                                                                'sit fringilla curabitur facilisi natoque aliquam ridiculus. Primis cursus metus conubia libero aptent et ' ||
+                                                                                                                'himenaeos euismod platea. Libero nunc cursus aliquet sollicitudin curae mus; maximus posuere.',
+                                                                                                            'PUBLISHED', '2024-07-21', 'author', 1002),
+                                                                                           (1004, 'Fantastic fantasy!', 'A dog and a cat... Lorem ipsum odor amet, consectetuer adipiscing elit. ' ||
+                                                                                                                'Himenaeos tristique mattis et ac quam pretium lectus at. Quis lobortis quis urna donec cras. ' ||
+                                                                                                                'Habitasse lacus neque ultrices sagittis mollis eget, erat parturient turpis. Fermentum justo enim ' ||
+                                                                                                                'netus placerat leo vestibulum, quis in. Eget tortor porta maecenas tellus taciti dis. Fusce gravida ' ||
+                                                                                                                'sit fringilla curabitur facilisi natoque aliquam ridiculus. Primis cursus metus conubia libero aptent et ' ||
+                                                                                                                'himenaeos euismod platea. Libero nunc cursus aliquet sollicitudin curae mus; maximus posuere.',
+                                                                                                            'PUBLISHED', '2024-07-21', 'author3', 1002),
                                                                                             (1005, 'Having a laugh', 'Two guys walk into a bar...', 'SUBMITTED', NULL, 'author', 1003),
                                                                                            (1006, 'Another one', 'This is the story of...', 'DECLINED', NULL, 'author2', 1003),
                                                                                            (1007, 'Just some funny things', 'There was a group of...', 'ACCEPTED', NULL, 'author3', 1003),
