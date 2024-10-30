@@ -22,7 +22,6 @@ public class Story {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "story_sequence")
     @SequenceGenerator(name = "story_sequence", sequenceName = "story_sequence", initialValue = 1009, allocationSize = 1)
-    @Column
     private Long id;
     @Column
     private String title;

@@ -45,7 +45,7 @@ public class MailingController {
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
-    @PatchMapping("/{mailingId}")
+    @PutMapping("/{mailingId}")
     public ResponseEntity<MailingOutputDto> updateMailing(@Valid @PathVariable("mailingId") Long mailingId, @RequestBody MailingInputDto updatedMailingInputDto) {
         MailingOutputDto updatedMailing = mailingService.updateMailing(mailingId, updatedMailingInputDto);
         return ResponseEntity.ok().body(updatedMailing);

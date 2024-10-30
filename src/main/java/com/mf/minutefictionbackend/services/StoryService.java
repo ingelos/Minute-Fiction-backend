@@ -72,9 +72,9 @@ public class StoryService {
     public StoryOutputDto updateStory(Long storyId, StoryInputDto updatedStory) {
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("No story found."));
-        if (updatedStory.getContent() != null) {
-            story.setContent(updatedStory.getContent());
-        }
+
+        story.setTitle(updatedStory.getTitle());
+        story.setContent(updatedStory.getContent());
 
         Story savedStory = storyRepository.save(story);
         return StoryMapper.storyFromModelToOutputDto(savedStory);
@@ -88,6 +88,12 @@ public class StoryService {
         return StoryMapper.storyModelListToOutputList(stories);
     }
 
+    public List<StoryOutputDto> getStoriesByStatusAndThemeName(StoryStatus status, String themeName) {
+        Theme theme = themeRepository.findByName(themeName)
+                .orElseThrow(() -> new ResourceNotFoundException("No theme found with the name " + themeName));
+        List<Story> stories = storyRepository.findByStatusAndTheme(status, theme);
+        return StoryMapper.storyModelListToOutputList(stories);
+    }
 
     public StoryOutputDto getStoryById(Long storyId) {
         Story story = storyRepository.findById(storyId)
@@ -192,16 +198,6 @@ public class StoryService {
         List<Story> publishedStories = storyRepository.findByAuthor_UsernameAndStatus(username, StoryStatus.PUBLISHED);
         return StoryMapper.storyModelListToOutputList(publishedStories);
     }
-
-
-
-
-
-
-
-
-
-
 
 
 

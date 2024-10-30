@@ -61,18 +61,10 @@ public class ThemeService {
         Theme updateTheme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ResourceNotFoundException("No theme found"));
 
-        if(updatedThemeInputDto.getName() != null) {
-            updateTheme.setName(updatedThemeInputDto.getName());
-        }
-        if(updatedThemeInputDto.getDescription() != null) {
-            updateTheme.setDescription(updatedThemeInputDto.getDescription());
-        }
-        if(updatedThemeInputDto.getOpenDate() != null) {
-            updateTheme.setOpenDate(updatedThemeInputDto.getOpenDate());
-        }
-        if(updatedThemeInputDto.getClosingDate() != null) {
-            updateTheme.setClosingDate(updatedThemeInputDto.getClosingDate());
-        }
+        updateTheme.setName(updatedThemeInputDto.getName());
+        updateTheme.setDescription(updatedThemeInputDto.getDescription());
+        updateTheme.setOpenDate(updatedThemeInputDto.getOpenDate());
+        updateTheme.setClosingDate(updatedThemeInputDto.getClosingDate());
 
         Theme returnTheme = themeRepository.save(updateTheme);
         return ThemeMapper.themeFromModelToOutputDto(returnTheme);
@@ -82,5 +74,10 @@ public class ThemeService {
     public List<Theme> findOpenThemes() {
         LocalDate now = LocalDate.now();
         return themeRepository.findByClosingDateAfter(now);
+    }
+
+    public List<Theme> findClosedThemes() {
+        LocalDate now = LocalDate.now();
+        return themeRepository.findByClosingDateBefore(now);
     }
 }

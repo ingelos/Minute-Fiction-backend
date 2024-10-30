@@ -18,7 +18,7 @@ public class Theme {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "theme_sequence")
-    @SequenceGenerator(name = "theme_sequence", sequenceName = "theme_sequence", initialValue = 1004, allocationSize = 1)
+    @SequenceGenerator(name = "theme_sequence", sequenceName = "theme_sequence", initialValue = 1005, allocationSize = 1)
     private Long id;
     @Column
     private String name;

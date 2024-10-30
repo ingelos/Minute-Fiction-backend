@@ -25,7 +25,7 @@ public class CommentController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/stories/{storyId}/comments")
-    public ResponseEntity<CommentOutputDto> addCommentToStory(@Valid @PathVariable Long storyId, @RequestBody CommentInputDto commentInputDto) {
+    public ResponseEntity<CommentOutputDto> addCommentToStory(@PathVariable Long storyId, @Valid @RequestBody CommentInputDto commentInputDto) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         CommentOutputDto savedComment = commentService.addComment(commentInputDto, storyId, username);
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -35,8 +35,8 @@ public class CommentController {
     }
 
     @PreAuthorize("hasAuthority('EDITOR') or @securityService.isCommentOwner(#commentId)")
-    @PatchMapping("/comments/{commentId}")
-    public ResponseEntity<CommentOutputDto> updateComment(@Valid @PathVariable("commentId") Long commentId, @RequestBody CommentInputDto updatedComment) {
+    @PutMapping("/comments/{commentId}")
+    public ResponseEntity<CommentOutputDto> updateComment(@PathVariable("commentId") Long commentId, @Valid @RequestBody CommentInputDto updatedComment) {
         CommentOutputDto updatedCommentDto = commentService.updateComment(commentId, updatedComment);
         return ResponseEntity.ok().body(updatedCommentDto);
     }

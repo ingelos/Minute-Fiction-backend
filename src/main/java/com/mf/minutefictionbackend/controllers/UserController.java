@@ -1,7 +1,6 @@
 package com.mf.minutefictionbackend.controllers;
 
-import com.mf.minutefictionbackend.dtos.inputDtos.AuthorityInputDto;
-import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.*;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.BadRequestException;
 import com.mf.minutefictionbackend.services.UserService;
@@ -59,12 +58,29 @@ public class UserController {
     }
 
     @PreAuthorize("@securityService.isOwner(#username)")
-    @PutMapping("/{username}")
-    public ResponseEntity<UserOutputDto> updateUser(@Valid @PathVariable("username") String username, @RequestBody UserInputDto userDto) {
-        UserOutputDto updatedUser = userService.updateUser(username, userDto);
+    @PatchMapping("/{username}/email")
+    public ResponseEntity<UserOutputDto> updateEmail(@Valid @PathVariable("username") String username, @RequestBody UpdateEmailDto updateEmailDto) {
+        boolean isVerified = userService.verifyPassword(username, updateEmailDto.getCurrentPassword());
+        if (!isVerified) {
+            throw new BadRequestException("Invalid password");
+        }
+        UserOutputDto updatedUser = userService.updateEmail(username, updateEmailDto);
         return ResponseEntity.ok().body(updatedUser);
     }
 
+    @PreAuthorize("@securityService.isOwner(#username)")
+    @PatchMapping("/{username}/password")
+    public ResponseEntity<Void> updatePassword(@Valid @PathVariable("username") String username, @RequestBody UpdatePasswordDto updatePasswordDto) {
+        userService.updatePassword(username, updatePasswordDto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("@securityService.isOwner(#username)")
+    @PatchMapping("/{username}/subscription")
+    public ResponseEntity<Void> updateSubscription(@Valid @PathVariable("username") String username, @RequestBody UpdateSubscriptionDto updateSubscriptionDto) {
+        userService.updateSubscription(username, updateSubscriptionDto);
+        return ResponseEntity.noContent().build();
+    }
 
     // MANAGE AUTHORITIES
 

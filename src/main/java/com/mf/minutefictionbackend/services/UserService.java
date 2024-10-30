@@ -1,5 +1,8 @@
 package com.mf.minutefictionbackend.services;
 
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdateEmailDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.UpdateSubscriptionDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.UserMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
@@ -70,24 +73,37 @@ public class UserService {
     }
 
     @Transactional
-    public UserOutputDto updateUser(String username, UserInputDto updatedUser) {
-        User updateUser = userRepository.findByUsername(username)
+    public UserOutputDto updateEmail(String username, UpdateEmailDto updateEmailDto) {
+        User existingUser = userRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No user found with username " + username));
-
-        if(updatedUser.getUsername() != null) {
-            throw new IllegalArgumentException("Username cannot be changed.");
-        }
-
-        updateUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-        updateUser.setEmail(updatedUser.getEmail());
-        updateUser.setSubscribedToMailing(updatedUser.isSubscribedToMailing());
-
-        User savedUser = userRepository.save(updateUser);
-
+        User updatedUser = UserMapper.updateEmailFromDtoToModel(existingUser, updateEmailDto);
+        User savedUser = userRepository.save(updatedUser);
         return UserMapper.userFromModelToOutputDto(savedUser);
     }
 
 
+    @Transactional
+    public void updatePassword(String username, UpdatePasswordDto updatePasswordDto) {
+        User existingUser = userRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No user found with username:" + username));
+        UserMapper.updatePasswordFromDtoToModel(existingUser, updatePasswordDto, passwordEncoder);
+        userRepository.save(existingUser);
+    }
+
+
+    @Transactional
+    public void updateSubscription(String username, UpdateSubscriptionDto updateSubscriptionDto) {
+        User existingUser = userRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException("No user found with username:" + username));
+       UserMapper.updateSubscriptionFromDtoToModel(existingUser, updateSubscriptionDto);
+       userRepository.save(existingUser);
+    }
+
+
+    public boolean verifyPassword(String username, String providedPassword) {
+        User user = userRepository.findById(username).orElseThrow(() -> new ResourceNotFoundException("No user found with username:" + username));
+        return passwordEncoder.matches(providedPassword, user.getPassword());
+    }
 
     // MANAGING AUTHORITIES
 
