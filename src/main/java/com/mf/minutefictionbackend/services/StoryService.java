@@ -200,5 +200,8 @@ public class StoryService {
     }
 
 
-
+    public List<StoryOutputDto> getUnpublishedStoriesByAuthor(String username) {
+        List<Story> unpublishedStories = storyRepository.findByAuthor_UsernameAndStatusNot(username, StoryStatus.PUBLISHED);
+        return StoryMapper.storyModelListToOutputList(unpublishedStories);
+    }
 }

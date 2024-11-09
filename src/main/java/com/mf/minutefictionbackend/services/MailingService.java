@@ -18,6 +18,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -63,7 +64,7 @@ public class MailingService {
 
         updateMailing.setSubject(updatedMailing.getSubject());
         updateMailing.setBody(updatedMailing.getBody());
-        updateMailing.setDate(updatedMailing.getDate());
+//        updateMailing.setDate(updatedMailing.getDate());
 
         Mailing returnMailing = mailingRepository.save(updateMailing);
         return MailingMapper.mailingFromModelToOutputDto(returnMailing);
@@ -84,6 +85,9 @@ public class MailingService {
         if(subscribers.isEmpty()) {
             throw new RuntimeException("No subscribers to the mailing at this time.");
         }
+
+        mailing.setSendDate(LocalDate.now());
+        mailingRepository.save(mailing);
 
         subscribers.forEach(user -> {
             if (isMailSendingEnabled) {

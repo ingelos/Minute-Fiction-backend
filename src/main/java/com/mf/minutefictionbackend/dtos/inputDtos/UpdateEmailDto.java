@@ -11,10 +11,6 @@ public class UpdateEmailDto {
     private String currentPassword;
     @Email(message = "Invalid email")
     private String email;
-//    @NotNull
-//    private boolean subscribedToMailing;
-
-//    private Set<AuthorityInputDto> authorities = new HashSet<>();
 
 
 }

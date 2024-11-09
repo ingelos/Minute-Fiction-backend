@@ -10,7 +10,7 @@ INSERT INTO themes (id, name, description, open_date, closing_date) VALUES (1001
                                                                            (1003, 'Humor', 'As funny as you can make it!', '2024-07-01', '2024-12-30'),
                                                                             (1004, 'Fall', 'The leaves are falling...', '2024-10-01', '2024-12-30');
 
-INSERT INTO mailings (id, subject, body, date) VALUES (1001, 'Fantastic fantasy!', 'Hi everyone! Last month the theme to write about was Fantasy...', '2024-06-05'),
+INSERT INTO mailings (id, subject, body, send_date) VALUES (1001, 'Fantastic fantasy!', 'Hi everyone! Last month the theme to write about was Fantasy...', '2024-06-05'),
                                                       (1002, 'Summer vacation!', 'Hi everyone, this month we have the summer holidays...', '2024-07-01');
 
 INSERT INTO profiles (username, firstname, lastname, bio, dob) VALUES ('author', 'John', 'Doe', 'Been writing since the good old days', '1989-02-04'),

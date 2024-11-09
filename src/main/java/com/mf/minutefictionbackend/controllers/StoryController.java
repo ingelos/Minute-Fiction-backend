@@ -9,6 +9,7 @@ import com.mf.minutefictionbackend.services.StoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,9 +33,10 @@ public class StoryController {
 
     @PreAuthorize("hasAnyAuthority('AUTHOR', 'EDITOR')")
     @PostMapping("/submit/{themeId}")
-    public ResponseEntity<StoryOutputDto> submitStory(@Valid @PathVariable Long themeId, @RequestParam String username, @RequestBody StoryInputDto storyInputDto) {
-        StoryOutputDto storyDto = storyService.submitStory(storyInputDto, themeId, username);
+    public ResponseEntity<StoryOutputDto> submitStory(@PathVariable Long themeId, @Valid @RequestBody StoryInputDto storyInputDto) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        StoryOutputDto storyDto = storyService.submitStory(storyInputDto, themeId, username);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + storyDto.getId()).toUriString());
@@ -44,7 +46,7 @@ public class StoryController {
 
     @PreAuthorize("hasAuthority('EDITOR')")
     @PutMapping("/editor/{storyId}/update")
-    public ResponseEntity<StoryOutputDto> updateStory(@Valid @PathVariable("storyId") Long storyId, @RequestBody StoryInputDto updatedStory) {
+    public ResponseEntity<StoryOutputDto> updateStory(@PathVariable("storyId") Long storyId, @Valid @RequestBody StoryInputDto updatedStory) {
         StoryOutputDto updatedStoryDto = storyService.updateStory(storyId, updatedStory);
         return ResponseEntity.ok().body(updatedStoryDto);
     }

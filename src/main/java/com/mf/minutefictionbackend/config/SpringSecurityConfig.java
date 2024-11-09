@@ -58,9 +58,9 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/users/{username}").hasAnyAuthority("READER", "EDITOR")
                         .requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("READER")
-                        .requestMatchers(HttpMethod.PATCH, "/users/{username}/password").hasAuthority("READER")
-                        .requestMatchers(HttpMethod.PATCH, "/users/{username}/email").hasAuthority("READER")
-                        .requestMatchers(HttpMethod.PATCH, "/users/{username}/subscription").hasAuthority("READER")
+                        .requestMatchers(HttpMethod.PATCH, "/users/{username}/password").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/users/{username}/email").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/users/{username}/subscription").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.DELETE, "/users/{username}").hasAnyAuthority("READER", "EDITOR")
 
                         .requestMatchers(HttpMethod.POST, "/users/{username}/authorities").hasAuthority("EDITOR")
@@ -77,6 +77,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/authorprofiles/{username}").hasAnyAuthority("AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.DELETE, "/authorprofiles/{username}").hasAnyAuthority("AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.GET, "/authorprofiles/{username}/overview").hasAnyAuthority("AUTHOR", "EDITOR")
+                        .requestMatchers(HttpMethod.GET, "/authorprofiles/{username}/unpublished").hasAnyAuthority("AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.GET, "/authorprofiles/{username}/stories/download").hasAuthority("AUTHOR")
 
                         .requestMatchers(HttpMethod.POST, "/authorprofiles/{username}/photo").hasAnyAuthority("AUTHOR", "EDITOR")
@@ -96,6 +97,8 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/stories/published/themes/{themeName}").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/stories/submit/{themeId}").hasAnyAuthority("AUTHOR", "EDITOR")
+
+
                         .requestMatchers(HttpMethod.GET, "/stories/editor/submitted").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/stories/editor/submitted/theme/{themeId}").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/stories/editor/{themeId}/stories").hasAuthority("EDITOR")
@@ -110,11 +113,12 @@ public class SpringSecurityConfig {
                         //COMMENTS
                         .requestMatchers(HttpMethod.GET, "/comments/{commentId}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stories/{storyId}/comments").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/stories/{storyId}/comments").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
-                        .requestMatchers(HttpMethod.PUT, "/comments/{commentId}").hasAnyAuthority("READER", "EDITOR")
+                        .requestMatchers(HttpMethod.POST, "/stories/{storyId}/comments").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/comments/{commentId}").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.DELETE, "/comments/{commentId}").hasAnyAuthority("READER", "EDITOR")
 
                         //MAILINGS
+                        .requestMatchers(HttpMethod.GET, "/mailings").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/mailings/*").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.POST, "/mailings").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.POST, "/mailings/{mailingId}/send").hasAuthority("EDITOR")

@@ -92,6 +92,13 @@ public class AuthorProfileController {
     }
 
     @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
+    @GetMapping("/{username}/unpublished")
+    public ResponseEntity<List<StoryOutputDto>> getUnpublishedStoriesByAuthor(@PathVariable String username) {
+        List<StoryOutputDto> stories = storyService.getUnpublishedStoriesByAuthor(username);
+        return ResponseEntity.ok(stories);
+    }
+
+    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
     @GetMapping("/{username}/overview")
     public ResponseEntity<List<StoryOutputDto>> getAllStoriesByAuthor(@PathVariable String username) {
         List<StoryOutputDto> stories = storyService.getAllStoriesByAuthor(username);

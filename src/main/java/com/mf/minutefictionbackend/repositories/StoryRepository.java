@@ -15,6 +15,7 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
     List<Story> findByStatusOrderByPublishDateDesc(StoryStatus status);
     List<Story> findByStatus(StoryStatus status);
     List<Story> findByAuthor_UsernameAndStatus(String username, StoryStatus status);
+    List<Story> findByAuthor_UsernameAndStatusNot(String username, StoryStatus status);
     List<Story> findByAuthor_Username(String username);
     List<Story> findByStatusAndTheme(StoryStatus status, Theme theme);
     List<Story> findByThemeId(Long themeId);
