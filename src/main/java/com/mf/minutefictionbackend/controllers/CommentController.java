@@ -3,6 +3,7 @@ package com.mf.minutefictionbackend.controllers;
 import com.mf.minutefictionbackend.dtos.inputDtos.CommentInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.CommentOutputDto;
 import com.mf.minutefictionbackend.services.CommentService;
+import com.mf.minutefictionbackend.services.SecurityService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,15 +18,17 @@ import java.net.URI;
 public class CommentController {
 
     private final CommentService commentService;
+    private final SecurityService securityService;
 
-    public CommentController(CommentService commentService) {
+    public CommentController(CommentService commentService, SecurityService securityService) {
         this.commentService = commentService;
+        this.securityService = securityService;
     }
 
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/stories/{storyId}/comments")
     public ResponseEntity<CommentOutputDto> addCommentToStory(@PathVariable Long storyId, @Valid @RequestBody CommentInputDto commentInputDto) {
+        securityService.checkIsAuthenticated();
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         CommentOutputDto savedComment = commentService.addComment(commentInputDto, storyId, username);
@@ -35,16 +38,18 @@ public class CommentController {
         return ResponseEntity.created(uri).body(savedComment);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isCommentOwner(#commentId)")
     @PatchMapping("/comments/{commentId}")
     public ResponseEntity<CommentOutputDto> updateComment(@PathVariable("commentId") Long commentId, @Valid @RequestBody CommentInputDto updatedComment) {
+        securityService.checkIsEditorOrCommentOwner(commentId);
+
         CommentOutputDto updatedCommentDto = commentService.updateComment(commentId, updatedComment);
         return ResponseEntity.ok().body(updatedCommentDto);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isCommentOwner(#commentId)")
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable("commentId") Long commentId) {
+        securityService.checkIsEditorOrCommentOwner(commentId);
+
         commentService.deleteCommentById(commentId);
         return ResponseEntity.noContent().build();
     }

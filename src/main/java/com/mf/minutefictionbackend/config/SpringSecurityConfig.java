@@ -57,7 +57,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/users/{username}").hasAnyAuthority("READER", "EDITOR")
-                        .requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("READER")
+//                        .requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("READER")
                         .requestMatchers(HttpMethod.PATCH, "/users/{username}/password").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/users/{username}/email").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/users/{username}/subscription").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
@@ -80,7 +80,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/authorprofiles/{username}/unpublished").hasAnyAuthority("AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.GET, "/authorprofiles/{username}/stories/download").hasAuthority("AUTHOR")
 
-                        .requestMatchers(HttpMethod.POST, "/authorprofiles/{username}/photo").hasAnyAuthority("AUTHOR", "EDITOR")
+                        .requestMatchers(HttpMethod.POST, "/authorprofiles/{username}/photo").hasAuthority("AUTHOR")
                         .requestMatchers(HttpMethod.DELETE, "/authorprofiles/{username}/photo").hasAnyAuthority("AUTHOR", "EDITOR")
 
                         //THEMES
@@ -98,15 +98,17 @@ public class SpringSecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/stories/submit/{themeId}").hasAnyAuthority("AUTHOR", "EDITOR")
 
-
-                        .requestMatchers(HttpMethod.GET, "/stories/editor/submitted").hasAuthority("EDITOR")
+                        .requestMatchers(HttpMethod.GET, "/stories/editor/overview").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/stories/editor/submitted/theme/{themeId}").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/stories/editor/{themeId}/stories").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/stories/{storyId}").hasAnyAuthority("AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.GET, "/stories/{storyId}/comments").permitAll()
 
-                        .requestMatchers(HttpMethod.PUT, "/stories/editor/{storyId}/update").hasAuthority("EDITOR")
-                        .requestMatchers(HttpMethod.PATCH, "/stories/editor/{storyId}/*").hasAuthority("EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/stories/editor/{storyId}/update").hasAuthority("EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/stories/editor/{storyId}/accept").hasAuthority("EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/stories/editor/{storyId}/decline").hasAuthority("EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/stories/editor/{storyId}/publish").hasAuthority("EDITOR")
+                        .requestMatchers(HttpMethod.PATCH, "/stories/editor/{storyId}/status").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/stories/editor/themes/{themeId}/publish").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.DELETE, "/stories/{storyId}").hasAnyAuthority("AUTHOR", "EDITOR")
 

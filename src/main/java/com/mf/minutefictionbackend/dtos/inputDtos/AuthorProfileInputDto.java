@@ -1,6 +1,7 @@
 package com.mf.minutefictionbackend.dtos.inputDtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class AuthorProfileInputDto {
     @Size(min=3, max=64)
     private String lastname;
     private String bio;
+    @Past
     private LocalDate dob;
 
 }

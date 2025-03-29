@@ -64,7 +64,6 @@ public class MailingService {
 
         updateMailing.setSubject(updatedMailing.getSubject());
         updateMailing.setBody(updatedMailing.getBody());
-//        updateMailing.setDate(updatedMailing.getDate());
 
         Mailing returnMailing = mailingRepository.save(updateMailing);
         return MailingMapper.mailingFromModelToOutputDto(returnMailing);

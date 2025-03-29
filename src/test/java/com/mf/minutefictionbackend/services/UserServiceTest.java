@@ -1,5 +1,9 @@
 package com.mf.minutefictionbackend.services;
 
+import com.mf.minutefictionbackend.dtos.dtos.AuthorityDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdateEmailDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdatePasswordDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdateSubscriptionDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.*;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.UsernameAlreadyExistsException;
@@ -77,9 +81,9 @@ class UserServiceTest {
         userInputDto.setEmail("newuser@email.com");
         userInputDto.setSubscribedToMailing(false);
 
-        AuthorityInputDto authorityInputDto = new AuthorityInputDto();
-        authorityInputDto.setAuthority("READER");
-        userInputDto.setAuthorities(Set.of(authorityInputDto));
+        AuthorityDto authorityDto = new AuthorityDto();
+        authorityDto.setAuthority("READER");
+        userInputDto.setAuthorities(Set.of(authorityDto));
 
         Mockito.when(passwordEncoder.encode(userInputDto.getPassword())).thenReturn("encodedPassword111");
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenAnswer(invocation -> invocation.<User>getArgument(0));

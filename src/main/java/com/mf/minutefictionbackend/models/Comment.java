@@ -23,8 +23,13 @@ public class Comment {
     @Column
     private String content;
     @Column
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime created;
 
+    @PrePersist
+    public void onPrePersist() {
+        this.setCreated(LocalDateTime.now());
+    }
 
     @ManyToOne
     @JoinColumn(name = "story_id")
@@ -35,13 +40,6 @@ public class Comment {
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
-
-
-    @PrePersist
-    public void onPrePersist() {
-        this.setCreated(LocalDateTime.now());
-    }
-
 
 
 

@@ -12,6 +12,4 @@ public class MailingInputDto {
     @NotNull(message = "Body is required.")
     private String body;
 
-
-
 }

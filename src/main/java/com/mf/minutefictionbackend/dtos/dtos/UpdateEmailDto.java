@@ -1,4 +1,4 @@
-package com.mf.minutefictionbackend.dtos.inputDtos;
+package com.mf.minutefictionbackend.dtos.dtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;

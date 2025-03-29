@@ -35,7 +35,7 @@ public class AuthorProfileMapper {
         dto.setDob(authorProfile.getDob());
 
         if (authorProfile.getProfilePhoto() != null) {
-            dto.setProfilePhoto(ProfilePhotoMapper.profilePhotoFromModelToOutputDto(authorProfile.getProfilePhoto()));
+            dto.setProfilePhoto(ProfilePhotoMapper.profilePhotoFromModelToDto(authorProfile.getProfilePhoto()));
         }
         return dto;
     }

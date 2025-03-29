@@ -3,6 +3,7 @@ package com.mf.minutefictionbackend.controllers;
 import com.mf.minutefictionbackend.dtos.inputDtos.MailingInputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.MailingOutputDto;
 import com.mf.minutefictionbackend.services.MailingService;
+import com.mf.minutefictionbackend.services.SecurityService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,14 +18,17 @@ import java.util.List;
 public class MailingController {
 
     private final MailingService mailingService;
+    private final SecurityService securityService;
 
-    public MailingController(MailingService mailingService) {
+    public MailingController(MailingService mailingService, SecurityService securityService) {
         this.mailingService = mailingService;
+        this.securityService = securityService;
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @PostMapping
     public ResponseEntity<MailingOutputDto> createMailing(@Valid @RequestBody MailingInputDto mailingInputDto) {
+        securityService.checkIsEditor();
+
         MailingOutputDto mailing = mailingService.createMailing(mailingInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -32,35 +36,40 @@ public class MailingController {
         return ResponseEntity.created(uri).body(mailing);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/{mailingId}")
     public ResponseEntity<MailingOutputDto> getMailingById(@PathVariable("mailingId") Long mailingId) {
+        securityService.checkIsEditor();
+
         return ResponseEntity.ok().body(mailingService.getMailingById(mailingId));
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping
     public ResponseEntity<List<MailingOutputDto>> getAllMailings() {
+        securityService.checkIsEditor();
+
         return ResponseEntity.ok().body(mailingService.getAllMailings());
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @PutMapping("/{mailingId}")
     public ResponseEntity<MailingOutputDto> updateMailing(@Valid @PathVariable("mailingId") Long mailingId, @RequestBody MailingInputDto updatedMailingInputDto) {
+        securityService.checkIsEditor();
+
         MailingOutputDto updatedMailing = mailingService.updateMailing(mailingId, updatedMailingInputDto);
         return ResponseEntity.ok().body(updatedMailing);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @DeleteMapping("/{mailingId}")
     public ResponseEntity<Void> deleteMailingById(@PathVariable("mailingId") Long mailingId) {
+        securityService.checkIsEditor();
+
         mailingService.deleteMailingById(mailingId);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @PostMapping("/{mailingId}/send")
     public ResponseEntity<Void> sendMailing(@PathVariable Long mailingId) {
+        securityService.checkIsEditor();
+
         mailingService.sendMailing(mailingId);
         return ResponseEntity.ok().build();
     }
