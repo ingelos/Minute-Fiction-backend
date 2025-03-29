@@ -80,14 +80,13 @@ public class AuthorProfileService {
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(returnAuthorProfile);
     }
 
-
     @Transactional
     public void deleteAuthorProfile(String username) {
         AuthorProfile authorProfile = authorProfileRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User " + username + " has no author profile."));
 
         if (!authorProfile.getStories().isEmpty()) {
-            throw new IllegalArgumentException("Cannot delete profile. Author has existing stories. Delete these first.");
+            throw new IllegalArgumentException("Author has stories linked to profile. Delete stories first.");
         }
 
         if (authorProfile.getProfilePhoto() != null) {
@@ -106,33 +105,46 @@ public class AuthorProfileService {
         userRepository.save(user);
     }
 
-    // MANAGE PROFILE PHOTOS
 
+    // MANAGE PROFILE PHOTOS
 
     @Transactional
     public Resource getPhotoForAuthorProfile(String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-        AuthorProfile authorProfile = authorProfileRepository.findByUser(user)
+        AuthorProfile authorProfile = authorProfileRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for user with username " + username));
-        ProfilePhoto photo = authorProfile.getProfilePhoto();
-        if (photo == null) {
+        ProfilePhoto profilePhoto = authorProfile.getProfilePhoto();
+        if (profilePhoto == null) {
             throw new ResourceNotFoundException("Author " + username + " has no photo.");
         }
-        return photoService.downLoadFile(photo.getFileName());
+        return photoService.downLoadFile(profilePhoto.getFileName());
     }
+
 
     @Transactional
     public AuthorProfileOutputDto assignPhotoToAuthorProfile(String fileName, String username) {
         AuthorProfile authorProfile = authorProfileRepository.findById(username)
                 .orElseThrow(() -> new ResourceNotFoundException("No author profile found for user with username " + username));
-        ProfilePhoto photo = fileUploadRepository.findByFileName(fileName)
-                .orElseThrow(() -> new ResourceNotFoundException("No author photo found."));
 
-        photo.setAuthorProfile(authorProfile);
-        authorProfile.setProfilePhoto(photo);
+        ProfilePhoto currentPhoto = authorProfile.getProfilePhoto();
+        ProfilePhoto newPhoto = fileUploadRepository.findByFileName(fileName)
+                .orElse(null);
+
+        if (newPhoto == null) {
+            newPhoto = new ProfilePhoto();
+            newPhoto.setFileName(fileName);
+        }
+
+        if (currentPhoto != null && !currentPhoto.getFileName().equals(fileName)) {
+            authorProfile.setProfilePhoto(null);
+            fileUploadRepository.delete(currentPhoto);
+        }
+
+        newPhoto.setAuthorProfile(authorProfile);
+        fileUploadRepository.save(newPhoto);
+
+        authorProfile.setProfilePhoto(newPhoto);
         authorProfileRepository.save(authorProfile);
-        fileUploadRepository.save(photo);
+
         return AuthorProfileMapper.authorProfileFromModelToOutputDto(authorProfile);
     }
 

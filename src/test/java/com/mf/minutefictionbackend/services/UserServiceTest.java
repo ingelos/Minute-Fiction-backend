@@ -1,9 +1,10 @@
 package com.mf.minutefictionbackend.services;
 
-import com.mf.minutefictionbackend.dtos.inputDtos.AuthorityInputDto;
-import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordDto;
-import com.mf.minutefictionbackend.dtos.inputDtos.UpdateUserInputDto;
-import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
+import com.mf.minutefictionbackend.dtos.dtos.AuthorityDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdateEmailDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdatePasswordDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdateSubscriptionDto;
+import com.mf.minutefictionbackend.dtos.inputDtos.*;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.UsernameAlreadyExistsException;
 import com.mf.minutefictionbackend.models.Authority;
@@ -80,9 +81,9 @@ class UserServiceTest {
         userInputDto.setEmail("newuser@email.com");
         userInputDto.setSubscribedToMailing(false);
 
-        AuthorityInputDto authorityInputDto = new AuthorityInputDto();
-        authorityInputDto.setAuthority("READER");
-        userInputDto.setAuthorities(Set.of(authorityInputDto));
+        AuthorityDto authorityDto = new AuthorityDto();
+        authorityDto.setAuthority("READER");
+        userInputDto.setAuthorities(Set.of(authorityDto));
 
         Mockito.when(passwordEncoder.encode(userInputDto.getPassword())).thenReturn("encodedPassword111");
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenAnswer(invocation -> invocation.<User>getArgument(0));
@@ -173,26 +174,27 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should update correct fields for correct user")
-    void updateUserTest() {
+    @DisplayName("Should update email for correct user")
+    void updateEmailTest() {
 
         String username = "testuser";
 
-        UpdateUserInputDto updateUserInputDto = new UpdateUserInputDto();
-        updateUserInputDto.setEmail("newemail@email.com");
-        updateUserInputDto.setSubscribedToMailing(true);
+        UpdateEmailDto updateEmailDto = new UpdateEmailDto();
+        updateEmailDto.setEmail("newemail@email.com");
 
         Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user));
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
 
-        UserOutputDto updatedUserDto = userService.updateUser(username, updateUserInputDto);
+        UserOutputDto updatedUser = userService.updateEmail(username, updateEmailDto);
 
-        assertEquals(username, updatedUserDto.getUsername());
-        assertEquals("newemail@email.com", updatedUserDto.getEmail());
-        assertTrue(updatedUserDto.isSubscribedToMailing());
+        assertEquals(username, updatedUser.getUsername());
+        assertEquals("newemail@email.com", updatedUser.getEmail());
 
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
     }
+
+
+
 
     @Test
     @DisplayName("Should return correct password")
@@ -219,6 +221,43 @@ class UserServiceTest {
 
     }
 
+    @Test
+    @DisplayName("Should return correct subscription status")
+    void updateSubscriptionTest() {
+        String username = user.getUsername();
+
+        UpdateSubscriptionDto updateSubscriptionDto = new UpdateSubscriptionDto();
+        updateSubscriptionDto.setSubscribedToMailing(true);
+
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user));
+
+        userService.updateSubscription(username, updateSubscriptionDto);
+
+        assertTrue(user.isSubscribedToMailing());
+
+        Mockito.verify(userRepository, Mockito.times(1)).save(user);
+    }
+
+
+    @Test
+    @DisplayName("Should return true is password matches")
+    void verifyPasswordTest() {
+        String username = user.getUsername();
+        String providedPassword = "correctPassword";
+
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(user));
+
+        Mockito.when(passwordEncoder.matches(providedPassword, user.getPassword())).thenReturn(true);
+
+        assertTrue(userService.verifyPassword(username, providedPassword), "Password should match");
+
+        Mockito.when(passwordEncoder.matches(providedPassword, user.getPassword())).thenReturn(false);
+
+        assertFalse(userService.verifyPassword(username, providedPassword), "Password should not match");
+
+        Mockito.verify(userRepository, Mockito.times(2)).findById(username);
+
+    }
 
 
     @Test

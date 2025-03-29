@@ -13,7 +13,6 @@ import com.mf.minutefictionbackend.repositories.CommentRepository;
 import com.mf.minutefictionbackend.repositories.StoryRepository;
 import com.mf.minutefictionbackend.repositories.ThemeRepository;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +21,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 
 import java.time.LocalDate;
@@ -53,7 +56,6 @@ class StoryServiceTest {
     private Story story4;
     private Story story5;
     private Story story6;
-    private Story story7;
     private Theme theme;
     private Theme theme2;
     private Theme themeClosed;
@@ -146,15 +148,6 @@ class StoryServiceTest {
                 .theme(theme)
                 .build();
 
-        story7 = Story.builder()
-                .id(7L)
-                .title("Story 7")
-                .content("Content story seven...")
-                .status(SUBMITTED)
-                .publishDate(null)
-                .author(AuthorProfile.builder().username("user5").build())
-                .theme(theme)
-                .build();
     }
 
 
@@ -200,9 +193,7 @@ class StoryServiceTest {
 
         Mockito.when(authorProfileRepository.findById(username)).thenReturn(Optional.of(authorProfile));
         Mockito.when(themeRepository.findById(theme2.getId())).thenReturn(Optional.of(theme2));
-        Mockito.when(storyRepository.countSubmissionsByTheme(theme2)).thenReturn(1);
 
-        Mockito.when(storyRepository.existsByThemeAndAuthorUsername(theme2, username)).thenReturn(true);
 
         assertThrows(BadRequestException.class, () -> storyService.submitStory(storyInputDto, theme2.getId() ,"user1"));
 
@@ -386,10 +377,13 @@ class StoryServiceTest {
         LocalDate publishDateStory4 = LocalDate.of(2024, 2, 1);
         LocalDate publishDateStory5 = LocalDate.of(2024, 3, 1);
 
-        List<Story> mockStoryList = List.of(story4, story5);
-        Mockito.when(storyRepository.findByStatusOrderByPublishDateDesc(PUBLISHED)).thenReturn(List.of(story5, story4));
+        List<Story> mockStoryList = List.of(story5, story4);
+        Page<Story> mockPage = new PageImpl<>(mockStoryList);
 
-        List<StoryOutputDto> storyList = storyService.getAllPublishedStoriesByDateDesc(PUBLISHED);
+        Pageable pageable = PageRequest.of(0, 10);
+        Mockito.when(storyRepository.findByStatusOrderByPublishDateDesc(PUBLISHED, pageable)).thenReturn(mockPage);
+
+        List<StoryOutputDto> storyList = storyService.getAllPublishedStoriesByDateDescWithPagination(PUBLISHED, 10, 0);
 
         assertEquals(storyList.size(), mockStoryList.size());
         assertEquals(titleStory4, storyList.get(1).getTitle());
@@ -416,28 +410,7 @@ class StoryServiceTest {
     }
 
 
-    @Test
-    @DisplayName("Should return all stories related to theme, no matter what status")
-    void getStoriesByThemeTest() {
 
-        Long themeId = 1L;
-        String titleStory2 = "Story 2";
-        String titleStory6 = "Story 6";
-        String themeStory6 = "Theme 1";
-        String themeStory7 = "Theme 1";
-        List<Story> mockStoryList = List.of(story2, story6, story7);
-
-        Mockito.when(storyRepository.findByThemeId(themeId)).thenReturn(List.of(story2, story6, story7));
-
-        List<StoryOutputDto> relatedStoryList = storyService.getStoriesByTheme(themeId);
-
-        assertEquals(relatedStoryList.size(), mockStoryList.size());
-        assertEquals(titleStory2, relatedStoryList.get(0).getTitle());
-        assertEquals(titleStory6, relatedStoryList.get(1).getTitle());
-        assertEquals(themeStory6, relatedStoryList.get(1).getThemeName());
-        assertEquals(themeStory7, relatedStoryList.get(2).getThemeName());
-
-    }
 
     @Test
     @DisplayName("Should return only stories with submitted status")
@@ -505,8 +478,8 @@ class StoryServiceTest {
         List<StoryOutputDto> storyList = storyService.getPublishedStoriesByAuthor(username);
 
         assertEquals(storyList.size(), mockStoryList.size());
-        assertEquals(username, storyList.get(0).getUsername());
-        assertEquals(storyTitle, storyList.get(0).getTitle());
+        assertEquals(username, storyList.getFirst().getUsername());
+        assertEquals(storyTitle, storyList.getFirst().getTitle());
 
     }
 

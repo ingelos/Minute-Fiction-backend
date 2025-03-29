@@ -1,8 +1,8 @@
 package com.mf.minutefictionbackend.services;
 
-import com.mf.minutefictionbackend.dtos.inputDtos.UpdateEmailDto;
-import com.mf.minutefictionbackend.dtos.inputDtos.UpdatePasswordDto;
-import com.mf.minutefictionbackend.dtos.inputDtos.UpdateSubscriptionDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdateEmailDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdatePasswordDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdateSubscriptionDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.UserInputDto;
 import com.mf.minutefictionbackend.dtos.mappers.UserMapper;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;

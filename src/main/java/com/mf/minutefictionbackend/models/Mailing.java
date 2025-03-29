@@ -26,7 +26,7 @@ public class Mailing {
     @Column(columnDefinition = "TEXT")
     private String body;
     @Column
-    private LocalDate date;
+    private LocalDate sendDate;
 
 
 

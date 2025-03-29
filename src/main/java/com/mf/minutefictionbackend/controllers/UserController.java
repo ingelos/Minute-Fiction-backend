@@ -1,8 +1,13 @@
 package com.mf.minutefictionbackend.controllers;
 
+import com.mf.minutefictionbackend.dtos.dtos.AuthorityDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdateEmailDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdatePasswordDto;
+import com.mf.minutefictionbackend.dtos.dtos.UpdateSubscriptionDto;
 import com.mf.minutefictionbackend.dtos.inputDtos.*;
 import com.mf.minutefictionbackend.dtos.outputDtos.UserOutputDto;
 import com.mf.minutefictionbackend.exceptions.BadRequestException;
+import com.mf.minutefictionbackend.services.SecurityService;
 import com.mf.minutefictionbackend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -18,11 +24,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final SecurityService securityService;
 
-
-    public UserController(UserService userService) {
+    public UserController(UserService userService, SecurityService securityService) {
         this.userService = userService;
-
+        this.securityService = securityService;
     }
 
     @PostMapping
@@ -37,29 +43,29 @@ public class UserController {
         return ResponseEntity.created(uri).body(createdUser);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping
     public ResponseEntity<List<UserOutputDto>> getAllUsers() {
+        securityService.checkIsEditor();
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
-    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
     @GetMapping("/{username}")
     public ResponseEntity<UserOutputDto> getUserByUsername(@PathVariable("username") String username) {
+        securityService.checkIsEditorOrOwner(username);
         UserOutputDto optionalUser = userService.getUserByUsername(username);
         return ResponseEntity.ok().body(optionalUser);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR') or @securityService.isOwner(#username)")
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteUser(@PathVariable("username") String username) {
+        securityService.checkIsEditorOrOwner(username);
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("@securityService.isOwner(#username)")
     @PatchMapping("/{username}/email")
-    public ResponseEntity<UserOutputDto> updateEmail(@Valid @PathVariable("username") String username, @RequestBody UpdateEmailDto updateEmailDto) {
+    public ResponseEntity<UserOutputDto> updateEmail(@PathVariable("username") String username, @Valid @RequestBody UpdateEmailDto updateEmailDto) {
+        securityService.checkIsOwner(username);
         boolean isVerified = userService.verifyPassword(username, updateEmailDto.getCurrentPassword());
         if (!isVerified) {
             throw new BadRequestException("Invalid password");
@@ -68,33 +74,33 @@ public class UserController {
         return ResponseEntity.ok().body(updatedUser);
     }
 
-    @PreAuthorize("@securityService.isOwner(#username)")
     @PatchMapping("/{username}/password")
-    public ResponseEntity<Void> updatePassword(@Valid @PathVariable("username") String username, @RequestBody UpdatePasswordDto updatePasswordDto) {
+    public ResponseEntity<Void> updatePassword(@PathVariable("username") String username, @Valid @RequestBody UpdatePasswordDto updatePasswordDto) {
+        securityService.checkIsOwner(username);
         userService.updatePassword(username, updatePasswordDto);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("@securityService.isOwner(#username)")
     @PatchMapping("/{username}/subscription")
-    public ResponseEntity<Void> updateSubscription(@Valid @PathVariable("username") String username, @RequestBody UpdateSubscriptionDto updateSubscriptionDto) {
+    public ResponseEntity<Void> updateSubscription( @PathVariable("username") String username, @Valid @RequestBody UpdateSubscriptionDto updateSubscriptionDto) {
+        securityService.checkIsOwner(username);
         userService.updateSubscription(username, updateSubscriptionDto);
         return ResponseEntity.noContent().build();
     }
 
     // MANAGE AUTHORITIES
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @GetMapping("/{username}/authorities")
     public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {
+        securityService.checkIsEditor();
         return ResponseEntity.ok().body(userService.getAuthorities(username));
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @PostMapping("/{username}/authorities")
-    public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody AuthorityInputDto authorityInputDto) {
+    public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody AuthorityDto authorityDto) {
+        securityService.checkIsEditor();
         try {
-            String authority = authorityInputDto.getAuthority();
+            String authority = authorityDto.getAuthority();
             userService.addAuthority(username, authority);
             return ResponseEntity.noContent().build();
         }
@@ -103,9 +109,9 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @DeleteMapping("/{username}/authorities/{authority}")
     public ResponseEntity<Object> deleteUserAuthority(@PathVariable("username") String username, @PathVariable("authority") String authority) {
+        securityService.checkIsEditor();
         userService.removeAuthority(username, authority);
         return ResponseEntity.noContent().build();
     }

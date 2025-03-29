@@ -1,6 +1,7 @@
 package com.mf.minutefictionbackend.dtos.outputDtos;
 
 
+import com.mf.minutefictionbackend.dtos.dtos.ProfilePhotoDto;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -13,6 +14,6 @@ public class AuthorProfileOutputDto {
     private String lastname;
     private String bio;
     private LocalDate dob;
-    private ProfilePhotoOutputDto profilePhoto;
+    private ProfilePhotoDto profilePhoto;
 
 }

@@ -7,10 +7,10 @@ INSERT INTO users (username, password, email, subscribed_to_mailing) VALUES ('au
 
 INSERT INTO themes (id, name, description, open_date, closing_date) VALUES (1001, 'Sci-fi', 'Science Fiction, stories about a galaxy far far away, or on this planet.', '2023-05-01', '2023-05-30'),
                                                                            (1002, 'Fantasy', 'We all love ourselves a bit of fantasy.' , '2024-06-01', '2024-06-30'),
-                                                                           (1003, 'Humor', 'As funny as you can make it!', '2024-07-01', '2024-12-30'),
-                                                                            (1004, 'Fall', 'The leaves are falling...', '2024-10-01', '2024-12-30');
+                                                                           (1003, 'Humor', 'As funny as you can make it!', '2024-07-01', '2025-06-30'),
+                                                                            (1004, 'Winter', 'Give us your best Winter stories!', '2024-11-01', '2025-12-20');
 
-INSERT INTO mailings (id, subject, body, date) VALUES (1001, 'Fantastic fantasy!', 'Hi everyone! Last month the theme to write about was Fantasy...', '2024-06-05'),
+INSERT INTO mailings (id, subject, body, send_date) VALUES (1001, 'Fantastic fantasy!', 'Hi everyone! Last month the theme to write about was Fantasy...', '2024-06-05'),
                                                       (1002, 'Summer vacation!', 'Hi everyone, this month we have the summer holidays...', '2024-07-01');
 
 INSERT INTO profiles (username, firstname, lastname, bio, dob) VALUES ('author', 'John', 'Doe', 'Been writing since the good old days', '1989-02-04'),
@@ -38,11 +38,30 @@ INSERT INTO stories (id, title, content, status, publish_date, author_id, theme_
                                                                                                                 'netus placerat leo vestibulum, quis in. Eget tortor porta maecenas tellus taciti dis. Fusce gravida ' ||
                                                                                                                 'sit fringilla curabitur facilisi natoque aliquam ridiculus. Primis cursus metus conubia libero aptent et ' ||
                                                                                                                 'himenaeos euismod platea. Libero nunc cursus aliquet sollicitudin curae mus; maximus posuere.',
-                                                                                                            'PUBLISHED', '2024-07-21', 'author3', 1002),
-                                                                                            (1005, 'Having a laugh', 'Two guys walk into a bar...', 'SUBMITTED', NULL, 'author', 1003),
-                                                                                           (1006, 'Another one', 'This is the story of...', 'DECLINED', NULL, 'author2', 1003),
-                                                                                           (1007, 'Just some funny things', 'There was a group of...', 'ACCEPTED', NULL, 'author3', 1003),
-                                                                                           (1008, 'Here we go again', 'Another story that is supposed to be funny', 'ACCEPTED', NULL, 'author2', 1003);
+                                                                                                                 'PUBLISHED', '2024-07-21', 'author3', 1002),
+                                                                                            (1005, 'Having a laugh', 'Two guys walk into a bar...Quis lobortis quis urna donec cras. ' ||
+                                                                                                                 'Habitasse lacus neque ultrices sagittis mollis eget, erat parturient turpis. Fermentum justo enim ' ||
+                                                                                                                'sit fringilla curabitur facilisi natoque aliquam ridiculus. Primis cursus metus conubia libero aptent et ' ||
+                                                                                                                 'himenaeos euismod platea. Libero nunc cursus aliquet sollicitudin curae mus;',
+                                                                                                                 'SUBMITTED', NULL, 'author', 1003),
+                                                                                           (1006, 'Another one', 'This is the story of...Quis lobortis quis urna donec cras. ' ||
+                                                                                                                  'Habitasse lacus neque ultrices sagittis mollis eget, erat parturient turpis. Fermentum justo enim ' ||
+                                                                                                                 'netus placerat leo vestibulum, quis in. Eget tortor porta maecenas tellus taciti dis. Fusce gravida ' ||
+                                                                                                                  'sit fringilla curabitur facilisi natoque aliquam ridiculus. Primis cursus metus conubia libero aptent et ' ||
+                                                                                                                  'himenaeos euismod platea. Libero nunc cursus aliquet sollicitudin curae mus;',
+                                                                                                                  'DECLINED', NULL, 'author2', 1003),
+                                                                                           (1007, 'Just some funny things', 'There was a group of...Quis lobortis quis urna donec cras. ' ||
+                                                                                                                   'Habitasse lacus neque ultrices sagittis mollis eget, erat parturient turpis. Fermentum justo enim ' ||
+                                                                                                                   'netus placerat leo vestibulum, quis in. Eget tortor porta maecenas tellus taciti dis. Fusce gravida ' ||
+                                                                                                                   'sit fringilla curabitur facilisi natoque aliquam ridiculus. Primis cursus metus conubia libero aptent et ' ||
+                                                                                                                   'himenaeos euismod platea. Libero nunc cursus aliquet sollicitudin curae mus;',
+                                                                                                                   'ACCEPTED', NULL, 'author3', 1003),
+                                                                                           (1008, 'Here we go again', 'Another story that is supposed to be funny Quis lobortis quis urna donec cras. ' ||
+                                                                                                                    'Habitasse lacus neque ultrices sagittis mollis eget, erat parturient turpis. Fermentum justo enim ' ||
+                                                                                                                  'netus placerat leo vestibulum, quis in. Eget tortor porta maecenas tellus taciti dis. Fusce gravida ' ||
+                                                                                                                  'sit fringilla curabitur facilisi natoque aliquam ridiculus. Primis cursus metus conubia libero aptent et ' ||
+                                                                                                                  'himenaeos euismod platea. Libero nunc cursus aliquet sollicitudin curae mus;',
+                                                                                                                  'ACCEPTED', NULL, 'author2', 1003);
 
 
 INSERT INTO comments (id, content, created, story_id, user_id) VALUES (1001, 'Lovely story!!', '2024-07-14 12:30:10', 1001, 'reader'),

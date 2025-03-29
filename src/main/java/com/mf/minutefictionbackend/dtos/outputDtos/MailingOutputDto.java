@@ -10,6 +10,6 @@ public class MailingOutputDto {
     private Long id;
     private String subject;
     private String body;
-    private LocalDate date;
+    private LocalDate sendDate;
 
 }

@@ -1,5 +1,6 @@
 package com.mf.minutefictionbackend.dtos.inputDtos;
 
+import com.mf.minutefictionbackend.dtos.dtos.AuthorityDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +22,7 @@ public class UserInputDto {
     @NotNull
     private boolean subscribedToMailing;
 
-    private Set<AuthorityInputDto> authorities = new HashSet<>();
+    private Set<AuthorityDto> authorities = new HashSet<>();
 
 
 }

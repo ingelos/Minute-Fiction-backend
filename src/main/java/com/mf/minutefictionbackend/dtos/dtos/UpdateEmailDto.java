@@ -1,4 +1,4 @@
-package com.mf.minutefictionbackend.dtos.inputDtos;
+package com.mf.minutefictionbackend.dtos.dtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -11,10 +11,6 @@ public class UpdateEmailDto {
     private String currentPassword;
     @Email(message = "Invalid email")
     private String email;
-//    @NotNull
-//    private boolean subscribedToMailing;
-
-//    private Set<AuthorityInputDto> authorities = new HashSet<>();
 
 
 }

@@ -9,6 +9,7 @@ import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
 import com.mf.minutefictionbackend.repositories.ThemeRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -51,7 +52,7 @@ public class ThemeService {
                 .orElseThrow(() -> new ResourceNotFoundException("No theme found with id " + themeId));
         List<Story> stories = theme.getStories();
         if(stories != null && !stories.isEmpty()) {
-            throw new BadRequestException("Theme has stories added to it. Delete these first.");
+            throw new BadRequestException("Selected theme has stories added to it. Delete these stories first.");
         }
         themeRepository.delete(theme);
     }
@@ -73,7 +74,7 @@ public class ThemeService {
 
     public List<Theme> findOpenThemes() {
         LocalDate now = LocalDate.now();
-        return themeRepository.findByClosingDateAfter(now);
+        return themeRepository.findByClosingDateAfter(now, Sort.by(Sort.Order.asc("closingDate")));
     }
 
     public List<Theme> findClosedThemes() {

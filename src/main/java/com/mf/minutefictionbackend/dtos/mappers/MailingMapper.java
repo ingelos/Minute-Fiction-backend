@@ -14,7 +14,6 @@ public class MailingMapper {
         Mailing mailing = new Mailing();
         mailing.setSubject(mailingInputDto.getSubject());
         mailing.setBody(mailingInputDto.getBody());
-        mailing.setDate(mailingInputDto.getDate());
         return mailing;
     }
 
@@ -23,7 +22,7 @@ public class MailingMapper {
         mailingOutputDto.setId(mailing.getId());
         mailingOutputDto.setSubject(mailing.getSubject());
         mailingOutputDto.setBody(mailing.getBody());
-        mailingOutputDto.setDate(mailing.getDate());
+        mailingOutputDto.setSendDate(mailing.getSendDate());
         return mailingOutputDto;
     }
 

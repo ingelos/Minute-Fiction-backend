@@ -7,6 +7,7 @@ import com.mf.minutefictionbackend.dtos.outputDtos.StoryOutputDto;
 import com.mf.minutefictionbackend.dtos.outputDtos.ThemeOutputDto;
 import com.mf.minutefictionbackend.models.Story;
 import com.mf.minutefictionbackend.models.Theme;
+import com.mf.minutefictionbackend.services.SecurityService;
 import com.mf.minutefictionbackend.services.ThemeService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +23,16 @@ import java.util.List;
 public class ThemeController {
 
     private final ThemeService themeService;
+    private final SecurityService securityService;
 
-
-    public ThemeController(ThemeService themeService) {
+    public ThemeController(ThemeService themeService, SecurityService securityService) {
         this.themeService = themeService;
-
+        this.securityService = securityService;
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @PostMapping
     public ResponseEntity<ThemeOutputDto> createTheme(@Valid @RequestBody ThemeInputDto themeInputDto) {
+        securityService.checkIsEditor();
         ThemeOutputDto theme = themeService.createTheme(themeInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -66,16 +67,16 @@ public class ThemeController {
 
     // MANAGE THEMES
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @PutMapping("/{themeId}")
     public ResponseEntity<ThemeOutputDto> updateTheme(@Valid @PathVariable("themeId") Long themeId, @RequestBody ThemeInputDto updatedThemeInputDto) {
+        securityService.checkIsEditor();
         ThemeOutputDto updatedTheme = themeService.updateTheme(themeId, updatedThemeInputDto);
         return ResponseEntity.ok().body(updatedTheme);
     }
 
-    @PreAuthorize("hasAuthority('EDITOR')")
     @DeleteMapping("/{themeId}")
     public ResponseEntity<Void> deleteThemeById(@PathVariable("themeId") Long themeId) {
+        securityService.checkIsEditor();
         themeService.deleteThemeById(themeId);
         return ResponseEntity.noContent().build();
     }

@@ -11,8 +11,8 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 public class ContactAppConfig {
 
-    private static final String dateFormat = "dd-MM-yyyy";
-    private static final String dateTimeFormat = "dd-MM-yyyy HH:mm:ss";
+    private static final String dateFormat = "yyyy-MM-dd";
+    private static final String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss";
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
