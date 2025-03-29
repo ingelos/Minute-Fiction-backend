@@ -42,7 +42,7 @@ class ThemeControllerIntegrationTest {
                 {
                     "name" : "faketheme",
                     "description" : "This is the description of the theme",
-                    "openDate" : "2025-01-01",
+                    "openDate" : "2025-05-05",
                     "closingDate" : "2025-12-12"
                 }
                 """;
@@ -63,15 +63,14 @@ class ThemeControllerIntegrationTest {
 
 
         String createdDescription = jsonNode.get("description").asText();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String openDateStr = jsonNode.get("openDate").asText();
         String closingDateStr = jsonNode.get("closingDate").asText();
-        LocalDate createdOpenDate = LocalDate.parse(openDateStr, formatter);
-        LocalDate createdClosingDate = LocalDate.parse(closingDateStr, formatter);
+        LocalDate createdOpenDate = LocalDate.parse(openDateStr);
+        LocalDate createdClosingDate = LocalDate.parse(closingDateStr);
 
         assertEquals("faketheme", createdThemeName);
         assertEquals("This is the description of the theme", createdDescription);
-        assertEquals(LocalDate.of(2025, 1, 1), createdOpenDate);
+        assertEquals(LocalDate.of(2025, 5, 5), createdOpenDate);
         assertEquals(LocalDate.of(2025, 12, 12), createdClosingDate);
 
     }

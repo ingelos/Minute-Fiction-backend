@@ -57,7 +57,6 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").hasAuthority("EDITOR")
                         .requestMatchers(HttpMethod.GET, "/users/{username}").hasAnyAuthority("READER", "EDITOR")
-//                        .requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("READER")
                         .requestMatchers(HttpMethod.PATCH, "/users/{username}/password").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/users/{username}/email").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
                         .requestMatchers(HttpMethod.PATCH, "/users/{username}/subscription").hasAnyAuthority("READER", "AUTHOR", "EDITOR")
